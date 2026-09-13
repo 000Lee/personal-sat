@@ -1,0 +1,925 @@
+<!doctype html>
+<html lang="ko">
+   <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>토요일 개인시간표 생성기</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500&display=swap" />
+      <style>
+         :root {
+            --bg: #f4f6f8;
+            --surface: #ffffff;
+            --surface-2: #edf1f5;
+            --ink: #16202b;
+            --muted: #5b6874;
+            --faint: #8a97a3;
+            --accent: #1f5c8b;
+            --accent-soft: #e2edf6;
+            --accent-line: #b9d3e7;
+            --warn: #a8501c;
+            --warn-soft: #f8ebe1;
+            --ok: #1e6b4f;
+            --ok-soft: #e2f0ea;
+            --line: #dce3ea;
+            --line-strong: #c4cfda;
+            --shadow: 0 1px 2px rgba(22, 32, 43, 0.05), 0 10px 28px -18px rgba(22, 32, 43, 0.25);
+            --display: 'IBM Plex Sans KR', -apple-system, 'Malgun Gothic', sans-serif;
+            --body: 'Noto Sans KR', 'IBM Plex Sans KR', -apple-system, 'Malgun Gothic', sans-serif;
+            --mono: 'IBM Plex Mono', 'D2Coding', ui-monospace, Consolas, monospace;
+         }
+         @media (prefers-color-scheme: dark) {
+            :root:not([data-theme='light']) {
+               --bg: #11161b;
+               --surface: #191f26;
+               --surface-2: #212932;
+               --ink: #e4e9ee;
+               --muted: #9ba7b3;
+               --faint: #78848f;
+               --accent: #79b4de;
+               --accent-soft: #1c2c39;
+               --accent-line: #2f4a60;
+               --warn: #de9060;
+               --warn-soft: #2e2119;
+               --ok: #6fc29c;
+               --ok-soft: #16281f;
+               --line: #28313a;
+               --line-strong: #3a4650;
+               --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px -18px rgba(0, 0, 0, 0.8);
+            }
+         }
+         :root[data-theme='dark'] {
+            --bg: #11161b;
+            --surface: #191f26;
+            --surface-2: #212932;
+            --ink: #e4e9ee;
+            --muted: #9ba7b3;
+            --faint: #78848f;
+            --accent: #79b4de;
+            --accent-soft: #1c2c39;
+            --accent-line: #2f4a60;
+            --warn: #de9060;
+            --warn-soft: #2e2119;
+            --ok: #6fc29c;
+            --ok-soft: #16281f;
+            --line: #28313a;
+            --line-strong: #3a4650;
+            --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px -18px rgba(0, 0, 0, 0.8);
+         }
+         * {
+            box-sizing: border-box;
+         }
+         html {
+            scroll-behavior: smooth;
+         }
+         img {
+            max-width: 100%;
+         }
+         body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: var(--body);
+            font-size: 16px;
+            line-height: 1.75;
+            margin: 0;
+            padding: 0 20px 100px;
+            -webkit-font-smoothing: antialiased;
+         }
+         .wrap {
+            max-width: 780px;
+            margin: 0 auto;
+         }
+
+         header.top {
+            padding: 52px 0 30px;
+            border-bottom: 1px solid var(--line);
+         }
+         .eyebrow {
+            font-family: var(--display);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            color: var(--accent);
+            margin: 0 0 12px;
+         }
+         h1 {
+            font-family: var(--display);
+            font-weight: 700;
+            font-size: 34px;
+            line-height: 1.25;
+            letter-spacing: -0.02em;
+            margin: 0 0 14px;
+            text-wrap: balance;
+         }
+         .lede {
+            color: var(--muted);
+            font-size: 17px;
+            margin: 0 0 26px;
+            max-width: 60ch;
+         }
+
+         .dl {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+         }
+         a.btn {
+            display: inline-block;
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            color: #fff;
+            background: var(--accent);
+            padding: 13px 24px;
+            border-radius: 9px;
+            box-shadow: var(--shadow);
+         }
+         a.btn:hover {
+            filter: brightness(1.08);
+         }
+         a.btn:focus-visible {
+            outline: 3px solid var(--accent-line);
+            outline-offset: 2px;
+         }
+         .dlmeta {
+            font-family: var(--mono);
+            font-size: 12.5px;
+            color: var(--faint);
+         }
+
+         nav.toc {
+            margin: 26px 0 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+         }
+         nav.toc a {
+            font-family: var(--display);
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--muted);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            padding: 6px 12px;
+            border-radius: 999px;
+         }
+         nav.toc a:hover {
+            color: var(--accent);
+            border-color: var(--accent-line);
+            background: var(--accent-soft);
+         }
+
+         section {
+            padding-top: 52px;
+         }
+         h2 {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: 24px;
+            letter-spacing: -0.01em;
+            margin: 0 0 6px;
+            scroll-margin-top: 16px;
+         }
+         h3 {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: 17px;
+            margin: 30px 0 8px;
+         }
+         .sub {
+            color: var(--muted);
+            font-size: 15px;
+            margin: 0 0 24px;
+         }
+
+         ol.steps {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+         }
+         ol.steps > li {
+            display: grid;
+            grid-template-columns: 34px 1fr;
+            gap: 16px;
+            align-items: start;
+         }
+         .num {
+            font-family: var(--mono);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-line);
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-variant-numeric: tabular-nums;
+         }
+         .body-col {
+            padding-top: 2px;
+            min-width: 0;
+         }
+         .body-col > p {
+            margin: 0 0 8px;
+         }
+         .body-col > p:last-child {
+            margin-bottom: 0;
+         }
+         .title-line {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: 16.5px;
+            margin: 0 0 6px;
+         }
+
+         .path {
+            font-family: var(--display);
+            font-size: 14px;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: 7px;
+            padding: 9px 12px;
+            display: block;
+            margin: 8px 0;
+            color: var(--ink);
+            overflow-x: auto;
+         }
+         .path b {
+            font-weight: 600;
+            color: var(--accent);
+         }
+         kbd {
+            font-family: var(--mono);
+            font-size: 12.5px;
+            background: var(--surface);
+            border: 1px solid var(--line-strong);
+            border-bottom-width: 2px;
+            border-radius: 5px;
+            padding: 1px 6px;
+            color: var(--ink);
+            white-space: nowrap;
+         }
+         code {
+            font-family: var(--mono);
+            font-size: 13.5px;
+            background: var(--surface-2);
+            padding: 1px 5px;
+            border-radius: 4px;
+            word-break: break-all;
+         }
+         pre {
+            font-family: var(--mono);
+            font-size: 13px;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 12px 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+            line-height: 1.6;
+         }
+
+         .note {
+            border-left: 3px solid var(--accent-line);
+            background: var(--accent-soft);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0;
+            font-size: 15px;
+         }
+         .note.warn {
+            border-left-color: var(--warn);
+            background: var(--warn-soft);
+         }
+         .note.ok {
+            border-left-color: var(--ok);
+            background: var(--ok-soft);
+         }
+         .note .lbl {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            display: block;
+            margin-bottom: 3px;
+            color: var(--accent);
+         }
+         .note.warn .lbl {
+            color: var(--warn);
+         }
+         .note.ok .lbl {
+            color: var(--ok);
+         }
+
+         .tablewrap {
+            overflow-x: auto;
+         }
+         table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 14.5px;
+            min-width: 420px;
+         }
+         th,
+         td {
+            text-align: left;
+            padding: 9px 12px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top;
+         }
+         th {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.06em;
+            color: var(--faint);
+            border-bottom-color: var(--line-strong);
+         }
+         td.k {
+            font-family: var(--mono);
+            font-size: 13px;
+            white-space: nowrap;
+            color: var(--accent);
+         }
+
+         .flow {
+            display: flex;
+            flex-direction: column;
+            margin: 22px 0 0;
+         }
+         .fbox {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 14px 16px;
+            box-shadow: var(--shadow);
+         }
+         .fbox .ft {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: 15px;
+            margin: 0 0 2px;
+         }
+         .fbox .fd {
+            font-size: 14px;
+            color: var(--muted);
+            margin: 0;
+         }
+         .farrow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0 8px 18px;
+            font-family: var(--display);
+            font-size: 13px;
+            color: var(--accent);
+            font-weight: 500;
+         }
+         .farrow i {
+            width: 2px;
+            height: 26px;
+            background: var(--accent-line);
+            border-radius: 2px;
+            display: block;
+         }
+
+         .fix {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--surface);
+            padding: 4px 18px;
+            box-shadow: var(--shadow);
+         }
+         .fix > div {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--line);
+         }
+         .fix > div:last-child {
+            border-bottom: none;
+         }
+         .fix h4 {
+            font-family: var(--display);
+            font-size: 15.5px;
+            font-weight: 600;
+            margin: 0 0 5px;
+         }
+         .fix p {
+            margin: 0 0 6px;
+            font-size: 15px;
+            color: var(--muted);
+         }
+         .fix p:last-child {
+            margin-bottom: 0;
+         }
+         .fix p b {
+            color: var(--ink);
+            font-weight: 600;
+         }
+
+         .keys {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+         }
+         .key {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            padding: 12px 14px;
+         }
+         .key .kd {
+            font-family: var(--display);
+            font-weight: 600;
+            font-size: 14px;
+            margin: 0 0 4px;
+         }
+         .key .kk {
+            font-size: 13.5px;
+            color: var(--muted);
+            margin: 0;
+         }
+
+         footer {
+            margin-top: 62px;
+            padding-top: 20px;
+            border-top: 1px solid var(--line);
+            color: var(--faint);
+            font-size: 13.5px;
+         }
+         a {
+            color: var(--accent);
+         }
+      </style>
+   </head>
+   <body>
+      <div class="wrap">
+         <header class="top">
+            <p class="eyebrow">재활치료부 · 내부 배포</p>
+            <h1>토요일 개인시간표 생성기</h1>
+            <p class="lede">PT·OT 토요시간표에서 환자별 치료 내역을 자동으로 뽑아 줍니다. 엑셀만 있으면 되고, 따로 설치할 프로그램은 없습니다.</p>
+            <div class="dl">
+               <a class="btn" href="토요일시간표_생성기.xlsx" download>생성기 내려받기 (.xlsx)</a>
+               <span class="dlmeta">v6.1 · 2026-09-13</span>
+            </div>
+            <nav class="toc">
+               <a href="#what">이게 뭔가요</a>
+               <a href="#first">처음 한 번만</a>
+               <a href="#weekly">매주 하는 일</a>
+               <a href="#keys">단축키</a>
+               <a href="#signals">이런 게 나오면</a>
+               <a href="#alias">별칭 시트</a>
+               <a href="#trouble">문제 해결</a>
+               <a href="#rules">읽는 규칙</a>
+            </nav>
+         </header>
+
+         <section id="what">
+            <h2>이게 뭔가요</h2>
+            <p class="sub">자동인 구간과 손으로 하는 구간이 나뉩니다. 이 그림만 이해하면 나머지는 따라 하기입니다.</p>
+
+            <div class="flow">
+               <div class="fbox">
+                  <p class="ft">① PT 시간표 · OT 시간표 (공유폴더 원본)</p>
+                  <p class="fd">치료사별로 짜인 표. 생성기는 <b>읽기만</b> 하고 절대 고치지 않습니다.</p>
+               </div>
+               <div class="farrow"><i></i>자동 — 새로 고침 한 번</div>
+               <div class="fbox">
+                  <p class="ft">② 생성기의 <code>출력</code> 시트</p>
+                  <p class="fd">환자별로 뒤집힌 표. 이름 · 병실 · 시간대 6칸으로, ★★★(개인시간표 생성기) 왼쪽과 똑같은 모양입니다.</p>
+               </div>
+               <div class="farrow"><i></i>손으로 — 복사 → 값 붙여넣기</div>
+               <div class="fbox">
+                  <p class="ft">③ ★★★ 파일 왼쪽 <code>A:H</code></p>
+                  <p class="fd">지금까지 손으로 채우던 그 자리입니다.</p>
+               </div>
+               <div class="farrow"><i></i>자동 — 원래 있던 수식</div>
+               <div class="fbox">
+                  <p class="ft">④ ★★★ 오른쪽 개인 시간표 카드</p>
+                  <p class="fd">여기는 손댈 일이 없습니다.</p>
+               </div>
+            </div>
+
+            <div class="note">
+               <span class="lbl">한 줄 요약</span>
+               바뀌는 건 <b>②를 누가 만드느냐</b> 하나뿐입니다. ★★★ 파일의 수식과 구조는 그대로고, 원본 시간표도 건드리지 않습니다.
+            </div>
+
+            <h3>쓸 수 있는 환경</h3>
+            <div class="tablewrap">
+               <table>
+                  <tr>
+                     <th>항목</th>
+                     <th>조건</th>
+                  </tr>
+                  <tr>
+                     <td class="k">컴퓨터</td>
+                     <td>공유폴더 <code>\\172.16.13.253</code> 에 접근되는 병원 PC</td>
+                  </tr>
+                  <tr>
+                     <td class="k">엑셀</td>
+                     <td><b>데이터</b> 탭에 <b>데이터 가져오기</b>(2019 이상) 또는 <b>새 쿼리</b>(2016) 버튼이 보이면 됩니다. 둘 다 없으면 2013 이하라 쓸 수 없습니다.</td>
+                  </tr>
+                  <tr>
+                     <td class="k">팀</td>
+                     <td>3 · 6 · 45 · 10 · 789팀 모두 지원합니다. 시간대는 파일에서 자동으로 읽습니다.</td>
+                  </tr>
+               </table>
+            </div>
+            <div class="note warn">
+               <span class="lbl">한글·폴라리스 오피스는 안 됩니다</span>
+               이 도구는 엑셀의 <b>파워쿼리</b> 기능을 씁니다. 마이크로소프트 엑셀 전용이라 다른 오피스 프로그램에는 그 기능이 없습니다.
+            </div>
+         </section>
+
+         <section id="first">
+            <h2>처음 한 번만</h2>
+            <p class="sub">컴퓨터 한 대에 딱 한 번 하는 준비입니다.</p>
+
+            <ol class="steps">
+               <li>
+                  <div class="num">1</div>
+                  <div class="body-col">
+                     <p class="title-line">파일 내려받고 내 PC에 저장</p>
+                     <p>위의 내려받기 버튼을 누르고, 저장합니다.</p>
+                     <p>팀 이름을 붙여 두면 나중에 헷갈리지 않습니다. 예: <code>토요일시간표_생성기_6팀.xlsx</code></p>
+                  </div>
+               </li>
+
+               <li>
+                  <div class="num">2</div>
+                  <div class="body-col">
+                     <p class="title-line">파일을 열고 편집 사용 누르기</p>
+                     <p>인터넷에서 받은 파일이라 위에 노란 띠로 <b>편집 사용</b> 또는 <b>콘텐츠 사용</b> 버튼이 뜹니다. 눌러 주세요. 안 누르면 새로 고침이 안 됩니다.</p>
+                  </div>
+               </li>
+
+               <li>
+                  <div class="num">3</div>
+                  <div class="body-col">
+                     <p class="title-line">개인 정보 수준 끄기 — 이걸 빼먹으면 오류가 납니다</p>
+                     <p>공유폴더의 파일과 이 파일 안의 표를 같이 쓰기 때문에, 엑셀이 보안을 이유로 막습니다. 미리 꺼 둡니다.</p>
+                     <span class="path"><b>데이터</b> 탭 → <b>데이터 가져오기</b> → <b>쿼리 옵션</b></span>
+                     <p>왼쪽에서 <b>전역</b> → <b>개인 정보</b> → ◉ <b>개인 정보 수준 설정을 항상 무시</b></p>
+                     <p>이어서 <b>현재 통합 문서</b> → <b>개인 정보</b> → ☑ <b>개인 정보 수준을 무시하고 잠재적으로 성능 향상</b> → <b>확인</b></p>
+                     <div class="note warn">
+                        <span class="lbl">컴퓨터마다 다시 해야 합니다</span>
+                        이 설정은 파일이 아니라 <b>엑셀 프로그램에 저장</b>됩니다. 다른 컴퓨터에서 열면 그 컴퓨터에서 한 번 더 해 주세요. 병원 내부 파일끼리만 합치는 것이라 보안상 문제 없습니다.
+                     </div>
+                  </div>
+               </li>
+
+               <li>
+                  <div class="num">4</div>
+                  <div class="body-col">
+                     <p class="title-line">마스터 시트에 우리 팀 환자 명단 채우기</p>
+                     <p>배포판의 <b>마스터</b> 시트는 <b>비어 있습니다.</b> 팀마다 환자가 다르기 때문입니다.</p>
+                     <p>EMR에서 담당 병동 <b>입원환자 목록</b>을 내려받아, <b>이름</b>과 <b>병실</b> 두 열만 복사해 붙여넣습니다.</p>
+                     <div class="tablewrap">
+                        <table>
+                           <tr>
+                              <th>A열 (이름)</th>
+                              <th>B열 (병실)</th>
+                           </tr>
+                           <tr>
+                              <td>홍길동</td>
+                              <td>1001</td>
+                           </tr>
+                           <tr>
+                              <td>김철수B</td>
+                              <td>1002</td>
+                           </tr>
+                        </table>
+                     </div>
+                     <p><b>이름은 시간표에 적히는 그대로</b> 넣어 주세요. 동명이인 구분자(뒤에 붙는 <code>B</code>, <code>C</code> 같은 알파벳)도 빠뜨리면 안 됩니다.</p>
+                     <div class="note">
+                        <span class="lbl">병실이 왜 필요한가요</span>
+                        PT·OT 원본 어디에도 병실 번호가 없습니다. 마스터 시트가 유일한 출처라, 여기 없는 환자는 병실이 <code>신환</code> 으로 표시됩니다.
+                     </div>
+                  </div>
+               </li>
+
+               <li>
+                  <div class="num">5</div>
+                  <div class="body-col">
+                     <p class="title-line">설정 시트에 파일 경로 넣기</p>
+                     <p><b>설정</b> 시트의 노란 칸 두 개에 이번 주 PT·OT 파일의 <b>전체 경로</b>를 넣습니다.</p>
+                     <p><b>직접 타이핑하지 마세요.</b> 파일명에 괄호와 쉼표가 있어서 한 글자만 달라도 못 찾습니다.</p>
+                     <span class="path">탐색기에서 파일을 <kbd>Shift</kbd> + 마우스 오른쪽 클릭 → <b>경로로 복사</b> → 설정 시트 칸에 <kbd>Ctrl</kbd>+<kbd>V</kbd></span>
+                     <p>붙여넣으면 앞뒤에 큰따옴표가 같이 옵니다. <b>그냥 두세요.</b> 프로그램이 알아서 떼어냅니다.</p>
+                     <div class="note">
+                        <span class="lbl">Shift 를 안 누르면</span>
+                        오른쪽 클릭 메뉴에 <b>경로로 복사</b> 가 안 보입니다. <kbd>Shift</kbd> 를 누른 채로 오른쪽 클릭해야 나옵니다.
+                     </div>
+                  </div>
+               </li>
+
+               <li>
+                  <div class="num">6</div>
+                  <div class="body-col">
+                     <p class="title-line">첫 실행</p>
+                     <span class="path"><b>데이터</b> 탭 → <b>모두 새로 고침</b></span>
+                     <p>처음에는 <b>자격 증명</b> 창이 뜰 수 있습니다. <b>Windows 자격 증명</b> → <b>현재 자격 증명 사용</b> → <b>연결</b> 을 누르세요. 공유폴더에 처음 접근할 때 한 번만 물어봅니다.</p>
+                     <p><b>출력</b> 시트에 이름·병실·시간대 6칸이 채워지면 성공입니다.</p>
+                     <div class="note ok">
+                        <span class="lbl">마지막으로</span>
+                        잘 되는 걸 확인했으면 <b>파일을 복사해 백업본을 하나 만들어 두세요.</b> 나중에 잘못 건드려도 되돌릴 수 있습니다.
+                     </div>
+                  </div>
+               </li>
+            </ol>
+         </section>
+
+         <section id="weekly">
+            <h2>매주 하는 일</h2>
+            <p class="sub">준비가 끝난 뒤에는 이것만 반복합니다.</p>
+
+            <ol class="steps">
+               <li>
+                  <div class="num">1</div>
+                  <div class="body-col">
+                     <p class="title-line">이번 주 파일 경로로 바꾸기</p>
+                     <p><b>설정</b> 시트의 <code>PT파일</code>·<code>OT파일</code> 경로를 이번 주 파일로 교체합니다. (<kbd>Shift</kbd>+오른쪽 클릭 → <b>경로로 복사</b>)</p>
+                     <p>같은 날짜에 시간표가 여러 개 올라오는 경우가 있어서, 어느 파일을 썼는지 확실하도록 경로를 직접 지정하는 방식입니다.</p>
+                  </div>
+               </li>
+               <li>
+                  <div class="num">2</div>
+                  <div class="body-col">
+                     <p class="title-line">새로 고침</p>
+                     <span class="path"><b>데이터</b> 탭 → <b>모두 새로 고침</b></span>
+                     <p>몇 초면 끝납니다. 오른쪽 아래에 회전 표시가 사라지면 완료입니다.</p>
+                  </div>
+               </li>
+               <li>
+                  <div class="num">3</div>
+                  <div class="body-col">
+                     <p class="title-line">신환 채우기</p>
+                     <p><b>출력</b> 시트를 맨 아래까지 내려서 병실 칸이 <code>신환</code> 인 행을 봅니다.</p>
+                     <p>그 환자의 호수를 찾아 <b>마스터</b> 시트 맨 아래 빈 줄에 <b>이름</b>과 <b>병실</b>을 입력합니다.</p>
+                     <p>퇴원 환자를 지울 때는 행 번호를 오른쪽 클릭 → <b>삭제</b> 로 행째 지우세요. <kbd>Delete</kbd> 로 글자만 지우면 빈 줄이 쌓입니다.</p>
+                  </div>
+               </li>
+               <li>
+                  <div class="num">4</div>
+                  <div class="body-col">
+                     <p class="title-line">다시 새로 고침</p>
+                     <p>마스터를 고쳤으면 <b>모두 새로 고침</b>을 한 번 더. 신환이 병실 순서대로 제자리에 들어갑니다.</p>
+                     <div class="note warn">
+                        <span class="lbl">순서가 중요합니다</span>
+                        마스터 정리를 <b>★★★ 에 붙여넣기 전에</b> 끝내세요. 붙여넣고 나서 고치면 다시 붙여넣어야 합니다.
+                     </div>
+                  </div>
+               </li>
+               <li>
+                  <div class="num">5</div>
+                  <div class="body-col">
+                     <p class="title-line">★★★ 파일에 옮기기</p>
+                     <p>★★★ 파일을 열고, 늘 하던 대로 지난주 시트를 복사해 이번 주 시트를 만듭니다.</p>
+                     <p>
+                        <b>복사:</b> 생성기 <b>출력</b> 표 안의 아무 칸을 클릭하고 <kbd>Ctrl</kbd>+<kbd>A</kbd> → <kbd>Ctrl</kbd>+<kbd>C</kbd><br />
+                        표의 데이터 영역만 정확히 잡힙니다. 행 수가 매주 달라져도 신경 쓸 필요 없습니다.
+                     </p>
+                     <p><b>붙여넣기:</b> ★★★ 새 시트의 <b>A2</b> 칸을 클릭하고 <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd> → <kbd>V</kbd> → <kbd>Enter</kbd></p>
+                     <div class="note warn">
+                        <span class="lbl">꼭 "값"으로 붙여넣기</span>
+                        그냥 <kbd>Ctrl</kbd>+<kbd>V</kbd> 로 붙이면 서식과 연결이 같이 넘어가서 ★★★ 파일이 이상해질 수 있습니다. 마우스로 하려면 오른쪽 클릭 → <b>붙여넣기 옵션</b> 의 <b>값</b> 아이콘(<code>123</code> 모양)입니다.
+                     </div>
+                  </div>
+               </li>
+               <li>
+                  <div class="num">6</div>
+                  <div class="body-col">
+                     <p class="title-line">확인하고 인쇄</p>
+                     <p>★★★ 오른쪽 카드가 자동으로 채워집니다. 몇 명 눈으로 확인하고 인쇄하면 끝입니다.</p>
+                     <p>자잘한 수정은 <b>★★★ 쪽에서 직접</b> 하세요. 생성기 <code>출력</code> 시트에서 고치면 다음 새로 고침 때 사라집니다.</p>
+                  </div>
+               </li>
+            </ol>
+         </section>
+
+         <section id="keys">
+            <h2>단축키</h2>
+            <p class="sub">매주 쓰는 것만 모았습니다.</p>
+            <div class="keys">
+               <div class="key">
+                  <p class="kd">표 전체 선택</p>
+                  <p class="kk">표 안의 칸을 클릭하고 <kbd>Ctrl</kbd>+<kbd>A</kbd></p>
+               </div>
+               <div class="key">
+                  <p class="kd">복사</p>
+                  <p class="kk"><kbd>Ctrl</kbd>+<kbd>C</kbd></p>
+               </div>
+               <div class="key">
+                  <p class="kd">값만 붙여넣기</p>
+                  <p class="kk"><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd> → <kbd>V</kbd> → <kbd>Enter</kbd></p>
+               </div>
+               <div class="key">
+                  <p class="kd">찾기</p>
+                  <p class="kk"><kbd>Ctrl</kbd>+<kbd>F</kbd> — <code>확인필요</code> 검색에 씁니다</p>
+               </div>
+               <div class="key">
+                  <p class="kd">맨 아래로 이동</p>
+                  <p class="kk"><kbd>Ctrl</kbd>+<kbd>End</kbd> — 신환 확인에 씁니다</p>
+               </div>
+               <div class="key">
+                  <p class="kd">되돌리기</p>
+                  <p class="kk"><kbd>Ctrl</kbd>+<kbd>Z</kbd></p>
+               </div>
+               <div class="key">
+                  <p class="kd">파일 경로 복사</p>
+                  <p class="kk">탐색기에서 <kbd>Shift</kbd> + 오른쪽 클릭 → 경로로 복사</p>
+               </div>
+               <div class="key">
+                  <p class="kd">새로 고침</p>
+                  <p class="kk"><b>데이터</b> 탭 → <b>모두 새로 고침</b></p>
+               </div>
+            </div>
+         </section>
+
+         <section id="signals">
+            <h2>이런 게 나오면</h2>
+            <p class="sub">오류가 아니라 "사람이 봐 달라"는 신호입니다.</p>
+
+            <div class="fix">
+               <div>
+                  <h4>병실 칸에 <code>신환</code></h4>
+                  <p>마스터 시트에 없는 이름이라는 뜻입니다. 세 가지 경우가 있습니다.</p>
+                  <p>
+                     ① <b>진짜 새 환자</b> → 호수를 찾아 마스터에 추가<br />
+                     ② <b>이름 표기가 다름</b> (시간표엔 <code>김명순</code>, 마스터엔 <code>김명순B</code>) → 마스터 쪽 철자를 시간표와 맞추거나, <b>별칭</b> 시트에 <code>원본표기</code> / <code>실제이름</code> 한 줄 추가<br />
+                     ③ <b>퇴원했는데 시간표에 남음</b> → 원본 확인
+                  </p>
+               </div>
+               <div>
+                  <h4>칸에 <code>확인필요</code></h4>
+                  <p>이름은 읽었는데 <b>무슨 치료인지 표기가 없다</b>는 뜻입니다. 추측해서 틀린 값을 넣지 않고 눈에 띄게 표시하는 것입니다.</p>
+                  <p>원본에서 그 이름을 찾아보고, ★★★ 에 붙여넣은 뒤 그 칸만 직접 채우세요. 자주 나온다면 새로운 표기법이 생긴 것이니 관리자에게 알려 주세요.</p>
+               </div>
+               <div>
+                  <h4>한 칸에 치료가 두 개 — <code>운동치료 / 작업치료</code></h4>
+                  <p>같은 환자가 같은 시간에 두 곳에 잡혀 있다는 뜻입니다. 프로그램 오류가 아니라 <b>원본을 확인해 봐야 할 신호</b>입니다.</p>
+               </div>
+               <div>
+                  <h4>시간대가 예상과 다름</h4>
+                  <p>시간대는 원본 파일에서 자동으로 읽습니다. 팀마다 다릅니다. 이상하면 설정 시트의 경로가 다른 팀 파일을 가리키고 있는지 확인하세요.</p>
+               </div>
+            </div>
+         </section>
+
+         <section id="alias">
+            <h2>별칭 시트</h2>
+            <p class="sub">시간표의 이름과 마스터의 이름이 같은 사람인데 글자가 다를 때, 둘을 이어 주는 표입니다. 평소에는 비어 있어도 됩니다.</p>
+
+            <div class="note">
+               <span class="lbl">먼저 확인하세요 — 대부분은 별칭이 필요 없습니다</span>
+               <code>/홍길동 C</code> 처럼 <b>공백만 다른 경우</b>, 이름 앞뒤의 <code>/</code> <code>G</code> <code>N</code> <code>S</code> <code>VT</code> 같은 기호, 괄호와 그 안의 내용(<code>(OS)</code> <code>(1-3)</code>)은 프로그램이 알아서 떼고 찾습니다. 별칭에 적지 않아도 됩니다.
+            </div>
+
+            <h3>이럴 때 씁니다</h3>
+            <p>글자 자체가 빠지거나 다른 경우입니다. 시간표에는 <code>김길동</code> 이라고만 적혀 있는데 마스터에는 동명이인 구분자가 붙은 <code>김길동B</code> 로 들어 있거나, 외국인 환자 이름이 시간표에서는 짧게 적히는 경우입니다.</p>
+
+            <h3>어느 칸에 무엇을 적나</h3>
+            <div class="tablewrap">
+               <table>
+                  <tr>
+                     <th>A열 — 원본표기</th>
+                     <th>B열 — 실제이름</th>
+                  </tr>
+                  <tr>
+                     <td>김길동</td>
+                     <td>김길동B</td>
+                  </tr>
+                  <tr>
+                     <td>이길동</td>
+                     <td>이길동C</td>
+                  </tr>
+                  <tr>
+                     <td>DONG</td>
+                     <td>HONG DONG</td>
+                  </tr>
+                  <tr>
+                     <td>HDONG</td>
+                     <td>HONG DONG</td>
+                  </tr>
+               </table>
+            </div>
+            <p><b>A열</b>은 <b>시간표에 적힌 그대로</b>(치료 기호는 뗀 이름만), <b>B열</b>은 <b>마스터 A열에 있는 이름과 한 글자도 다르지 않게</b> 적습니다.</p>
+            <p>같은 사람이 시간표마다 다르게 적힌다면 <b>표기마다 한 줄씩</b> 추가하세요. 위의 <code>DONG</code> · <code>HDONG</code> 처럼 두 줄이 됩니다.</p>
+
+            <div class="note warn">
+               <span class="lbl">이런 건 하지 마세요</span>
+               <b>방향을 바꿔 적으면</b> 찾지 못합니다. 왼쪽이 시간표, 오른쪽이 마스터입니다.<br />
+               B열에 <b>마스터에 없는 이름</b>을 적으면 그대로 <code>신환</code> 으로 남습니다. 마스터부터 확인하세요.<br />
+               <b>진짜 다른 사람</b>을 이어 붙이면 안 됩니다. 동명이인이라면 별칭이 아니라 마스터와 시간표 양쪽의 구분자(<code>B</code> <code>C</code>)를 맞추는 쪽이 맞습니다.
+            </div>
+
+            <p>별칭을 고친 뒤에는 <b>데이터</b> 탭 → <b>모두 새로 고침</b> 을 한 번 더 눌러야 반영됩니다.</p>
+         </section>
+
+         <section id="trouble">
+            <h2>문제 해결</h2>
+            <p class="sub">위에서부터 확인해 보세요.</p>
+            <div class="fix">
+               <div>
+                  <h4>"데이터 원본에 직접 액세스할 수 없습니다" / Formula.Firewall</h4>
+                  <p><b>처음 한 번만 3단계</b>(개인 정보 수준 끄기)를 안 했거나, 다른 컴퓨터에서 열어서 그 PC에 설정이 안 된 경우입니다. <b>전역</b>과 <b>현재 통합 문서</b> 양쪽 다 해 주세요.</p>
+               </div>
+               <div>
+                  <h4>"값 null을(를) Logical 형식으로 변환할 수 없습니다"</h4>
+                  <p>원본에서 데이터를 하나도 못 찾았다는 뜻입니다. <b>설정</b> 시트의 경로를 그대로 복사해 탐색기 주소창에 붙여넣고 <kbd>Enter</kbd> 를 쳐 보세요. 파일이 열리면 경로는 정상이고, 안 열리면 경로가 틀린 것입니다.</p>
+               </div>
+               <div>
+                  <h4>출력 시트가 비어 있음</h4>
+                  <p>경로가 틀렸거나 아직 새로 고침을 안 한 경우입니다. <b>데이터</b> → <b>쿼리 및 연결</b> 을 눌러 오른쪽 창에서 <code>출력</code> 아래에 "○개의 행이 로드되었습니다" 가 뜨는지 확인하세요.</p>
+               </div>
+               <div>
+                  <h4>쿼리 목록에 노란 ⚠ 표시가 남아 있음</h4>
+                  <p><b>오류가 아닙니다.</b> 화면에 내보내지 않는 중간 계산이라 미리보기를 저장하지 않는다는 표시입니다. 진짜 오류면 빨간 글씨로 오류 이름이 같이 나옵니다.</p>
+               </div>
+               <div>
+                  <h4>새로 고침이 안 됨 / 파일이 잠김</h4>
+                  <p>원본 PT·OT 파일을 다른 사람이 편집 중이면 읽기가 막힐 수 있습니다. 잠시 뒤 다시 시도하거나, 파일을 복사해 두고 그 복사본 경로를 쓰세요.</p>
+               </div>
+               <div>
+                  <h4>★★★ 파일이 이상해졌다</h4>
+                  <p>생성기는 ★★★ 를 건드리지 않으므로 붙여넣기 과정의 문제입니다. <kbd>Ctrl</kbd>+<kbd>Z</kbd> 로 되돌리고, 저장하지 않은 채 닫았다 다시 열면 원래대로 돌아옵니다.</p>
+               </div>
+               <div>
+                  <h4>그래도 안 될 때</h4>
+                  <p>오류 창을 <b>화면 캡처</b>해서 관리자에게 보내 주세요. 어느 팀 파일로, 어느 단계에서 났는지 같이 적어 주면 빠릅니다.</p>
+               </div>
+            </div>
+         </section>
+
+         <section id="rules">
+            <h2>원본을 읽는 규칙</h2>
+            <p class="sub">궁금할 때 참고하세요. 평소에는 몰라도 됩니다.</p>
+
+            <div class="tablewrap">
+               <table>
+                  <tr>
+                     <th>표기</th>
+                     <th>판정</th>
+                     <th>예</th>
+                  </tr>
+                  <tr>
+                     <td class="k">G · M 접두</td>
+                     <td>기구치료</td>
+                     <td><code>G김길동</code> <code>M백길동</code></td>
+                  </tr>
+                  <tr>
+                     <td class="k">N · G · Z 접미</td>
+                     <td>운동치료</td>
+                     <td><code>지길동N</code> <code>임길동G</code> <code>가길동Z</code></td>
+                  </tr>
+                  <tr>
+                     <td class="k">S · A 접미</td>
+                     <td>작업치료</td>
+                     <td><code>권길동S</code> <code>정길동A</code></td>
+                  </tr>
+                  <tr>
+                     <td class="k">VT 접두 · 접미</td>
+                     <td>연하전기치료</td>
+                     <td><code>VT이길동</code> <code>송길동VT</code></td>
+                  </tr>
+                  <tr>
+                     <td class="k">언어 열</td>
+                     <td>언어치료</td>
+                     <td></td>
+                  </tr>
+                  <tr>
+                     <td class="k">FES 열</td>
+                     <td>FES</td>
+                     <td></td>
+                  </tr>
+               </table>
+            </div>
+
+            <p style="font-size: 14.5px; color: var(--muted); margin-top: 14px">
+               접두 <code>G</code> 는 기구, 접미 <code>G</code> 는 운동으로 뜻이 반대입니다. 이름 앞의 <code>/</code> 는 회복기 환자 표시라 이름에서 떼어냅니다. 괄호와 그 안의 내용(<code>(OS)</code> <code>(1-3)</code>), 그리고 <code>접수</code> <code>건수</code> <code>점심</code> <code>OS</code> 및
+               팀 번호 같은 숫자는 환자가 아니므로 무시합니다.
+            </p>
+
+            <div class="note warn">
+               <span class="lbl">색은 읽지 못합니다</span>
+               프로그램이 읽을 수 있는 건 글자뿐이고 색은 볼 수 없습니다. 만약 색으로 처리해야하는 관행이 있다면 결과를 따로 수정해 주세요.
+            </div>
+         </section>
+
+         <footer>
+            <p><b>업데이트</b> — 규칙이나 원본 양식이 바뀌면 이 페이지의 파일을 새로 올립니다. 공지를 받으면 위에서 다시 내려받아 쓰던 파일을 교체하세요. <b>마스터 시트 내용은 새 파일에 다시 옮겨 주세요.</b></p>
+            <p style="margin-top: 14px">v6.1 · 2026-09-13 · 3 · 6 · 45 · 10 · 789팀 지원</p>
+         </footer>
+      </div>
+   </body>
+</html>
