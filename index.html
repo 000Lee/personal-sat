@@ -76,12 +76,12 @@
   }
   /* 기본은 위에서 아래로 한 줄씩 (① → ② → ③ → ④) */
   main > .card{grid-column:1/-1;}
-  /* "한 칸씩 끌어서 넣기"를 펼치면 ③·④를 나란히 놓아 끌어다 놓기 쉽게 한다 */
-  main.dragmode > #card-convert{grid-column:1/2;}
-  main.dragmode > #card-result{grid-column:2/-1;}
+  /* "시간별 환자 보기"를 펼치면 ③·④를 나란히 놓아 대조하기 쉽게 한다 */
+  main.sideview > #card-convert{grid-column:1/2;}
+  main.sideview > #card-result{grid-column:2/-1;}
   @media (max-width:1050px){
     main{grid-template-columns:1fr;}
-    main.dragmode > #card-convert, main.dragmode > #card-result{grid-column:1/-1;}
+    main.sideview > #card-convert, main.sideview > #card-result{grid-column:1/-1;}
   }
 
   .card{
@@ -191,13 +191,11 @@
     padding:6px 8px;
     font-size:11.5px;
     background:#fff;
-    cursor:grab;
     max-width:190px;
     user-select:none;
     transition:opacity .15s, transform .1s;
   }
-  .chip:active{cursor:grabbing;transform:scale(0.97);}
-  .chip.done{opacity:0.35;}
+  .chip{cursor:default;}
   .chip .line{
     display:flex;
     align-items:baseline;
@@ -210,15 +208,6 @@
   .chip .rawtext{font-family:ui-monospace,SFMono-Regular,monospace;}
   .chip .catname{color:var(--ink-soft);}
 
-  .dropzone{
-    border:2px dashed var(--line);
-    border-radius:10px;
-    transition:background .15s,border-color .15s;
-  }
-  .dropzone.hover{
-    background:#F0F6F3;
-    border-color:var(--accent);
-  }
 
   .empty-note{
     color:var(--ink-soft);
@@ -333,7 +322,7 @@
   details.fold > summary::before{content:'▸ ';}
   details.fold[open] > summary::before{content:'▾ ';}
   details.fold > .foldbody{padding-top:12px;}
-  #drag-panel > .foldbody{max-height:520px;overflow:auto;}
+  #source-panel > .foldbody{max-height:520px;overflow:auto;}
 
   .pending-item{
     font-size:12px;
@@ -482,15 +471,15 @@
     <div class="card-head"><h2><span class="step-num">3</span>변환</h2></div>
     <div class="card-body">
       <button class="btn accent big" id="btn-autoall">전체 변환</button>
-      <details class="fold" id="drag-panel">
-        <summary>한 칸씩 끌어서 넣기</summary>
+      <details class="fold" id="source-panel">
+        <summary>시간별 환자 보기</summary>
         <div class="foldbody">
           <div class="tabbar" style="margin-bottom:12px;">
             <button class="tabbtn active" data-src="pt" id="tab-pt">PT</button>
             <button class="tabbtn" data-src="ot" id="tab-ot">OT</button>
           </div>
           <div id="source-body">
-            <div class="empty-note">PT 시간표를 넣으면 여기에 시간대별 칸이 표시됩니다.<br>칸을 아래 결과 표로 끌어다 놓으면 자동 분류되어 들어갑니다.</div>
+            <div class="empty-note">시간표를 넣으면 시간대별로 원본에 적힌 그대로와, 프로그램이 어떤 치료로 읽었는지가 표시됩니다.<br>칸에 마우스를 올리면 몇 번 열 · 어느 치료사 칸인지 나옵니다.</div>
           </div>
         </div>
       </details>
@@ -514,7 +503,7 @@
         </div>
       </div>
       <div class="summary-bar" id="summary-bar"></div>
-      <div class="dropzone" id="dropzone">
+      <div>
         <div style="overflow-x:auto;">
           <table class="dest" id="dest-table">
             <thead><tr id="dest-head"><th>이름</th><th>병실</th></tr></thead>
@@ -1137,7 +1126,6 @@ const state = {
   source: {pt: [], ot: []},
   detect: {pt: null, ot: null},
   activeTab: 'pt',
-  processed: new Set(),   // "sheet|addr" — 이미 변환한 칸
   destRows: {},           // name -> {name, room, roomEdited, cells, sources, note, special, status, isNew}
   allTimeLabels: [],
   pending: [],
@@ -1154,19 +1142,27 @@ const OT_CONFLICT_PAIR = ['연하전기치료','작업치료'];
 // "1:1치료 N개 희망" 과 비교할 1:1(개별) 치료 — SPEC 4-8: 도수치료 포함
 const INDIVIDUAL_CATS = ['운동치료','언어치료','작업치료','보행치료','도수치료'];
 
-// 특이사항 문구 -> 있으면 안 되는 치료 카테고리
+/* 특이사항 문구 -> 있으면 안 되는 치료 카테고리
+   치료 이름을 어떻게 적어도 잡히게 한다.
+     "연하 안 함" · "연하전기 안함" · "연하전기치료 제외"  ← 전부 같은 뜻
+   앞부분(연하/연하전기)만 적어도, 뒤에 "치료"를 붙여도, 띄어쓰기가 없어도 잡는다. */
+const NO_WORDS = '(?:안\\s*함|안\\s*합니다|안\\s*해|않음|없음|제외|중단|불가|금지|보류|X|x)';
+function noRule(word, cats){
+  return {re: new RegExp(word + '\\s*(?:치료)?\\s*' + NO_WORDS), cats};
+}
 const SPECIAL_NO_RULES = [
-  // "PT 안 함" 에는 도수치료도 포함한다 (도수치료도 PT 치료. SPEC 4-4 목록에는 없지만 사용자 확인)
-  {re:/PT\s*(안\s*함|없음|제외|중단|불가|X)/i, cats:['운동치료','보행치료','매트치료','기구치료','도수치료']},
-  {re:/OT\s*(안\s*함|없음|제외|중단|불가|X)/i, cats:['작업치료','연하전기치료']},
-  {re:/FES\s*(안\s*함|없음|제외|중단|불가|X)/i, cats:['FES']},
-  {re:/보행\s*(안\s*함|없음|제외|중단|불가)/, cats:['보행치료']},
-  {re:/매트\s*(안\s*함|없음|제외|중단|불가)/, cats:['매트치료']},
-  {re:/운동\s*(안\s*함|없음|제외|중단|불가)/, cats:['운동치료']},
-  {re:/작업\s*(안\s*함|없음|제외|중단|불가)/, cats:['작업치료']},
-  {re:/연하\s*(안\s*함|없음|제외|중단|불가)/, cats:['연하전기치료']},
-  {re:/기구\s*(안\s*함|없음|제외|중단|불가)/, cats:['기구치료']},
-  {re:/도수\s*(안\s*함|없음|제외|중단|불가)/, cats:['도수치료']},   // 다른 치료와 같은 방식으로 이름을 직접 적어도 잡히게
+  // "PT 안 함" 에는 도수치료도 포함한다 (도수치료도 PT 치료)
+  noRule('(?:PT|pt|피티)',            ['운동치료','보행치료','매트치료','기구치료','도수치료']),
+  noRule('(?:OT|ot|오티)',            ['작업치료','연하전기치료']),
+  noRule('(?:FES|fes|Fes)',           ['FES']),
+  noRule('보행',                       ['보행치료']),
+  noRule('매트',                       ['매트치료']),
+  noRule('운동',                       ['운동치료']),
+  noRule('작업',                       ['작업치료']),
+  noRule('연하(?:전기)?',              ['연하전기치료']),
+  noRule('기구',                       ['기구치료']),
+  noRule('도수',                       ['도수치료']),
+  noRule('언어',                       ['언어치료']),
 ];
 
 function parseTimeConstraint(text){
@@ -1543,15 +1539,15 @@ function switchTab(tab){
   document.getElementById('tab-ot').classList.toggle('active', tab==='ot');
   renderSource();
 }
-document.getElementById('drag-panel').addEventListener('toggle', (e)=>{
-  document.getElementById('main').classList.toggle('dragmode', e.target.open);
+document.getElementById('source-panel').addEventListener('toggle', (e)=>{
+  document.getElementById('main').classList.toggle('sideview', e.target.open);
 });
 
 function renderSource(){
   const body = document.getElementById('source-body');
   const rows = state.source[state.activeTab];
   if(!rows.length){
-    body.innerHTML = `<div class="empty-note">${state.activeTab.toUpperCase()} 시간표를 넣으면 여기에 시간대별 칸이 표시됩니다.</div>`;
+    body.innerHTML = `<div class="empty-note">${state.activeTab.toUpperCase()} 시간표를 넣으면 여기에 시간대별로 표시됩니다.</div>`;
     return;
   }
   body.innerHTML = '';
@@ -1572,13 +1568,11 @@ function renderSource(){
   });
 }
 
+const ROLE_LABEL = {therapist:'치료사', lang:'언어', fes:'FES'};
 function makeChip(sheet, timeLabel, cell){
   const chip = document.createElement('div');
-  const chipId = sheet+'|'+cell.addr;
-  chip.className = 'chip' + (state.processed.has(chipId) ? ' done' : '');
-  chip.draggable = true;
-  chip.dataset.chipId = chipId;
-  chip.title = `${cell.colLabel} · ${cell.header||'(빈 헤더)'} · ${cell.role}`;
+  chip.className = 'chip';
+  chip.title = `${sheet.toUpperCase()} 시간표 · ${timeLabel}\n${cell.colLabel}열 · ${cell.header||'(빈 헤더)'} (${ROLE_LABEL[cell.role]||cell.role})`;
 
   const results = classifyCell(cell);
   if(!results.length){
@@ -1604,7 +1598,6 @@ function makeChip(sheet, timeLabel, cell){
     chip.appendChild(div);
   });
 
-  chip.addEventListener('dragstart', (e)=>{ e.dataTransfer.setData('text/plain', chipId); });
   return chip;
 }
 
@@ -1622,6 +1615,11 @@ function ensureDestRow(name){
       note: '',
       special: '',
       status: '',
+      // 이 값이 ② 메모란에서 왔는지 표시. [메모 반영] 을 다시 누를 때 메모에서 온 것만 지우고
+      // 표에서 직접 친 것은 지키기 위함
+      specialFromNotes: false,
+      statusFromNotes: false,
+      createdByNotes: false,
       isNew: !(name in roster.nameRoom),
     };
   }
@@ -1805,7 +1803,12 @@ function renderDest(){
       tdSpecial.classList.add('conflict'); redCells++;
       tdSpecial.title = specialErrors.map(er=>er.message).join('\n');
     }
-    tdSpecial.addEventListener('input', ()=>{ row.special = tdSpecial.textContent.trim(); refreshChecks(); });
+    // 표에서 직접 친 특이사항은 메모란 소유가 아니다 ([메모 반영] 을 눌러도 안 지워짐)
+    tdSpecial.addEventListener('input', ()=>{
+      row.special = tdSpecial.textContent.trim();
+      row.specialFromNotes = false;
+      refreshChecks();
+    });
     tr.appendChild(tdSpecial);
 
     const tdStatus = document.createElement('td');
@@ -1818,7 +1821,11 @@ function renderDest(){
       if((row.status||'') === v) opt.selected = true;
       statusSelect.appendChild(opt);
     });
-    statusSelect.addEventListener('change', ()=>{ row.status = statusSelect.value; refreshChecks(); });
+    statusSelect.addEventListener('change', ()=>{
+      row.status = statusSelect.value;
+      row.statusFromNotes = false;
+      refreshChecks();
+    });
     tdStatus.appendChild(statusSelect);
     const statusErrors = rowFieldErrors(name, 'status');
     if(statusErrors.length){
@@ -1887,29 +1894,6 @@ function renderErrors(){
   ).join('');
 }
 
-/* 끌어다 놓기 */
-const dropzone = document.getElementById('dropzone');
-dropzone.addEventListener('dragover', (e)=>{ e.preventDefault(); dropzone.classList.add('hover'); });
-dropzone.addEventListener('dragleave', ()=>{ dropzone.classList.remove('hover'); });
-dropzone.addEventListener('drop', (e)=>{
-  e.preventDefault();
-  dropzone.classList.remove('hover');
-  const chipId = e.dataTransfer.getData('text/plain');
-  if(!chipId) return;
-  const [sheet, addr] = chipId.split('|');
-  let target = null;
-  for(const row of state.source[sheet]){
-    const c = row.cells.find(c=>c.addr===addr);
-    if(c){ target = {timeLabel:row.timeLabel, cell:c}; break; }
-  }
-  if(!target) return;
-  const {applied, skipped} = applyClassification(sheet, target.timeLabel, target.cell);
-  state.processed.add(chipId);
-  renderSource();
-  rebuildDestHeader();
-  showToast(`${applied}건 반영` + (skipped ? `, ${skipped}건 보류` : ''));
-});
-
 /* 전체 변환 */
 document.getElementById('btn-autoall').addEventListener('click', ()=>{
   if(!state.source.pt.length && !state.source.ot.length){
@@ -1921,19 +1905,18 @@ document.getElementById('btn-autoall').addEventListener('click', ()=>{
   const keep = {};
   Object.values(state.destRows).forEach(r=>{
     if(r.special || r.status || r.roomEdited){
-      keep[r.name] = {special:r.special, status:r.status, room:r.room, roomEdited:r.roomEdited};
+      keep[r.name] = {special:r.special, status:r.status, room:r.room, roomEdited:r.roomEdited,
+                      specialFromNotes:r.specialFromNotes, statusFromNotes:r.statusFromNotes};
     }
   });
   state.destRows = {};
   state.pending = [];
-  state.processed = new Set();
   let totalApplied=0, totalSkipped=0;
   ['pt','ot'].forEach(sheet=>{
     state.source[sheet].forEach(row=>{
       row.cells.forEach(cell=>{
         const {applied, skipped} = applyClassification(sheet, row.timeLabel, cell);
         totalApplied += applied; totalSkipped += skipped;
-        state.processed.add(sheet+'|'+cell.addr);
       });
     });
   });
@@ -1941,6 +1924,8 @@ document.getElementById('btn-autoall').addEventListener('click', ()=>{
     const row = ensureDestRow(name);
     row.special = keep[name].special;
     row.status  = keep[name].status;
+    row.specialFromNotes = keep[name].specialFromNotes;
+    row.statusFromNotes  = keep[name].statusFromNotes;
     if(keep[name].roomEdited){ row.room = keep[name].room; row.roomEdited = true; }
   });
 
@@ -1984,7 +1969,6 @@ document.getElementById('btn-reset').addEventListener('click', ()=>{
   if(!confirm('결과 표 내용을 모두 지울까요? (넣은 파일은 유지됩니다)')) return;
   state.destRows = {};
   state.pending = [];
-  state.processed = new Set();
   renderSource();
   renderDest();
 });
@@ -1995,9 +1979,22 @@ document.getElementById('btn-reset').addEventListener('click', ()=>{
 function splitNameList(s){
   return s.split(/[,、\/·\s]+/).map(x=>x.trim()).filter(x=>x.length);
 }
+
+/* 메모 줄에서 이름을 찾는다.
+   입원목록 명단뿐 아니라 "이미 결과 표에 있는 이름"도 찾는다.
+   그래야 (1) 입원목록을 안 넣었을 때 (2) 명단에 없는 신환일 때도 메모를 달 수 있다. */
+function findNameForNote(text){
+  const inTable = Object.keys(state.destRows)
+    .filter(n => n.length >= 2 && text.includes(n))
+    .sort((a,b)=> b.length - a.length)[0] || null;
+  const inRoster = findNameInText(text);
+  if(inTable && inRoster) return inTable.length >= inRoster.length ? inTable : inRoster;
+  return inTable || inRoster || null;
+}
 function resolveTypedName(n){
+  if(n in state.destRows) return n;
   if(n in roster.nameRoom) return n;
-  return findNameInText(n) || n;
+  return findNameForNote(n) || n;
 }
 function parseNotesInput(text){
   const lines = text.split('\n').map(l=>l.trim()).filter(l=>l.length);
@@ -2016,7 +2013,7 @@ function parseNotesInput(text){
       splitNameList(m[1]).forEach(n=> dischargedNames.push(resolveTypedName(n)));
       return;
     }
-    const found = findNameInText(line);
+    const found = findNameForNote(line);
     if(found) specialLines.push({name:found, line});
     else unmatched.push(line);
   });
@@ -2027,13 +2024,41 @@ document.getElementById('btn-apply-notes').addEventListener('click', ()=>{
   const text = document.getElementById('notes-input').value;
   const {specialLines, newNames, dischargedNames, unmatched} = parseNotesInput(text);
 
+  // 메모란이 곧 현재 상태다. 지난번 메모에서 들어간 것은 먼저 전부 지운다.
+  // (표에서 직접 친 특이사항·상태는 건드리지 않는다)
+  Object.values(state.destRows).forEach(row=>{
+    if(row.specialFromNotes){ row.special = ''; row.specialFromNotes = false; }
+    if(row.statusFromNotes){  row.status  = ''; row.statusFromNotes  = false; }
+  });
+
   const bySpecialName = {};
   specialLines.forEach(({name, line})=>{
     bySpecialName[name] = bySpecialName[name] ? bySpecialName[name]+'; '+line : line;
   });
-  Object.keys(bySpecialName).forEach(name=>{ ensureDestRow(name).special = bySpecialName[name]; });
-  newNames.forEach(name=>{ ensureDestRow(name).status = '신환'; });
-  dischargedNames.forEach(name=>{ ensureDestRow(name).status = '퇴원'; });
+  const touched = (name)=>{
+    const isNewRow = !(name in state.destRows);
+    const row = ensureDestRow(name);
+    if(isNewRow) row.createdByNotes = true;
+    return row;
+  };
+  Object.keys(bySpecialName).forEach(name=>{
+    const row = touched(name);
+    row.special = bySpecialName[name];
+    row.specialFromNotes = true;
+  });
+  newNames.forEach(name=>{
+    const row = touched(name); row.status = '신환'; row.statusFromNotes = true;
+  });
+  dischargedNames.forEach(name=>{
+    const row = touched(name); row.status = '퇴원'; row.statusFromNotes = true;
+  });
+
+  // 메모 때문에 생겼다가 이제 아무 내용도 없어진 줄은 치운다
+  Object.keys(state.destRows).forEach(name=>{
+    const row = state.destRows[name];
+    if(row.createdByNotes && !row.special && !row.status && !row.note
+       && !Object.values(row.cells).some(c=>c)) delete state.destRows[name];
+  });
 
   rebuildDestHeader();
 
