@@ -473,6 +473,25 @@
   .help-lead p{margin:6px 0 0;}
   .help-steps{margin:8px 0 0;padding-left:20px;}
   .help-steps li{margin:2px 0;}
+  .help-paste{
+    background:#fff;
+    border:1px solid #BFD9CF;
+    border-radius:8px;
+    padding:9px 11px;
+    margin-top:11px;
+  }
+  .help-paste p{margin:5px 0 0;line-height:1.9;}
+  .key{
+    display:inline-block;
+    border:1px solid #C9C6BA;
+    border-bottom-width:2px;
+    border-radius:5px;
+    background:#F7F6F1;
+    padding:0 6px;
+    font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+    font-size:11.5px;
+    font-weight:700;
+  }
 
   .help-sec{
     border:1px solid var(--line);
@@ -713,6 +732,15 @@
         </ol>
         <p>빨간 칸이 보이면 그 칸에 <b>마우스를 올려</b> 이유를 읽고 고치세요.</p>
         <p class="help-warn">환자 정보를 저장하지 않습니다. 창을 닫거나 새로고침하면 전부 사라집니다.</p>
+
+        <div class="help-paste">
+          <b>저장한 엑셀을 개인 시간표 생성기에 붙여넣기</b>
+          <p>엑셀저장파일 열람 → <b>1번째 줄 삭제</b> → <span class="key">Ctrl</span>+<span class="key">A</span>
+             → <span class="key">Ctrl</span>+<span class="key">C</span>
+             → 개인시간표 생성기의 <b>A2칸</b> 클릭
+             → <span class="key">Ctrl</span>+<span class="key">Alt</span>+<span class="key">V</span>
+             → <span class="key">V</span> → <span class="key">Enter</span></p>
+        </div>
       </div>
 
       <!-- ① -->
