@@ -997,27 +997,30 @@
 
       <!-- 빨간 칸 -->
       <details class="help-sec">
-        <summary>빨간 칸이 되는 이유 (15가지)</summary>
+        <summary>빨간 칸이 되는 이유 (16가지)</summary>
         <div class="help-sec-body">
           <p class="help-sub">같은 사람, 같은 시간에 겹침</p>
           <ol>
             <li>PT 안에서 <b>기구치료 + 운동치료</b></li>
             <li>OT 안에서 <b>연하전기치료 + 작업치료</b></li>
             <li><b>PT 치료와 OT 치료가 같은 시간에</b></li>
+            <li><b>언어치료와 다른 치료가 같은 시간에</b> (어떤 치료든)</li>
           </ol>
           <table class="help-t">
             <tr><th style="width:26%">PT 치료</th><td>운동 · 보행 · 매트 · 기구 · 도수 · FES</td></tr>
             <tr><th>OT 치료</th><td>작업 · 연하전기</td></tr>
-            <tr><th>어느 쪽도 아님</th><td>언어치료 (겹침 판정에서 제외)</td></tr>
+            <tr><th>언어치료</th><td>PT 도 OT 도 아닌 제3 분류. 다른 어떤 치료와도 겹치면 안 됨</td></tr>
           </table>
           <p class="help-note"><b>어느 시간표 파일에서 왔는지는 보지 않고 치료 종류로만 가릅니다.</b>
             6팀처럼 한쪽 시간표가 상대편 열을 그대로 품고 있어도 겹침으로 잘못 잡히지 않습니다.</p>
+          <p class="help-bad"><b>아직 안 잡는 것</b> — 같은 과 안의 다른 조합(운동+보행, 기구+도수 등)은
+            검사하지 않습니다. 병원 규정을 확인한 뒤 넣을 예정입니다.</p>
           <p class="help-sub">치료를 못 정함</p>
-          <ol start="4">
+          <ol start="5">
             <li><b>확인필요</b> — 치료사 칸인데 표기가 없음. 원본 글자와 위치를 알려줍니다</li>
           </ol>
           <p class="help-sub">특이사항과 안 맞음</p>
-          <ol start="5">
+          <ol start="6">
             <li><span class="mono">○○ 안 함</span> 인데 그 치료가 있음</li>
             <li><span class="mono">시:분 이후/이전</span> 을 어김</li>
             <li><span class="mono">일찍 희망</span> 인데 뒤쪽 절반에 배정</li>
@@ -1025,18 +1028,18 @@
             <li><span class="mono">1:1치료 N개</span> 인데 개수가 모자람</li>
           </ol>
           <p class="help-sub">신환·퇴원과 안 맞음</p>
-          <ol start="10">
+          <ol start="11">
             <li><span class="mono">퇴원</span> 인데 치료가 있음</li>
             <li><span class="mono">신환</span> 인데 입원목록 명단에 이미 있음</li>
           </ol>
           <p class="help-sub">빠뜨렸을 가능성</p>
-          <ol start="12">
+          <ol start="13">
             <li><b>치료 1건</b> — 치료가 하나뿐 (퇴원은 제외)</li>
             <li><b>시간대 공백</b> — 8:30과 9:40엔 있는데 그 사이 9:05가 비어 있음</li>
             <li><b>동명이인</b> — 끝 알파벳만 다른 이름이 같은 표에 둘 이상</li>
             <li><b>이름 오류</b> — 눈에는 똑같아 보이는데 <b>보이지 않는 공백이나 특수문자</b> 때문에 두 줄로 나뉜 경우</li>
           </ol>
-          <p class="help-bad"><b>15번이 못 잡는 것</b> — <span class="mono">김철수</span> / <span class="mono">김쳘수</span> 처럼 <b>글자 자체가 다른 오타</b>는 프로그램이 찾지 못합니다. 눈으로 찾으셔야 합니다.</p>
+          <p class="help-bad"><b>16번이 못 잡는 것</b> — <span class="mono">김철수</span> / <span class="mono">김쳘수</span> 처럼 <b>글자 자체가 다른 오타</b>는 프로그램이 찾지 못합니다. 눈으로 찾으셔야 합니다.</p>
         </div>
       </details>
 
@@ -1771,6 +1774,13 @@ function computeConflicts(){
       // 3) PT·OT 겹침
       if(ptCats.size>0 && otCats.size>0){
         errors.push({name, timeLabel, field:'cell', type:'PT/OT 겹침', message:`${name} · ${timeLabel} — 같은 시간에 PT(${Array.from(ptCats).join(',')})와 OT(${Array.from(otCats).join(',')})가 동시에 배정되었습니다.`});
+      }
+      // 4) 언어치료 겹침 — 언어치료는 다른 어떤 치료와도 같은 시간에 있을 수 없다
+      //    (언어치료실에서 시간을 먼저 정해 주면 PT·OT 를 거기 피해서 짜므로, 겹치면 그게 실수다)
+      if(cats.has('언어치료') && cats.size > 1){
+        const others = [...cats].filter(c=> c !== '언어치료');
+        errors.push({name, timeLabel, field:'cell', type:'언어치료 겹침',
+          message:`${name} · ${timeLabel} — 언어치료와 ${others.join(', ')}가 같은 시간에 배정되었습니다.`});
       }
     });
 
