@@ -678,7 +678,7 @@
         <div class="upload-slot" id="slot-prev">
           <span class="tag">지난 결과<br><span style="font-weight:400;color:var(--ink-soft)">(선택)</span></span>
           <label class="filebtn">파일 선택<input type="file" id="file-prev" accept=".xlsx,.xls"></label>
-          <span class="fname" id="fname-prev">지난 검수 때 저장한 엑셀</span>
+          <span class="fname" id="fname-prev">지난번에 저장했던 엑셀</span>
         </div>
       </div>
       <div class="sheetname-row" style="margin-top:12px;margin-bottom:0;">
@@ -717,6 +717,7 @@
           <div class="tabbar" style="margin-bottom:12px;">
             <button class="tabbtn active" data-src="pt" id="tab-pt">PT</button>
             <button class="tabbtn" data-src="ot" id="tab-ot">OT</button>
+            <button class="tabbtn" data-src="st" id="tab-st">ST</button>
           </div>
           <div id="source-body">
             <div class="empty-note">시간표를 넣으면 시간대별로 원본에 적힌 그대로와, 프로그램이 어떤 치료로 읽었는지가 표시됩니다.<br>칸에 마우스를 올리면 몇 번 열 · 어느 치료사 칸인지 나옵니다.</div>
@@ -972,7 +973,14 @@
             <li>가운데 = <b>원본에 적힌 그대로</b></li>
             <li>괄호 = 프로그램이 <b>읽어낸 치료</b>. 명단에 없으면 <span class="mono">·신환</span>이 붙습니다</li>
             <li><b>칸에 마우스를 올리면</b> 어느 시간표 · 몇 번 열 · 어느 치료사 칸인지 나옵니다</li>
-            <li><b>PT / OT 탭</b>으로 두 시간표를 번갈아 봅니다</li>
+            <li><b>PT · OT · ST 탭</b>으로 나눠 봅니다
+                <table class="help-t" style="margin-top:6px">
+                  <tr><th style="width:16%">PT</th><td>운동 · 보행 · 매트 · 기구 · 도수 · FES</td></tr>
+                  <tr><th>OT</th><td>작업 · 연하전기</td></tr>
+                  <tr><th>ST</th><td>언어치료. <b>PT·OT 시간표 양쪽의 「언어」 열을 모아서</b> 보여줍니다.
+                      양쪽에 똑같이 적혀 있으면 하나로 합쳐서 한 번만 보여주고,
+                      마우스를 올리면 <span class="mono">PT Y열 · OT T열 두 군데에 똑같이 적혀 있음</span> 이라고 나옵니다</td></tr>
+                </table></li>
             <li>펼치면 화면이 넓을 때 ③과 ④가 <b>좌우로 나란히</b> 놓여 대조하기 편합니다</li>
           </ul>
         </div>
@@ -2326,23 +2334,66 @@ function guessSheetName(filename){
 /* =========================================================
    4. 원본 칸 렌더링 (드래그 가능한 칩)
    ========================================================= */
-document.getElementById('tab-pt').addEventListener('click', ()=>switchTab('pt'));
-document.getElementById('tab-ot').addEventListener('click', ()=>switchTab('ot'));
+const SOURCE_TABS = ['pt','ot','st'];
+SOURCE_TABS.forEach(t=>
+  document.getElementById('tab-'+t).addEventListener('click', ()=>switchTab(t)));
 function switchTab(tab){
   state.activeTab = tab;
-  document.getElementById('tab-pt').classList.toggle('active', tab==='pt');
-  document.getElementById('tab-ot').classList.toggle('active', tab==='ot');
+  SOURCE_TABS.forEach(t=>
+    document.getElementById('tab-'+t).classList.toggle('active', tab===t));
   renderSource();
 }
 document.getElementById('source-panel').addEventListener('toggle', (e)=>{
   document.getElementById('main').classList.toggle('sideview', e.target.open);
 });
 
+/* 탭별로 보여줄 칸을 고른다.
+   언어치료(ST)는 PT 시간표와 OT 시간표의 "언어" 열 양쪽에 적히므로,
+   PT·OT 탭에서는 빼고 ST 탭에 모아서 보여준다. */
+function sourceRowsFor(tab){
+  if(tab === 'st'){
+    const byTime = {};
+    ['pt','ot'].forEach(sheet=>{
+      state.source[sheet].forEach(row=>{
+        row.cells.filter(c=> c.role === 'lang').forEach(c=>{
+          (byTime[row.timeLabel] = byTime[row.timeLabel] || []).push(Object.assign({}, c, {sheet}));
+        });
+      });
+    });
+    // PT·OT 시간표에 똑같은 내용을 각각 적어두는 경우가 많다. 글자가 같으면 하나로 합친다.
+    Object.keys(byTime).forEach(t=>{
+      const seen = {};
+      byTime[t].forEach(c=>{
+        const key = String(c.text).replace(/\s+/g,'');
+        const 출처 = `${c.sheet.toUpperCase()} ${c.colLabel}열`;
+        if(seen[key]) seen[key].from.push(출처);
+        else seen[key] = Object.assign({}, c, {from:[출처]});
+      });
+      byTime[t] = Object.values(seen);
+    });
+    return Object.keys(byTime)
+      .sort((a,b)=> timeToMinutes(a)-timeToMinutes(b))
+      .map(t=> ({timeLabel:t, cells:byTime[t]}));
+  }
+  return state.source[tab]
+    .map(row=> ({
+      timeLabel: row.timeLabel,
+      cells: row.cells.filter(c=> c.role !== 'lang').map(c=> Object.assign({}, c, {sheet:tab})),
+    }))
+    .filter(row=> row.cells.length);
+}
+
+const TAB_EMPTY = {
+  pt:'PT 시간표를 넣으면 여기에 시간대별로 표시됩니다.',
+  ot:'OT 시간표를 넣으면 여기에 시간대별로 표시됩니다.',
+  st:'시간표의 "언어" 열에 적힌 내용이 여기에 표시됩니다.<br>PT·OT 시간표 양쪽의 언어 열을 모아서 보여줍니다.',
+};
+
 function renderSource(){
   const body = document.getElementById('source-body');
-  const rows = state.source[state.activeTab];
+  const rows = sourceRowsFor(state.activeTab);
   if(!rows.length){
-    body.innerHTML = `<div class="empty-note">${state.activeTab.toUpperCase()} 시간표를 넣으면 여기에 시간대별로 표시됩니다.</div>`;
+    body.innerHTML = `<div class="empty-note">${TAB_EMPTY[state.activeTab]}</div>`;
     return;
   }
   body.innerHTML = '';
@@ -2356,7 +2407,7 @@ function renderSource(){
     const wrap = document.createElement('div');
     wrap.className = 'chipwrap';
     row.cells.forEach(cell=>{
-      wrap.appendChild(makeChip(state.activeTab, row.timeLabel, cell));
+      wrap.appendChild(makeChip(cell.sheet, row.timeLabel, cell));
     });
     group.appendChild(wrap);
     body.appendChild(group);
@@ -2367,7 +2418,10 @@ const ROLE_LABEL = {therapist:'치료사', lang:'언어', fes:'FES'};
 function makeChip(sheet, timeLabel, cell){
   const chip = document.createElement('div');
   chip.className = 'chip';
-  chip.title = `${sheet.toUpperCase()} 시간표 · ${timeLabel}\n${cell.colLabel}열 · ${cell.header||'(빈 헤더)'} (${ROLE_LABEL[cell.role]||cell.role})`;
+  const 출처 = (cell.from && cell.from.length > 1)
+    ? cell.from.join(' · ') + ' 두 군데에 똑같이 적혀 있음'
+    : `${sheet.toUpperCase()} 시간표 · ${cell.colLabel}열`;
+  chip.title = `${출처}\n${timeLabel} · ${cell.header||'(빈 헤더)'} (${ROLE_LABEL[cell.role]||cell.role})`;
 
   const results = classifyCell(cell);
   if(!results.length){
