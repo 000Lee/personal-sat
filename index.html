@@ -1762,9 +1762,18 @@ function computeConflicts(){
       const cats = new Set(entries.map(e=>e.category).filter(c=> c && c !== CHECK));
 
       // 1) 시간 겹침 — 한 타임에 서로 다른 치료가 2개 이상
+      //    어느 시간표 · 몇 번 열 · 누구 칸에서 나온 건지까지 알려줘야 원본을 찾아가 고칠 수 있다
       if(cats.size >= 2){
+        const 어디서 = [...cats].map(c=>{
+          const src = entries.filter(e=> e.category === c).map(e=>{
+            const 치료사 = String(e.header||'').replace(/\s+/g,' ').trim();
+            return `${e.sheet.toUpperCase()} ${e.col||''}열${치료사?' '+치료사:''}${e.raw?' "'+e.raw+'"':''}`;
+          });
+          return `${c} ← ${Array.from(new Set(src)).join(' / ')}`;
+        });
         errors.push({name, timeLabel, field:'cell', type:'시간 겹침',
-          message:`${name} · ${timeLabel} — 같은 시간에 ${[...cats].join(' + ')}가 함께 배정되었습니다. 한 타임에는 치료 하나만 받을 수 있습니다.`});
+          message:`${name} · ${timeLabel} — 같은 시간에 치료가 ${cats.size}개 배정되었습니다. ` +
+                  `한 타임에는 하나만 받을 수 있습니다.  ${어디서.join('  ·  ')}`});
       }
     });
 
