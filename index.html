@@ -550,24 +550,32 @@
   }
   .help-sec > summary{
     cursor:pointer;
-    padding:11px 14px;
+    padding:11px 14px 11px 12px;
     font-size:14px;
     font-weight:700;
-    background:#F7F6F1;
+    background:#EAF0EC;
+    border-left:4px solid #9CBDAE;
     list-style:none;
     user-select:none;
   }
+  .help-sec > summary:hover{background:#DFE9E2;}
   .help-sec > summary::-webkit-details-marker{display:none;}
   .help-sec > summary::before{content:'▸ ';color:var(--ink-soft);}
-  .help-sec[open] > summary::before{content:'▾ ';}
-  .help-sec[open] > summary{border-bottom:1px solid var(--line);}
-  .help-sec-body{padding:12px 14px 14px;}
+  .help-sec[open] > summary::before{content:'▾ ';color:rgba(255,255,255,.75);}
+  /* 펼쳤을 때는 제목을 진하게 — 안쪽 표·예시와 확실히 갈라 보이게 */
+  .help-sec[open] > summary{
+    background:var(--accent);
+    border-left-color:#1E5346;
+    color:#fff;
+  }
+  .help-sec[open] > summary:hover{background:#2A6354;}
+  .help-sec-body{padding:14px 14px 16px;background:#fff;}
   .help-sec-body h4{
     margin:16px 0 6px;
     font-size:13.5px;
     font-weight:700;
     padding-bottom:3px;
-    border-bottom:2px solid var(--line);
+    border-bottom:2px solid #C7D8CF;
   }
   .help-sec-body h4:first-child{margin-top:2px;}
   .help-sec-body ul, .help-sec-body ol{margin:6px 0;padding-left:20px;}
@@ -592,11 +600,12 @@
     text-align:left;
     vertical-align:top;
   }
-  table.help-t th{background:#F7F6F1;font-weight:700;}
+  table.help-t th{background:#F2EFE7;font-weight:700;}
 
   pre.help-code{
-    background:#F7F6F1;
-    border:1px solid var(--line);
+    background:#F1F4F7;
+    border:1px solid #D7DFE6;
+    border-left:3px solid #A9BECD;
     border-radius:7px;
     padding:9px 11px;
     margin:6px 0 10px;
@@ -608,7 +617,7 @@
   }
   .help-body .mono{
     font-family:ui-monospace,SFMono-Regular,"Nanum Gothic Coding",Consolas,monospace;
-    background:#F2F1EC;
+    background:#EDEAE1;
     border-radius:4px;
     padding:0 4px;
     font-size:12.5px;
