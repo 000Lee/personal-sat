@@ -1110,7 +1110,13 @@
             <li>한 칸에 두 치료면 <span class="mono">운동치료/작업치료</span> 로 붙여 넣습니다. FES는 후순위라 다른 치료가 있으면 빠집니다.</li>
             <li>이름 뒤 알파벳이 <b>동명이인 구분</b>일 수도 있습니다. 명단에 그 이름이 있으면 사람 이름으로, 없으면 치료 표기로 봅니다.</li>
             <li><span class="mono">/</span>로 시작하는 이름(회복기 표시)과 줄바꿈으로 떨어진 <span class="mono">N</span>은 알아서 붙입니다.</li>
-            <li>이름 아랫줄의 <span class="mono">OS</span> 와 괄호로 쓴 <span class="mono">(OS)</span> 는 둘 다 <b>메모 칸</b>에 남습니다.</li>
+            <li>이름 아랫줄에 적는 <b>진단군 표시</b>는 <b>메모 칸</b>에 남습니다. 괄호가 있든 없든 같습니다.
+                <table class="help-t" style="margin-top:6px">
+                  <tr><th style="width:20%"><span class="mono">OS</span></th><td>근골격계</td></tr>
+                  <tr><th><span class="mono">GB</span></th><td>길랑바레</td></tr>
+                </table>
+                <b>치료 종류는 이름 뒤 글자로만 정해집니다.</b> 아랫줄이 무엇이든 치료는 같습니다.
+                <span class="mono">김철수A + OS</span> 도 작업치료, <span class="mono">김철수A + GB</span> 도 작업치료입니다.</li>
           </ul>
           <h4>무시하는 것</h4>
           <p><span class="mono">FES1</span> <span class="mono">FES-1</span> 같은 기계 담당 표시 · <span class="mono">789</span> <span class="mono">1020</span> 같은 숫자 · <span class="mono">7팀</span> <span class="mono">7팀액팅</span> · <span class="mono">접수</span> <span class="mono">건수</span> <span class="mono">점심</span> <span class="mono">부도사유</span> <span class="mono">OS</span> · 한 글자짜리</p>
@@ -1258,7 +1264,11 @@ function timeToMinutes(label){
 /* ---------------------------------------------------------
    1. 시트 읽기  (SPEC 2-1, 2-2)
    --------------------------------------------------------- */
-const JUNK_WORDS = ['접수','건수','점심','부도사유','OS'];
+const JUNK_WORDS = ['접수','건수','점심','부도사유','OS','GB'];
+
+// 이름 아랫줄에 따로 적는 진단군 표시 — 이름 뒤 치료 글자(Z·G·A 등)와 무관하게 메모로 남긴다
+//   OS = 근골격계,  GB = 길랑바레
+const SIDE_NOTE = /^(OS|GB)$/i;
 
 // 셀 주소로 원문 읽기
 function textAt(ws, r, c){
@@ -1440,10 +1450,13 @@ function tokenizeCell(text){
     } else if(it.body === '' && it.note && merged.length){
       const prev = merged[merged.length-1];
       prev.note = prev.note ? prev.note+'; '+it.note : it.note;
-    } else if(merged.length && /^OS$/i.test(it.body)){
-      // 이름 아랫줄에 따로 적힌 OS. 괄호로 쓴 (OS) 는 이미 메모로 가므로 같게 맞춘다
+    } else if(merged.length && SIDE_NOTE.test(it.body)){
+      // 이름 아랫줄에 따로 적는 진단군 표시. 괄호로 쓴 (OS) 는 이미 메모로 가므로 같게 맞춘다.
+      //   OS = 근골격계,  GB = 길랑바레
+      // ※ 아랫줄에는 이것 말고도 팀 표기(-10팀) · 병실 번호 같은 것이 올 수 있다. 그건 따로 처리한다.
       const prev = merged[merged.length-1];
-      prev.note = prev.note ? prev.note+'; OS' : 'OS';
+      const v = it.body.toUpperCase();
+      prev.note = prev.note ? prev.note+'; '+v : v;
     } else {
       merged.push(it);
     }
