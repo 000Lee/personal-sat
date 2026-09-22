@@ -894,7 +894,7 @@
             <tr><th>PT 시간표</th><td>예) <span class="mono">PT 시간표 2026.09.12 토 (7,8,9팀).xlsx</span></td></tr>
             <tr><th>OT 시간표</th><td>같은 날짜 OT 파일</td></tr>
             <tr><th>입원목록</th><td>EMR에서 뽑은 <span class="mono">입원조회.xls</span><br><b>성명과 병실 두 칸만</b> 읽습니다. 등록번호·주민번호·진단명은 읽지 않습니다</td></tr>
-            <tr><th>지난 결과<br>(선택)</th><td><b>지난 검수 때 이 프로그램으로 저장한 엑셀</b>을 그대로 넣습니다(머리글 있는 상태).<br>넣으면 그때와 무엇이 달라졌는지 표시됩니다. 안 넣으면 평소처럼 동작합니다</td></tr>
+            <tr><th>지난 결과<br>(선택)</th><td><b>지난 검수 때 이 프로그램으로 저장한 엑셀</b>을 그대로 넣습니다(머리글 있는 상태).<br>넣으면 그때와 무엇이 달라졌는지 표시됩니다. 안 넣으면 평소처럼 동작합니다.<br><b>공휴일 결과(시트 두 장)도 그대로 넣으면 됩니다</b> — 오전·오후를 합쳐서 읽습니다</td></tr>
           </table>
           <ul>
             <li>PT나 OT 중 <b>하나만 넣어도</b> 됩니다.</li>
@@ -1173,6 +1173,8 @@
              같이 넣으면, 그때와 <b>무엇이 달라졌는지</b> 표시해 줍니다.</p>
           <p class="help-note">넣지 않으면 평소처럼 동작합니다. 비교는 <b>엑셀에 들어가는 것만</b> 합니다 —
              이름 · 병실 · 시간대 칸. 메모 · 특이사항 · 신환/퇴원은 엑셀에 없으므로 비교하지 않습니다.</p>
+          <p class="help-note"><b>공휴일 결과도 됩니다.</b> 시트가 오전·오후 두 장이어도 그대로 넣으면
+             <b>둘을 합쳐서</b> 읽습니다. 오전에만 있는 사람, 오후에만 있는 사람도 한 사람으로 봅니다.</p>
 
           <h4>표에서 보는 법</h4>
           <p>칸 <b>왼쪽에 굵은 세로선</b>이 생깁니다. 배경색(노랑 = 신환, 분홍 = 오류)은 그대로라
@@ -1799,6 +1801,11 @@ function buildNameRoom(records, wardFilter){
    머리글: 이름 | 병실 | 8:30 | 9:05 | ...
    --------------------------------------------------------- */
 function parsePreviousResult(wb){
+  const map = {};
+  const slotSet = new Set();
+  const 시트들 = [];
+
+  // 시트를 전부 훑는다. 공휴일 결과는 "09.24 오전" / "09.24 오후" 두 장이다.
   for(const sheetName of wb.SheetNames){
     const ws = wb.Sheets[sheetName];
     if(!ws || !ws['!ref']) continue;
@@ -1826,25 +1833,34 @@ function parsePreviousResult(wb){
     }
     if(!timeCols.length) continue;
 
-    const map = {};
+    let 읽은행 = 0;
     for(let r=headerRow+1; r<=range.e.r; r++){
       const name = textAt(ws, r, nameCol).trim().replace(/\s+/g,' ');
       if(!name) continue;
-      const cells = {};
+      읽은행++;
+      const room = textAt(ws, r, roomCol).trim();
+      // 같은 사람이 여러 시트에 있으면 칸을 합친다 (오전 시트 + 오후 시트)
+      const rec = map[name] || (map[name] = {name, room, cells:{}});
+      if(!rec.room && room) rec.room = room;
       timeCols.forEach(({c, label})=>{
         const v = textAt(ws, r, c).trim();
-        if(v) cells[label] = v;
+        if(v) rec.cells[label] = v;
       });
-      map[name] = {name, room: textAt(ws, r, roomCol).trim(), cells};
     }
-    if(Object.keys(map).length){
-      return {ok:true, map, slots: timeCols.map(x=>x.label), detect:{
-        sheetName, headerRow: headerRow+1,
-        인원: Object.keys(map).length, 시간대: timeCols.map(x=>x.label),
-      }};
-    }
+    timeCols.forEach(x=> slotSet.add(x.label));
+    if(읽은행) 시트들.push({시트:sheetName, 머리글행:headerRow+1, 행:읽은행, 시간대:timeCols.map(x=>x.label)});
   }
-  return {ok:false, map:{}, slots:[], detect:{reason:'이름·병실 머리글과 시간 열을 찾지 못함'}};
+
+  if(!Object.keys(map).length)
+    return {ok:false, map:{}, slots:[], detect:{reason:'이름·병실 머리글과 시간 열을 찾지 못함'}};
+
+  const slots = [...slotSet].sort((a,b)=> timeToMinutes(a)-timeToMinutes(b));
+  return {ok:true, map, slots, detect:{
+    시트수: 시트들.length,
+    시트: 시트들,
+    인원: Object.keys(map).length,
+    시간대: slots,
+  }};
 }
 
 /* ---------------------------------------------------------
@@ -2657,7 +2673,10 @@ document.getElementById('file-prev').addEventListener('change', (e)=>{
     document.getElementById('slot-prev').classList.add('filled');
     console.log('%c[지난 결과 감지]', 'font-weight:bold;color:#2F6F5E', res.detect);
     rebuildDestHeader();
-    showToast(`지난 결과 ${res.detect.인원}명 · 시간대 ${res.slots.length}개 읽음`);
+    const 시트 = res.detect.시트 || [];
+    showToast(시트.length > 1
+      ? `지난 결과 ${res.detect.인원}명 · 시트 ${시트.length}개(${시트.map(x=>x.시트).join(' · ')}) 합쳐 읽음`
+      : `지난 결과 ${res.detect.인원}명 · 시간대 ${res.slots.length}개 읽음`);
   });
 });
 
