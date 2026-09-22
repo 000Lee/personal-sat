@@ -162,6 +162,38 @@
   }
   .notice.ok{background:#F0F6F3;border-color:#BFD9CF;color:#245446;}
 
+  /* ===== 토요일 / 공휴일 ===== */
+  #mode-row{
+    margin-top:12px;
+    padding:10px 12px;
+    border:1px solid #BFD2E0;
+    background:#EDF3F8;
+    border-radius:8px;
+  }
+  .mode-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .mode-label{font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-right:2px;}
+  .modebtn{
+    border:1px solid #BFD2E0;
+    background:#fff;
+    color:var(--ink-soft);
+    padding:5px 14px;
+    border-radius:7px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .modebtn.active{background:#27587D;color:#fff;border-color:#27587D;}
+  #mode-why{font-size:12px;color:#27587D;margin-top:6px;}
+
+  /* 오전과 오후 사이 굵은 선 */
+  table.dest th.session-start, table.dest td.session-start{
+    border-left:3px solid var(--ink-soft);
+  }
+  table.dest th.session-head{
+    background:#EDF3F8;
+    color:#27587D;
+  }
+
   .tabbar{display:flex;gap:6px;}
   .tabbtn{
     border:1px solid var(--line);
@@ -713,6 +745,17 @@
         <span id="roster-count" style="font-size:12.5px;color:var(--ink-soft);"></span>
       </div>
       <div class="notice" id="roster-notice">입원목록을 넣으면 병실이 채워집니다. (지금은 모두 신환으로 처리됩니다)</div>
+      <div id="mode-row" style="display:none;">
+        <div class="mode-line">
+          <span class="mode-label">시간표 종류</span>
+          <button class="modebtn active" id="mode-sat">토요일</button>
+          <button class="modebtn" id="mode-holiday">공휴일</button>
+          <span class="field" id="cut-wrap" style="display:none;">나누는 지점
+            <select id="cutpoint"></select>
+          </span>
+        </div>
+        <div id="mode-why"></div>
+      </div>
       <div id="ward-breakdown" style="font-size:12px;color:var(--ink-soft);margin-top:8px;"></div>
     </div>
   </div>
@@ -1052,6 +1095,67 @@
         </div>
       </details>
 
+      <!-- 공휴일 -->
+      <details class="help-sec">
+        <summary>공휴일 시간표 (오전 · 오후)</summary>
+        <div class="help-sec-body">
+          <p>공휴일은 하루 종일 시간표라 <b>오전과 오후가 한 파일</b>에 들어 있습니다.
+             파일을 넣으면 프로그램이 <b>스스로 알아보고</b> 오전·오후로 나눕니다.</p>
+
+          <h4>어떻게 알아보나</h4>
+          <p><b>시각을 정해두지 않습니다.</b> 팀마다 시작 시각이 달라서(8:00 / 8:30 …) 못박아 두면 안 됩니다.
+             대신 <b>시간대 사이 간격이 갑자기 벌어지는 곳</b>을 찾습니다. 거기가 점심시간입니다.</p>
+          <pre class="help-code">8:30 → 9:05 → 9:40 → 10:15 → 10:50 → 11:25
+                                       125분 벌어짐  ← 여기서 나눔
+13:30 → 14:05 → 14:40 → 15:15 → 15:50 → 16:25
+
+치료 30분 + 쉬는 시간 5분 = 보통 35분 간격</pre>
+
+          <h4>틀렸으면 고칠 수 있습니다</h4>
+          <p>① 파일 넣기 아래에 나옵니다.</p>
+          <pre class="help-code">시간표 종류  [ 토요일 ]  [ 공휴일 ]    나누는 지점 [ 11:25 / 13:30 ▼ ]
+시간대 12개 — 오전 6칸 (8:30~11:25) · 오후 6칸 (13:30~16:25)
+11:25 과 13:30 사이가 125분 벌어져 있습니다 (보통 간격 35분)</pre>
+          <ul>
+            <li>맞으면 그냥 넘어가면 됩니다</li>
+            <li>틀렸으면 <b>버튼을 누르거나</b> 나누는 지점을 직접 고르세요</li>
+            <li><b>왜 그렇게 판단했는지</b> 늘 한 줄로 보여줍니다</li>
+          </ul>
+
+          <h4>표</h4>
+          <p>한 줄에 <b>12칸이 모두</b> 나오고, 오전과 오후 사이에 <b>굵은 세로선</b>이 그어집니다.
+             같은 환자의 하루가 한 줄에 다 보입니다.</p>
+
+          <h4>엑셀 저장</h4>
+          <p><b>한 파일에 시트 두 개</b>로 저장됩니다.</p>
+          <pre class="help-code">09.24_공휴일.xlsx
+  [09.24 오전]  이름 │ 병실 │ 8:30 … 11:25
+  [09.24 오후]  이름 │ 병실 │ 13:30 … 16:25</pre>
+          <p>각 시트에는 <b>그 시간대에 치료가 있는 사람만</b> 들어갑니다.</p>
+
+          <h4>공휴일에만 하는 검사</h4>
+          <p class="help-note"><b>회복기 환자</b>는 원본 이름 앞에 <span class="mono">/</span> 가 붙습니다
+             (<span class="mono">/김철수N</span>). <b>1:1 치료는 회복기 환자만</b> 받을 수 있습니다.</p>
+          <table class="help-t">
+            <tr><th style="width:24%">1:1 치료</th><td>운동 · 보행 · 매트 · 도수 · 작업<br>
+                <span class="mono">언어치료는 세지 않습니다</span> — 비회복기 환자도 받는 경우가 있어서입니다</td></tr>
+            <tr><th>1:다 치료</th><td>기구 · FES · 연하전기</td></tr>
+          </table>
+          <table class="help-t">
+            <tr><th style="width:24%">🔴 / 표시 누락</th><td><span class="mono">/</span> 없이 1:1 치료가 배정된 경우</td></tr>
+            <tr><th>🟡 1:1 개수</th><td>한 세션의 1:1 치료가 2개가 아닌 경우</td></tr>
+            <tr><th>🟡 1:다 중복</th><td>같은 1:다 치료를 한 세션에 두 번 받은 경우</td></tr>
+            <tr><th>🟡 1:다 개수</th><td>한 세션의 1:다 치료가 3개를 넘는 경우</td></tr>
+          </table>
+          <p class="help-bad"><b>🟡 세 가지는 아직 규칙이 확정되지 않아 확인 권고로 둡니다.</b>
+             고쳐야 하는 게 아니라 눈으로만 보시면 됩니다.</p>
+          <p class="help-note"><b>비회복기 환자는 「치료 1건」 경고가 뜨지 않습니다.</b>
+             기구 하나만 받고 끝나는 게 정상이기 때문입니다.</p>
+          <p><b>시간대 공백 · 일찍 희망 · 첫타임</b> 검사는 <b>오전·오후 각각</b> 따로 봅니다.
+             점심시간을 공백으로 잡지 않습니다.</p>
+        </div>
+      </details>
+
       <!-- 지난 결과와 비교 -->
       <details class="help-sec">
         <summary>지난 결과와 비교 (검수 2차 · 3차)</summary>
@@ -1148,7 +1252,7 @@
 
       <!-- 빨간 칸 -->
       <details class="help-sec">
-        <summary>빨간 칸 · 주황 칸이 되는 이유 (13가지)</summary>
+        <summary>빨간 칸 · 주황 칸이 되는 이유 (17가지)</summary>
         <div class="help-sec-body">
           <p class="help-note"><b>두 단계로 나옵니다.</b><br>
              <b class="help-red">🔴 빨간 칸 — 고쳐야 할 것</b> · 규칙 위반이 확실하거나 ② 메모로 적어준 것을 어긴 경우<br>
@@ -1156,7 +1260,8 @@
              맨 위에 <span class="mono">고쳐야 할 칸 2개 · 확인할 칸 5개</span> 처럼 따로 셉니다.
              목록도 <b>🔴 고쳐야 할 것</b> 과 <b>🟡 확인 권고</b> 로 나뉩니다.</p>
           <table class="help-t">
-            <tr><th style="width:26%">🟡 확인 권고</th><td><b>치료 1건</b> — 하루에 치료가 하나뿐. 퇴원 예정이거나 원래 적게 받는 분이면 정상입니다</td></tr>
+            <tr><th style="width:26%">🟡 확인 권고</th><td><b>치료 1건</b> — 하루에 치료가 하나뿐. 퇴원 예정이거나 원래 적게 받는 분이면 정상입니다<br>
+                <b>1:1 개수 · 1:다 중복 · 1:다 개수</b> (공휴일) — 규칙이 아직 확정되지 않았습니다</td></tr>
             <tr><th>🔴 나머지 전부</th><td>아래 항목은 모두 빨간 칸입니다</td></tr>
           </table>
 
@@ -1197,6 +1302,13 @@
             <li><b>시간대 공백</b> — 8:30과 9:40엔 있는데 그 사이 9:05가 비어 있음</li>
             <li><b>동명이인</b> — 끝 알파벳만 다른 이름이 같은 표에 둘 이상</li>
             <li><b>이름 오류</b> — 눈에는 똑같아 보이는데 <b>보이지 않는 공백이나 특수문자</b> 때문에 두 줄로 나뉜 경우</li>
+          </ol>
+          <p class="help-sub">공휴일에만 (위 「공휴일 시간표」 항목 참고)</p>
+          <ol start="14">
+            <li>🔴 <b>/ 표시 누락</b> — <span class="mono">/</span> 없이 1:1 치료가 배정됨</li>
+            <li>🟡 <b>1:1 개수</b> — 한 세션의 1:1 치료가 2개가 아님</li>
+            <li>🟡 <b>1:다 중복</b> — 같은 1:다 치료를 한 세션에 두 번</li>
+            <li>🟡 <b>1:다 개수</b> — 한 세션의 1:다 치료가 3개를 넘음</li>
           </ol>
           <p class="help-bad"><b>13번이 못 잡는 것</b> — <span class="mono">김철수</span> / <span class="mono">김쳘수</span> 처럼 <b>글자 자체가 다른 오타</b>는 프로그램이 찾지 못합니다. 눈으로 찾으셔야 합니다.</p>
         </div>
@@ -1495,10 +1607,13 @@ function tokenizeCell(text){
   });
 
   // "/" 로 잘림 복구 + "/" 접두 제거 ("/"는 회복기 표시로 항상 이름 앞에만 붙음)
+  // ※ 떼어버리기 전에 "이 조각 앞에 / 가 있었는지" 를 기록해 둔다 (공휴일 규칙에서 쓴다).
+  //   자른 뒤 두 번째 조각부터는 앞에 반드시 / 가 있었다는 뜻이다.
+  //   "/김철수B/이영희" → ['', '김철수B', '이영희'] → 뒤 둘은 hasSlash
   const split = [];
   merged.forEach(it=>{
-    String(it.body).split('/').forEach(piece=>{
-      split.push({body: piece, note: it.note, raw: it.raw});
+    String(it.body).split('/').forEach((piece, i)=>{
+      split.push({body: piece, note: it.note, raw: it.raw, hasSlash: i > 0});
     });
   });
 
@@ -1512,9 +1627,44 @@ function tokenizeCell(text){
     if(t.includes('팀')) return;                                // ○팀, ○팀액팅
     if(t.toUpperCase().startsWith('FES')) return;               // FES, FES1~FES3
     if(t.startsWith('-')) return;
-    out.push({text:t, note:it.note, raw:it.raw});
+    out.push({text:t, note:it.note, raw:it.raw, hasSlash: !!it.hasSlash});
   });
   return out;
+}
+
+/* ---------------------------------------------------------
+   2-1. 오전 / 오후 나누기
+   공휴일은 하루 종일 시간표라 오전·오후가 한 파일에 들어 있다.
+   ※ 시각을 하드코딩하지 않는다. 팀마다 시작 시각이 다르다 (8:00 / 8:30 …).
+     대신 "슬롯 사이 간격이 갑자기 벌어지는 곳" 을 찾는다. 점심시간이 거기다.
+     타임 간격은 35분(치료 30분 + 쉬는시간 5분)이고 점심은 그보다 훨씬 길다.
+   --------------------------------------------------------- */
+function splitSessions(slots){
+  const none = {split:false, cutIndex:-1, sessions:[slots], gapMax:0, gapMid:0, 이유:''};
+  if(!slots || slots.length < 4) return none;
+  const m = slots.map(timeToMinutes);
+  const gaps = m.slice(1).map((v,i)=> v - m[i]);
+  const 정렬 = gaps.slice().sort((a,b)=>a-b);
+  const gapMid = 정렬[Math.floor(정렬.length/2)];          // 보통 타임 간격
+  const gapMax = Math.max(...gaps);
+  const idx = gaps.indexOf(gapMax);
+  const 두번째 = 정렬[정렬.length-2] || gapMid;
+
+  // ① 가장 큰 간격이 두 번째로 큰 간격의 2배 이상   ② 그리고 60분 이상
+  if(!(gapMax >= 두번째*2 && gapMax >= 60)) return none;
+  return {
+    split:true, cutIndex:idx, gapMax, gapMid,
+    sessions:[slots.slice(0, idx+1), slots.slice(idx+1)],
+    이유:`${slots[idx]} 과 ${slots[idx+1]} 사이가 ${gapMax}분 벌어져 있습니다 (보통 간격 ${gapMid}분)`,
+  };
+}
+
+// 자르는 지점을 사람이 직접 고른 경우
+function splitAt(slots, cutIndex){
+  if(cutIndex == null || cutIndex < 0 || cutIndex >= slots.length-1)
+    return {split:false, cutIndex:-1, sessions:[slots], 이유:''};
+  return {split:true, cutIndex, sessions:[slots.slice(0,cutIndex+1), slots.slice(cutIndex+1)],
+          이유:`${slots[cutIndex]} 과 ${slots[cutIndex+1]} 사이에서 직접 나눴습니다`};
 }
 
 /* ---------------------------------------------------------
@@ -1829,7 +1979,8 @@ function resolveToken(tok, role){
 function classifyCell(cell){
   return tokenizeCell(cell.text).map(t=>{
     const r = resolveToken(t.text, cell.role);
-    return {name:r.name, category:r.category, isNew:r.isNew, rule:r.rule, note:t.note, raw:t.text};
+    return {name:r.name, category:r.category, isNew:r.isNew, rule:r.rule,
+            note:t.note, raw:t.text, hasSlash:t.hasSlash};
   });
 }
 
@@ -1860,7 +2011,7 @@ if(typeof module !== 'undefined' && module.exports){
   module.exports = {
     cellText, serialToTimeLabel, timeLabelOfCell, timeToMinutes,
     parseSheet, parseWorkbookBestSheet,
-    stripParens, tokenizeCell, JUNK_WORDS,
+    stripParens, tokenizeCell, JUNK_WORDS, splitSessions, splitAt,
     wardOf, roomSortKey, compareRoom,
     findAdmissionHeader, parseAdmissionWorkbook, parseWardFilter, buildNameRoom, parsePreviousResult,
     roster, setRoster, resolveExact, findNameInText,
@@ -1905,7 +2056,44 @@ const state = {
   admission: null,        // {records, wardCounts, detect} — 메모리에만 존재
   prev: null,             // 지난 검수 때 저장한 엑셀 {map, slots, detect}
   diff: null,             // 지난 결과와 비교한 결과
+  mode: 'sat',            // 'sat' 토요일(한 세션) | 'holiday' 공휴일(오전/오후)
+  modeAuto: true,         // 사람이 버튼을 눌렀으면 false
+  cutIndex: -1,           // 오전/오후를 나누는 지점 (오전 마지막 슬롯의 번호)
+  sessions: [],           // [{label:'오전', slots:[...]}, ...]
 };
+
+/* =========================================================
+   1-2. 오전 / 오후 세션
+   공휴일은 하루 종일 시간표라 오전·오후가 한 파일에 들어 있다.
+   시각을 하드코딩하지 않고 "간격이 벌어지는 곳" 으로 찾은 뒤,
+   화면에 근거를 보여주고 사람이 고칠 수 있게 한다.
+   ========================================================= */
+function rebuildSessions(){
+  const slots = state.allTimeLabels;
+  const auto = splitSessions(slots);
+
+  if(state.modeAuto) state.mode = auto.split ? 'holiday' : 'sat';
+
+  let r;
+  if(state.mode !== 'holiday')            r = {split:false, cutIndex:-1, sessions:[slots], 이유:''};
+  else if(state.cutIndex >= 0)            r = splitAt(slots, state.cutIndex);
+  else if(auto.split)                     r = auto;
+  else                                    r = splitAt(slots, Math.floor(slots.length/2)-1);
+
+  state.cutIndex = r.cutIndex;
+  state.sessions = r.split
+    ? [{label:'오전', slots:r.sessions[0]}, {label:'오후', slots:r.sessions[1]}]
+    : [{label:'', slots:slots}];
+  state.autoInfo = auto;
+  return r;
+}
+// 이 시각이 몇 번째 세션인가
+function sessionOf(timeLabel){
+  for(let i=0;i<state.sessions.length;i++)
+    if(state.sessions[i].slots.includes(timeLabel)) return i;
+  return 0;
+}
+const isHoliday = ()=> state.mode === 'holiday' && state.sessions.length > 1;
 
 /* =========================================================
    1-1. 지난 결과와 비교
@@ -1983,7 +2171,21 @@ const INDIVIDUAL_CATS = ['운동치료','언어치료','작업치료','보행치
         환자 사정에 따라 정상일 수 있는 "개수" 관련만 권고. */
 const WARN_TYPES = new Set([
   '치료 1건',
+  // 공휴일 — 규칙이 아직 확정되지 않아 권고로 둔다 (팀장님 확인 후 오류로 올릴 수 있음)
+  '1:1 개수',
+  '1:다 중복',
+  '1:다 개수',
 ]);
+
+/* ===== 공휴일 전용 ===== */
+// 1:1(개별) 치료 — 회복기 환자만 받을 수 있다. 원본 이름 앞에 "/" 가 붙는다.
+// ※ 언어치료는 뺀다. 실제 자료에서 비회복기 환자도 언어치료만 받는 경우가 있었다 (09.24 2명, 09.26 5명)
+const SLASH_REQUIRED_CATS = ['운동치료','보행치료','매트치료','도수치료','작업치료'];
+// 1:1 개수를 셀 때 쓰는 목록 (언어치료 제외 — 위와 같은 이유)
+const ONE_TO_ONE_CATS = SLASH_REQUIRED_CATS;
+// 1:다 치료 — 비회복기 환자도 받는다
+const ONE_TO_MANY_CATS = ['기구치료','FES','연하전기치료'];
+const ONE_TO_ONE_PER_SESSION = 2;     // 한 세션에 1:1 치료 2개
 
 /* 특이사항 문구 -> 있으면 안 되는 치료 카테고리
    치료 이름을 어떻게 적어도 잡히게 한다.
@@ -2062,7 +2264,51 @@ function computeConflicts(){
           message:`${name} · ${timeLabel} — 같은 시간에 치료가 ${cats.size}개 배정되었습니다. ` +
                   `한 타임에는 하나만 받을 수 있습니다.  ${어디서.join('  ·  ')}`});
       }
+
+      // 2) 공휴일 — "/" 표시 없이 1:1 치료가 배정된 경우
+      //    1:1 치료는 회복기 환자만 받을 수 있고, 회복기는 원본 이름 앞에 "/" 가 붙는다
+      if(isHoliday()){
+        entries.forEach(e=>{
+          if(!SLASH_REQUIRED_CATS.includes(e.category) || e.hasSlash) return;
+          errors.push({name, timeLabel, field:'cell', type:'/ 표시 누락',
+            message:`${name} · ${timeLabel} — 원본 "${e.raw}" 에 '/' 없이 ${e.category}(1:1 치료)가 배정되어 있습니다. ` +
+                    `1:1 치료는 회복기 환자만 받습니다. '/' 표시를 확인하세요. (${e.sheet.toUpperCase()} ${e.col||''}열 ${String(e.header||'').replace(/\s+/g,' ')})`});
+        });
+      }
     });
+
+    /* ===== 공휴일 — 세션별 개수 검사 (전부 확인 권고) ===== */
+    if(isHoliday()){
+      const 회복기 = Object.values(row.sources||{}).some(list=> list.some(e=>e.hasSlash));
+      state.sessions.forEach(sess=>{
+        const one = [], many = [];
+        sess.slots.forEach(t=> (row.sources[t]||[]).forEach(e=>{
+          if(ONE_TO_ONE_CATS.includes(e.category)) one.push(e.category);
+          else if(ONE_TO_MANY_CATS.includes(e.category)) many.push(e.category);
+        }));
+        // 1:1 개수 — 회복기만
+        if(회복기 && one.length && one.length !== ONE_TO_ONE_PER_SESSION){
+          errors.push({name, timeLabel:null, field:'name', type:'1:1 개수',
+            message:`${name} — ${sess.label}에 1:1 치료가 ${one.length}개입니다(${one.join(', ')}). ` +
+                    `보통 ${ONE_TO_ONE_PER_SESSION}개입니다. 언어치료는 세지 않습니다.`});
+        }
+        // 1:다 — 같은 치료를 한 세션에 두 번
+        const 센것 = {};
+        many.forEach(c=> 센것[c] = (센것[c]||0)+1);
+        const 두번 = Object.entries(센것).filter(([,v])=>v>1);
+        if(두번.length){
+          errors.push({name, timeLabel:null, field:'name', type:'1:다 중복',
+            message:`${name} — ${sess.label}에 ${두번.map(([c,v])=>`${c} ${v}번`).join(', ')} 배정되어 있습니다. ` +
+                    `같은 치료는 한 세션에 한 번입니다.`});
+        }
+        // 1:다 — 한 세션에 3개(기구·FES·연하전기 각 1개)를 넘김
+        if(many.length > ONE_TO_MANY_CATS.length){
+          errors.push({name, timeLabel:null, field:'name', type:'1:다 개수',
+            message:`${name} — ${sess.label}에 1:다 치료가 ${many.length}개입니다(${many.join(', ')}). ` +
+                    `기구·FES·연하전기 각 1개씩 최대 ${ONE_TO_MANY_CATS.length}개입니다.`});
+        }
+      });
+    }
 
     if(row.special && row.special.trim()){
       const assignedCats = new Set();
@@ -2100,25 +2346,31 @@ function computeConflicts(){
       }
 
       // 6) "일찍 받기 희망" -> 전체 시간대 뒤쪽 절반에 배정되면 오류
-      if(!tc && wantsEarlyTime(row.special) && state.allTimeLabels.length>=2){
-        const n = state.allTimeLabels.length;
-        const cutoffIdx = Math.max(0, Math.ceil(n/2)-1);
-        const cutoffLabel = state.allTimeLabels[cutoffIdx];
-        const cutoffMins = timeToMinutes(cutoffLabel);
-        Object.keys(row.cells).forEach(t=>{
-          if(!row.cells[t]) return;
-          if(timeToMinutes(t) > cutoffMins){
-            errors.push({name, timeLabel:t, field:'cell', type:'특이사항 이른시간 희망 위반', message:`${name} · ${t} — 특이사항("${row.special}")대로 이른 시간(${cutoffLabel} 이전)을 원하지만 그 이후 시간에 배정되어 있습니다.`});
-          }
+      if(!tc && wantsEarlyTime(row.special)){
+        state.sessions.forEach(sess=>{
+          const 슬 = sess.slots;
+          if(슬.length < 2) return;
+          const cutoffLabel = 슬[Math.max(0, Math.ceil(슬.length/2)-1)];
+          const cutoffMins = timeToMinutes(cutoffLabel);
+          슬.forEach(t=>{
+            if(!row.cells[t]) return;
+            if(timeToMinutes(t) > cutoffMins){
+              errors.push({name, timeLabel:t, field:'cell', type:'특이사항 이른시간 희망 위반',
+                message:`${name} · ${t} — 특이사항("${row.special}")대로 ${sess.label?sess.label+' ':''}이른 시간(${cutoffLabel} 이전)을 원하지만 그 이후 시간에 배정되어 있습니다.`});
+            }
+          });
         });
       }
 
       // 7) "첫타임 힘들다" -> 가장 이른 시간대에 배정되면 오류
-      if(refusesFirstTime(row.special) && state.allTimeLabels.length>=1){
-        const firstLabel = state.allTimeLabels[0];
-        if(row.cells[firstLabel]){
-          errors.push({name, timeLabel:firstLabel, field:'cell', type:'특이사항 첫타임 위반', message:`${name} · ${firstLabel} — 특이사항("${row.special}")대로 첫 타임 배정을 피해야 하지만 ${firstLabel}에 배정되어 있습니다.`});
-        }
+      if(refusesFirstTime(row.special)){
+        state.sessions.forEach(sess=>{
+          const firstLabel = sess.slots[0];
+          if(firstLabel && row.cells[firstLabel]){
+            errors.push({name, timeLabel:firstLabel, field:'cell', type:'특이사항 첫타임 위반',
+              message:`${name} · ${firstLabel} — 특이사항("${row.special}")대로 ${sess.label?sess.label+' ':''}첫 타임 배정을 피해야 하지만 ${firstLabel}에 배정되어 있습니다.`});
+          }
+        });
       }
 
       // 8) "1:1치료 N개" -> 1:1 치료 횟수 부족 (운동·언어·작업·보행·도수)
@@ -2154,25 +2406,31 @@ function computeConflicts(){
         if(!c) return;
         treatmentCount += c.split('/').filter(x=>x).length;
       });
-      if(treatmentCount === 1){
+      // 공휴일 비회복기 환자는 1:다 치료 1개만 받는 게 정상이므로 경고하지 않는다
+      const 비회복기 = isHoliday() &&
+        !Object.values(row.sources||{}).some(list=> list.some(e=>e.hasSlash));
+      if(treatmentCount === 1 && !비회복기){
         errors.push({name, timeLabel:null, field:'name', type:'치료 1건', message:`${name} — 치료가 1건만 배정되어 있습니다. 누락 여부를 확인하세요.`});
       }
     }
 
     // 12) 시간대 공백 — 배정된 시간대 사이에 빈 시간대
-    if(row.status !== '퇴원' && state.allTimeLabels.length>=3){
-      const filledIdx = [];
-      state.allTimeLabels.forEach((t, idx)=>{ if(row.cells[t]) filledIdx.push(idx); });
-      if(filledIdx.length>=2){
+    //     공휴일은 세션(오전·오후) 안에서만 본다. 점심시간을 공백으로 잡으면 안 되기 때문
+    if(row.status !== '퇴원'){
+      state.sessions.forEach(sess=>{
+        const 슬 = sess.slots;
+        if(슬.length < 3) return;
+        const filledIdx = [];
+        슬.forEach((t, idx)=>{ if(row.cells[t]) filledIdx.push(idx); });
+        if(filledIdx.length < 2) return;
         const minIdx = filledIdx[0], maxIdx = filledIdx[filledIdx.length-1];
         const missing = [];
-        for(let i=minIdx+1;i<maxIdx;i++){
-          if(!filledIdx.includes(i)) missing.push(state.allTimeLabels[i]);
-        }
+        for(let i=minIdx+1;i<maxIdx;i++) if(!filledIdx.includes(i)) missing.push(슬[i]);
         if(missing.length){
-          errors.push({name, timeLabel:null, field:'name', type:'시간대 공백', message:`${name} — ${state.allTimeLabels[minIdx]}~${state.allTimeLabels[maxIdx]} 사이 ${missing.join(', ')} 시간대가 비어 있습니다. 배정 누락 여부를 확인하세요.`});
+          errors.push({name, timeLabel:null, field:'name', type:'시간대 공백',
+            message:`${name} — ${sess.label?sess.label+' ':''}${슬[minIdx]}~${슬[maxIdx]} 사이 ${missing.join(', ')} 시간대가 비어 있습니다. 배정 누락 여부를 확인하세요.`});
         }
-      }
+      });
     }
   });
 
@@ -2345,6 +2603,47 @@ document.getElementById('file-prev').addEventListener('change', (e)=>{
     showToast(`지난 결과 ${res.detect.인원}명 · 시간대 ${res.slots.length}개 읽음`);
   });
 });
+
+/* 토요일 / 공휴일 버튼 · 나누는 지점 */
+document.getElementById('mode-sat').addEventListener('click', ()=>{
+  state.mode = 'sat'; state.modeAuto = false; state.cutIndex = -1; rebuildDestHeader();
+});
+document.getElementById('mode-holiday').addEventListener('click', ()=>{
+  state.mode = 'holiday'; state.modeAuto = false; state.cutIndex = -1; rebuildDestHeader();
+});
+document.getElementById('cutpoint').addEventListener('change', (e)=>{
+  state.cutIndex = parseInt(e.target.value, 10); rebuildDestHeader();
+});
+
+function renderModeRow(){
+  const row = document.getElementById('mode-row');
+  const slots = state.allTimeLabels;
+  if(!slots.length){ row.style.display = 'none'; return; }
+  row.style.display = 'block';
+  document.getElementById('mode-sat').classList.toggle('active', state.mode !== 'holiday');
+  document.getElementById('mode-holiday').classList.toggle('active', state.mode === 'holiday');
+
+  const wrap = document.getElementById('cut-wrap');
+  wrap.style.display = state.mode === 'holiday' ? 'flex' : 'none';
+  if(state.mode === 'holiday'){
+    const sel = document.getElementById('cutpoint');
+    sel.innerHTML = slots.slice(0,-1).map((t,i)=>
+      `<option value="${i}"${i===state.cutIndex?' selected':''}>${t} / ${slots[i+1]}</option>`).join('');
+  }
+
+  const why = document.getElementById('mode-why');
+  const a = state.autoInfo || {};
+  if(state.mode === 'holiday'){
+    const 오전 = state.sessions[0], 오후 = state.sessions[1];
+    why.innerHTML = `시간대 ${slots.length}개 — ` +
+      `오전 <b>${오전.slots.length}칸</b> (${오전.slots[0]}~${오전.slots[오전.slots.length-1]}) · ` +
+      `오후 <b>${오후?오후.slots.length:0}칸</b>${오후?` (${오후.slots[0]}~${오후.slots[오후.slots.length-1]})`:''}` +
+      (state.modeAuto && a.이유 ? `<br>${a.이유}` : '');
+  } else {
+    why.innerHTML = `시간대 ${slots.length}개 — 한 세션 (${slots[0]}~${slots[slots.length-1]})` +
+      (state.modeAuto && a.split ? `<br>${a.이유} — 공휴일로 보려면 위 버튼을 눌러주세요.` : '');
+  }
+}
 
 document.getElementById('wardfilter').addEventListener('change', ()=> refreshRoster(true));
 document.getElementById('sortorder').addEventListener('change', ()=> renderDest());
@@ -2577,7 +2876,7 @@ function applyClassification(sheet, timeLabel, cell){
       row.cells[timeLabel] = r.category;
     }
     if(!row.sources[timeLabel]) row.sources[timeLabel] = [];
-    row.sources[timeLabel].push({category:r.category, sheet, raw:r.raw, col:cell.colLabel, header:cell.header});
+    row.sources[timeLabel].push({category:r.category, sheet, raw:r.raw, col:cell.colLabel, header:cell.header, hasSlash:!!r.hasSlash});
     if(r.note) row.note = row.note ? row.note+'; '+r.note : r.note;
     applied++;
   });
@@ -2586,8 +2885,16 @@ function applyClassification(sheet, timeLabel, cell){
 
 function rebuildDestHeader(){
   state.allTimeLabels = allTimeLabelsSorted();
+  rebuildSessions();
   const head = document.getElementById('dest-head');
-  head.innerHTML = '<th>이름</th><th>병실</th>' + state.allTimeLabels.map(t=>`<th>${t}</th>`).join('') + '<th>메모</th><th>특이사항</th><th>신환/퇴원</th><th></th>';
+  const 나눔 = isHoliday();
+  head.innerHTML = '<th>이름</th><th>병실</th>' +
+    state.allTimeLabels.map((t,i)=>{
+      const 세션시작 = 나눔 && i === state.cutIndex + 1;
+      return `<th class="${세션시작?'session-start ':''}${나눔?'session-head':''}">${t}</th>`;
+    }).join('') +
+    '<th>메모</th><th>특이사항</th><th>신환/퇴원</th><th></th>';
+  renderModeRow();
   renderDest();
 }
 
@@ -2709,7 +3016,7 @@ function renderDest(){
 
     state.allTimeLabels.forEach(t=>{
       const td = document.createElement('td');
-      td.className = 'catcell';
+      td.className = 'catcell' + (isHoliday() && state.allTimeLabels.indexOf(t) === state.cutIndex+1 ? ' session-start' : '');
       td.dataset.t = t;
       td.contentEditable = true;
       paintCatCell(td, row.cells[t]);
@@ -3114,24 +3421,41 @@ document.getElementById('btn-export').addEventListener('click', ()=>{
   const sheetName = document.getElementById('sheetname').value.trim() || '새시트';
   if(!Object.keys(state.destRows).length){ showToast('결과 표에 내용이 없습니다.'); return; }
 
-  const aoa = buildExportAoA(state.destRows, state.allTimeLabels);
-  const ws = XLSX.utils.aoa_to_sheet(aoa);
-  ws['!cols'] = [{wch:12},{wch:8}, ...state.allTimeLabels.map(()=>({wch:14}))];
-
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  // 공휴일이면 오전·오후를 시트 두 개로 나눠 담는다. 토요일이면 시트 하나.
+  const 묶음 = isHoliday()
+    ? state.sessions.map(sess=> ({이름: `${sheetName} ${sess.label}`, slots: sess.slots}))
+    : [{이름: sheetName, slots: state.allTimeLabels}];
+
+  let 총인원 = 0;
+  묶음.forEach(({이름, slots})=>{
+    // 그 세션에 치료가 하나라도 있는 사람만 담는다
+    const 해당 = {};
+    Object.keys(state.destRows).forEach(n=>{
+      const row = state.destRows[n];
+      if(묶음.length > 1 && !slots.some(t=> row.cells[t])) return;
+      해당[n] = row;
+    });
+    const aoa = buildExportAoA(해당, slots);
+    총인원 = Math.max(총인원, aoa.length-1);
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols'] = [{wch:12},{wch:8}, ...slots.map(()=>({wch:14}))];
+    XLSX.utils.book_append_sheet(wb, ws, 이름.slice(0,31));   // 엑셀 시트 이름은 31자까지
+  });
 
   const wbout = XLSX.write(wb, {bookType:'xlsx', type:'array'});
   const blob = new Blob([wbout], {type:'application/octet-stream'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${sheetName}_토요일.xlsx`;
+  a.download = `${sheetName}_${isHoliday() ? '공휴일' : '토요일'}.xlsx`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast(`${aoa.length-1}명 · A:${String.fromCharCode(66+state.allTimeLabels.length)} 내보냄`);
+  showToast(isHoliday()
+    ? `시트 ${묶음.length}개 (${묶음.map(x=>x.이름).join(' · ')}) 내보냄`
+    : `${총인원}명 · A:${String.fromCharCode(66+state.allTimeLabels.length)} 내보냄`);
 });
 
 /* 초기 렌더 */
