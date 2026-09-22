@@ -1146,10 +1146,16 @@
             <tr><th>🔴 1:다 중복</th><td><b>같은 처방</b>을 한 세션에 두 번 받은 경우 (오전에 기구 2번 등)<br>
                 기구·FES·연하전기는 <b>서로 다른 처방</b>이라 한 세션에 각 1번씩, 최대 3개까지 됩니다.<br>
                 오전에 기구 1번 + 오후에 기구 1번은 정상입니다</td></tr>
-            <tr><th>🟡 1:1 개수</th><td>한 세션의 1:1 치료가 2개가 아닌 경우</td></tr>
+            <tr><th>🟡 1:1 개수</th><td>한 세션의 1:1 치료(PT·OT 계열)가 2개가 아닌 경우</td></tr>
+            <tr><th>🟡 1:1 개수(언어)</th><td>PT·OT 는 2개로 맞는데 <b>언어치료가 더 있어</b> 넘치는 경우.
+                언어치료도 1:1 이지만 원인이 다르므로 따로 띄웁니다</td></tr>
+            <tr><th>🟡 1:1 중복</th><td>같은 1:1 치료를 한 세션에 <b>두 번</b> 받는 경우 (NDT 두 개 등)</td></tr>
             <tr><th>🟡 1:다 개수</th><td>한 세션의 1:다 치료가 3개를 넘는 경우</td></tr>
             <tr><th>🟡 비회복기 언어치료</th><td><span class="mono">/</span> 없는 환자에게 언어치료가 있는 경우</td></tr>
           </table>
+          <p class="help-note"><b>세기 전에 같은 것을 합칩니다.</b> PT·OT 시간표 양쪽에 같은 치료를 적어두는
+             관행이 있어서, 그냥 세면 한 번 받은 것이 두 번으로 잡힙니다
+             (09.24 언어치료 17건). <b>시간과 치료가 모두 같으면 한 번</b>으로 셉니다.</p>
           <p class="help-bad"><b>🟡 세 가지는 아직 규칙이 확정되지 않아 확인 권고로 둡니다.</b>
              고쳐야 하는 게 아니라 눈으로만 보시면 됩니다.</p>
           <p class="help-note"><b>비회복기 환자는 「치료 1건」 경고가 뜨지 않습니다.</b>
@@ -1255,18 +1261,18 @@
 
       <!-- 빨간 칸 -->
       <details class="help-sec">
-        <summary>빨간 칸 · 주황 칸이 되는 이유 (18가지)</summary>
+        <summary>빨간 칸 · 주황 칸이 되는 이유 (20가지)</summary>
         <div class="help-sec-body">
           <p class="help-note"><b>두 단계로 나옵니다.</b><br>
              <b class="help-red">🔴 빨간 칸 — 고쳐야 할 것</b> · 규칙 위반이 확실하거나 ② 메모로 적어준 것을 어긴 경우<br>
              <b class="help-yellow">🟡 주황 칸 — 확인 권고</b> · 환자 사정에 따라 정상일 수 있어 눈으로만 보면 되는 경우<br>
              맨 위에 <span class="mono">고쳐야 할 칸 2개 · 확인할 칸 5개</span> 처럼 따로 셉니다.</p>
           <p class="help-bad"><b>토요일과 공휴일은 규칙이 다릅니다.</b>
-             아래 <b>1~13번은 둘 다</b>에 적용되고, <b>14~18번은 공휴일에만</b> 적용됩니다.
-             공휴일이 아니면 14~18번은 아예 검사하지 않습니다.</p>
+             아래 <b>1~13번은 둘 다</b>에 적용되고, <b>14~20번은 공휴일에만</b> 적용됩니다.
+             공휴일이 아니면 14~20번은 아예 검사하지 않습니다.</p>
           <table class="help-t">
             <tr><th style="width:30%">토요일에 뜨는 🟡</th><td><b>치료 1건</b> 하나뿐입니다</td></tr>
-            <tr><th>공휴일에만 뜨는 🟡</th><td>1:1 개수 · 1:다 개수 · 비회복기 언어치료</td></tr>
+            <tr><th>공휴일에만 뜨는 🟡</th><td>1:1 개수 · 1:1 개수(언어) · 1:1 중복 · 1:다 개수 · 비회복기 언어치료</td></tr>
           </table>
 
           <p class="help-sub">시간 겹침</p>
@@ -1312,7 +1318,9 @@
             <li>🔴 <b>/ 표시 누락</b> — <span class="mono">/</span> 없이 1:1 치료가 배정됨</li>
             <li>🔴 <b>1:다 중복</b> — <b>같은 처방</b>을 한 세션에 두 번<br>
                 <span class="mono">기구 · FES · 연하전기는 서로 다른 처방</b>이라 한 세션에 각 1번씩은 됩니다</span></li>
-            <li>🟡 <b>1:1 개수</b> — 한 세션의 1:1 치료가 2개가 아님</li>
+            <li>🟡 <b>1:1 개수</b> — 한 세션의 1:1 치료(PT·OT 계열)가 2개가 아님</li>
+            <li>🟡 <b>1:1 개수(언어)</b> — PT·OT 는 2개로 맞는데 언어치료가 더 있어 넘침</li>
+            <li>🟡 <b>1:1 중복</b> — 같은 1:1 치료를 한 세션에 두 번 (NDT 두 개 등)</li>
             <li>🟡 <b>1:다 개수</b> — 한 세션의 1:다 치료가 3개를 넘음</li>
             <li>🟡 <b>비회복기 언어치료</b> — <span class="mono">/</span> 없는 환자에게 언어치료가 있음</li>
           </ol>
@@ -2179,6 +2187,8 @@ const WARN_TYPES = new Set([
   '치료 1건',
   // 공휴일 — 규칙이 아직 확정되지 않아 권고로 둔다 (팀장님 확인 후 오류로 올릴 수 있음)
   '1:1 개수',
+  '1:1 개수(언어)',
+  '1:1 중복',
   '1:다 개수',
   '비회복기 언어치료',
 ]);
@@ -2284,45 +2294,76 @@ function computeConflicts(){
       }
     });
 
-    /* ===== 공휴일 — 세션별 개수 검사 (전부 확인 권고) ===== */
+    /* ===== 공휴일 — 세션별 개수 검사 =====
+       ※ 세기 전에 (시간 + 치료) 가 같은 것을 하나로 합친다.
+         PT·OT 시간표 양쪽에 같은 치료를 적어두는 관행이 있어서, 그냥 세면
+         "한 번 받은 것" 이 두 번으로 잡힌다 (09.24 언어치료 17건). */
     if(isHoliday()){
       const 회복기 = Object.values(row.sources||{}).some(list=> list.some(e=>e.hasSlash));
       state.sessions.forEach(sess=>{
-        const one = [], many = [];
+        // (시간 + 치료) 로 합치기
+        const 배정 = [];                      // [{t, cat}]
+        const 본것 = new Set();
         sess.slots.forEach(t=> (row.sources[t]||[]).forEach(e=>{
-          if(ONE_TO_ONE_CATS.includes(e.category)) one.push(e.category);
-          else if(ONE_TO_MANY_CATS.includes(e.category)) many.push(e.category);
-        }));
-        // 1:1 개수 — 회복기만
-        if(회복기 && one.length && one.length !== ONE_TO_ONE_PER_SESSION){
-          errors.push({name, timeLabel:null, field:'name', type:'1:1 개수',
-            message:`${name} — ${sess.label}에 1:1 치료가 ${one.length}개입니다(${one.join(', ')}). ` +
-                    `보통 ${ONE_TO_ONE_PER_SESSION}개입니다. 언어치료는 세지 않습니다.`});
-        }
-        // 1:다 — 같은 치료를 한 세션에 두 번
-        const 센것 = {};
-        many.forEach(c=> 센것[c] = (센것[c]||0)+1);
-        const 두번 = Object.entries(센것).filter(([,v])=>v>1);
-        if(두번.length){
-          errors.push({name, timeLabel:null, field:'name', type:'1:다 중복',
-            message:`${name} — ${sess.label}에 ${두번.map(([c,v])=>`${c} ${v}번`).join(', ')} 배정되어 있습니다. ` +
-                    `같은 처방은 한 세션에 한 번입니다. (기구·FES·연하전기는 서로 다른 처방이라 각 1번씩은 됩니다)`});
-        }
-        // 비회복기인데 언어치료가 있는 경우 — 예외로 두되 눈에는 보이게 (규칙 미확정)
-        sess.slots.forEach(t=> (row.sources[t]||[]).forEach(e=>{
-          if(e.category === '언어치료' && !e.hasSlash && !회복기){
-            errors.push({name, timeLabel:null, field:'name', type:'비회복기 언어치료',
-              message:`${name} — ${sess.label} ${t}에 언어치료가 있는데 원본에 '/' 표시가 없습니다. ` +
-                      `1:1 치료는 회복기 환자만 받지만, 언어치료는 비회복기도 받는 경우가 있어 권고로만 알립니다.`});
-          }
+          const key = t + '|' + e.category;
+          if(본것.has(key)) return;
+          본것.add(key);
+          배정.push({t, cat:e.category});
         }));
 
-        // 1:다 — 한 세션에 3개(기구·FES·연하전기 각 1개)를 넘김
+        const one  = 배정.filter(x=> ONE_TO_ONE_CATS.includes(x.cat));
+        const lang = 배정.filter(x=> x.cat === '언어치료');
+        const many = 배정.filter(x=> ONE_TO_MANY_CATS.includes(x.cat));
+
+        // 치료 종류별로 몇 번인지
+        const 횟수 = arr =>{
+          const c = {};
+          arr.forEach(x=> (c[x.cat] = c[x.cat] || []).push(x.t));
+          return c;
+        };
+
+        if(회복기){
+          // 1:1 개수 — PT·OT 계열만 세서 2개가 아닌 경우
+          if(one.length && one.length !== ONE_TO_ONE_PER_SESSION){
+            errors.push({name, timeLabel:null, field:'name', type:'1:1 개수',
+              message:`${name} — ${sess.label}에 1:1 치료가 ${one.length}개입니다` +
+                      `(${one.map(x=>x.t+' '+x.cat).join(', ')}). 보통 ${ONE_TO_ONE_PER_SESSION}개입니다.`});
+          }
+          // 1:1 개수(언어) — PT·OT 는 2개인데 언어치료가 더 붙어 넘친 경우
+          else if(lang.length && one.length + lang.length > ONE_TO_ONE_PER_SESSION){
+            errors.push({name, timeLabel:null, field:'name', type:'1:1 개수(언어)',
+              message:`${name} — ${sess.label}에 1:1 치료가 ${one.length + lang.length}개입니다` +
+                      `(${[...one, ...lang].map(x=>x.t+' '+x.cat).join(', ')}). ` +
+                      `PT·OT 는 ${one.length}개로 맞지만 언어치료가 더 있습니다.`});
+          }
+          // 1:1 중복 — 같은 1:1 치료를 한 세션에 두 번 (NDT 두 개 등)
+          Object.entries(횟수([...one, ...lang])).filter(([,ts])=>ts.length>1).forEach(([cat,ts])=>{
+            errors.push({name, timeLabel:null, field:'name', type:'1:1 중복',
+              message:`${name} — ${sess.label}에 ${cat}가 ${ts.length}번 배정되어 있습니다 (${ts.join(', ')}). ` +
+                      `한 세션에 같은 1:1 치료를 두 번 받는 게 맞는지 확인하세요.`});
+          });
+        }
+
+        // 1:다 중복 — 같은 처방을 한 세션에 두 번 (확정 규칙이므로 오류)
+        Object.entries(횟수(many)).filter(([,ts])=>ts.length>1).forEach(([cat,ts])=>{
+          errors.push({name, timeLabel:null, field:'name', type:'1:다 중복',
+            message:`${name} — ${sess.label}에 ${cat}가 ${ts.length}번 배정되어 있습니다 (${ts.join(', ')}). ` +
+                    `같은 처방은 한 세션에 한 번입니다. (기구·FES·연하전기는 서로 다른 처방이라 각 1번씩은 됩니다)`});
+        });
+
+        // 1:다 개수 — 한 세션에 3개(기구·FES·연하전기 각 1개)를 넘김
         if(many.length > ONE_TO_MANY_CATS.length){
           errors.push({name, timeLabel:null, field:'name', type:'1:다 개수',
-            message:`${name} — ${sess.label}에 1:다 치료가 ${many.length}개입니다(${many.join(', ')}). ` +
-                    `기구·FES·연하전기 각 1개씩 최대 ${ONE_TO_MANY_CATS.length}개입니다.`});
+            message:`${name} — ${sess.label}에 1:다 치료가 ${many.length}개입니다` +
+                    `(${many.map(x=>x.t+' '+x.cat).join(', ')}). 기구·FES·연하전기 각 1개씩 최대 ${ONE_TO_MANY_CATS.length}개입니다.`});
         }
+
+        // 비회복기인데 언어치료가 있는 경우 — 예외로 두되 눈에는 보이게 (규칙 미확정)
+        if(!회복기) lang.forEach(x=>{
+          errors.push({name, timeLabel:null, field:'name', type:'비회복기 언어치료',
+            message:`${name} — ${sess.label} ${x.t}에 언어치료가 있는데 원본에 '/' 표시가 없습니다. ` +
+                    `1:1 치료는 회복기 환자만 받지만, 언어치료는 비회복기도 받는 경우가 있어 권고로만 알립니다.`});
+        });
       });
     }
 
