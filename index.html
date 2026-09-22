@@ -14,6 +14,8 @@
     --accent: #2F6F5E;
     --accent-ink: #FFFFFF;
     --warn: #B5566B;
+    --advise: #C99A2E;        /* 확인 권고 */
+    --advise-ink: #8A6A16;
     --new: #C68A2E;
 
     --c-fes: #C68A2E;
@@ -337,6 +339,14 @@
     border-radius:8px;
     padding:12px 14px;
   }
+  .advise-box{
+    background:#FDF6E6;
+    border:1px solid #E7D5AE;
+    border-radius:8px;
+    padding:12px 14px;
+  }
+  .advise-box .error-item{border-bottom-color:#E7D5AE;}
+  .advise-box .error-item b{color:var(--advise-ink);}
   .error-item{
     font-size:12px;
     color:var(--ink);
@@ -352,6 +362,12 @@
     font-weight:700;
   }
   table.dest tr:hover td.conflict{background:#F5C6CE !important;}
+  /* 확인 권고 — 고쳐야 하는 건 아니고 눈으로 보기만 하면 되는 칸 */
+  table.dest td.advise{
+    background:#FBF0DA !important;
+    box-shadow:inset 0 0 0 2px var(--advise);
+  }
+  table.dest tr:hover td.advise{background:#F7E7C8 !important;}
   table.dest select.statusselect{
     font-size:12px;
     border:1px solid var(--line);
@@ -417,7 +433,9 @@
   }
   .diff-legend i{display:inline-block;width:4px;height:13px;border-radius:1px;}
   .headline.bad{color:var(--warn);}
+  .headline.advise-head{color:var(--advise-ink);}
   .headline.good{color:var(--accent);}
+  .headline-sub{font-size:16px;font-weight:600;color:var(--advise-ink);}
 
   .summary-bar{
     display:flex;
@@ -770,8 +788,12 @@
         <div class="foldbody"><div id="diff-items"></div></div>
       </details>
       <details class="fold" id="error-fold" style="display:none;">
-        <summary>오류 자세히 보기 <span id="error-count"></span></summary>
+        <summary>🔴 고쳐야 할 것 <span id="error-count"></span></summary>
         <div class="foldbody"><div class="error-box" id="error-items"></div></div>
+      </details>
+      <details class="fold" id="advise-fold" style="display:none;">
+        <summary>🟡 확인 권고 <span id="advise-count"></span></summary>
+        <div class="foldbody"><div class="advise-box" id="advise-items"></div></div>
       </details>
       <details class="fold" id="pending-fold" style="display:none;">
         <summary>이름을 못 찾은 항목 <span id="pending-count"></span></summary>
@@ -1126,8 +1148,18 @@
 
       <!-- 빨간 칸 -->
       <details class="help-sec">
-        <summary>빨간 칸이 되는 이유 (13가지)</summary>
+        <summary>빨간 칸 · 주황 칸이 되는 이유 (13가지)</summary>
         <div class="help-sec-body">
+          <p class="help-note"><b>두 단계로 나옵니다.</b><br>
+             <b class="help-red">🔴 빨간 칸 — 고쳐야 할 것</b> · 규칙 위반이 확실하거나 ② 메모로 적어준 것을 어긴 경우<br>
+             <b class="help-yellow">🟡 주황 칸 — 확인 권고</b> · 환자 사정에 따라 정상일 수 있어 눈으로만 보면 되는 경우<br>
+             맨 위에 <span class="mono">고쳐야 할 칸 2개 · 확인할 칸 5개</span> 처럼 따로 셉니다.
+             목록도 <b>🔴 고쳐야 할 것</b> 과 <b>🟡 확인 권고</b> 로 나뉩니다.</p>
+          <table class="help-t">
+            <tr><th style="width:26%">🟡 확인 권고</th><td><b>치료 1건</b> — 하루에 치료가 하나뿐. 퇴원 예정이거나 원래 적게 받는 분이면 정상입니다</td></tr>
+            <tr><th>🔴 나머지 전부</th><td>아래 항목은 모두 빨간 칸입니다</td></tr>
+          </table>
+
           <p class="help-sub">시간 겹침</p>
           <ol>
             <li><b>같은 사람이 같은 시간에 서로 다른 치료를 2개 이상</b> 받는 경우<br>
@@ -1161,7 +1193,7 @@
           </ol>
           <p class="help-sub">빠뜨렸을 가능성</p>
           <ol start="10">
-            <li><b>치료 1건</b> — 치료가 하나뿐 (퇴원은 제외)</li>
+            <li><b>치료 1건</b> — 치료가 하나뿐 (퇴원은 제외) &nbsp;<b class="help-yellow">🟡 확인 권고</b></li>
             <li><b>시간대 공백</b> — 8:30과 9:40엔 있는데 그 사이 9:05가 비어 있음</li>
             <li><b>동명이인</b> — 끝 알파벳만 다른 이름이 같은 표에 둘 이상</li>
             <li><b>이름 오류</b> — 눈에는 똑같아 보이는데 <b>보이지 않는 공백이나 특수문자</b> 때문에 두 줄로 나뉜 경우</li>
@@ -1946,6 +1978,13 @@ function diffTitleFor(name, field){
 // "1:1치료 N개 희망" 과 비교할 1:1(개별) 치료 — SPEC 4-8: 도수치료 포함
 const INDIVIDUAL_CATS = ['운동치료','언어치료','작업치료','보행치료','도수치료'];
 
+/* 🟡 확인 권고로 띄울 규칙. 여기 없는 것은 전부 🔴 오류다.
+   기준: ② 메모로 적어준 것을 어기면 무조건 오류.
+        환자 사정에 따라 정상일 수 있는 "개수" 관련만 권고. */
+const WARN_TYPES = new Set([
+  '치료 1건',
+]);
+
 /* 특이사항 문구 -> 있으면 안 되는 치료 카테고리
    치료 이름을 어떻게 적어도 잡히게 한다.
      "연하 안 함" · "연하전기 안함" · "연하전기치료 제외"  ← 전부 같은 뜻
@@ -2173,7 +2212,13 @@ function computeConflicts(){
     }
   });
 
+  /* 두 단계로 나눈다.
+     🔴 오류   — 규칙 위반이 확실하거나 ② 메모로 적어준 것을 어긴 것. 고쳐야 한다.
+     🟡 확인 권고 — 환자 사정에 따라 정상일 수 있는 것. 눈으로 보기만 하면 된다. */
+  errors.forEach(e=> e.sev = WARN_TYPES.has(e.type) ? 'warn' : 'error');
+
   errors.sort((a,b)=>{
+    if(a.sev !== b.sev) return a.sev === 'error' ? -1 : 1;   // 오류를 위로
     const ta = a.timeLabel ? timeToMinutes(a.timeLabel) : Infinity;
     const tb = b.timeLabel ? timeToMinutes(b.timeLabel) : Infinity;
     if(ta!==tb) return ta-tb;
@@ -2182,8 +2227,21 @@ function computeConflicts(){
   state.errors = errors;
 }
 
-function conflictKeysForCell(name, timeLabel){
-  return state.errors.some(er=>er.field==='cell' && er.name===name && er.timeLabel===timeLabel);
+function cellErrors(name, timeLabel){
+  return state.errors.filter(er=>er.field==='cell' && er.name===name && er.timeLabel===timeLabel);
+}
+// 오류가 하나라도 섞여 있으면 빨강, 권고만 있으면 주황
+function sevOf(list){
+  if(!list.length) return null;
+  return list.some(e=>e.sev==='error') ? 'conflict' : 'advise';
+}
+// 칸에 단계 표시를 붙인다. 붙였으면 true
+function markSev(td, list){
+  const s = sevOf(list);
+  if(!s) return null;
+  td.classList.add(s);
+  td.title = list.map(er=>(er.sev==='error'?'[고쳐야 함] ':'[확인 권고] ')+er.message).join('\n');
+  return s;
 }
 function rowFieldErrors(name, field){
   return state.errors.filter(er=>er.field===field && er.name===name);
@@ -2548,7 +2606,7 @@ function paintCatCell(td, cat){
    여기서는 칸의 class 와 title 만 건드린다. */
 function refreshChecks(){
   computeConflicts();
-  let redCells = 0;
+  let redCells = 0, adviseCells = 0;
   document.querySelectorAll('#dest-body tr').forEach(tr=>{
     const name = tr.dataset.name;
     tr.querySelectorAll('td').forEach(td=>{
@@ -2558,17 +2616,14 @@ function refreshChecks(){
       } else if(td.dataset.field){
         errs = rowFieldErrors(name, td.dataset.field);
       } else return;
-      if(errs.length){
-        td.classList.add('conflict');
-        td.title = errs.map(er=>er.message).join('\n');
-        redCells++;
-      } else {
-        td.classList.remove('conflict');
-        td.removeAttribute('title');
-      }
+      td.classList.remove('conflict','advise');
+      td.removeAttribute('title');
+      const sv = markSev(td, errs);
+      if(sv === 'conflict') redCells++;
+      else if(sv === 'advise') adviseCells++;
     });
   });
-  updateSummary(redCells);
+  updateSummary(redCells, adviseCells);
 }
 
 /* 표에서 이름을 고쳤을 때. 칸 밖으로 나가는 순간 확정한다.
@@ -2604,7 +2659,7 @@ function renderDest(){
   computeDiff();
   const body = document.getElementById('dest-body');
   body.innerHTML = '';
-  let redCells = 0;
+  let redCells = 0, adviseCells = 0;
   const 바뀐것만 = state.diff && document.getElementById('diff-only').checked;
   // 줄 순서는 사용자가 고른다. 병실순이면 내보내는 엑셀과 같은 순서가 되어 눈으로 대조하기 쉽다.
   const sortBy = (document.getElementById('sortorder')||{}).value || 'room';
@@ -2625,11 +2680,7 @@ function renderDest(){
     tdName.dataset.field = 'name';
     tdName.contentEditable = true;
     tdName.textContent = row.name;
-    const nameErrors = rowFieldErrors(name, 'name');
-    if(nameErrors.length){
-      tdName.classList.add('conflict'); redCells++;
-      tdName.title = nameErrors.map(er=>er.message).join('\n');
-    }
+    { const sv = markSev(tdName, rowFieldErrors(name, 'name')); if(sv==='conflict') redCells++; else if(sv==='advise') adviseCells++; }
     markDiff(tdName, name, 'name');
     // 칸 밖으로 나갈 때 이름 바꾸기를 확정한다 (글자를 치는 도중에는 건드리지 않는다)
     tdName.addEventListener('blur', ()=>{
@@ -2662,10 +2713,7 @@ function renderDest(){
       td.dataset.t = t;
       td.contentEditable = true;
       paintCatCell(td, row.cells[t]);
-      if(conflictKeysForCell(name, t)){
-        td.classList.add('conflict'); redCells++;
-        td.title = state.errors.filter(er=>er.name===name && er.timeLabel===t).map(er=>er.message).join('\n');
-      }
+      { const sv = markSev(td, cellErrors(name, t)); if(sv==='conflict') redCells++; else if(sv==='advise') adviseCells++; }
       // 글자를 치는 동안 바로 다시 검사한다 (표를 다시 그리지 않으므로 커서가 그대로 있음)
       td.addEventListener('input', ()=>{ row.cells[t] = td.textContent.trim(); refreshChecks(); });
       // 칸에서 빠져나갈 때 색 점을 다시 그린다
@@ -2684,11 +2732,7 @@ function renderDest(){
     tdSpecial.dataset.field = 'special';
     tdSpecial.contentEditable = true;
     tdSpecial.textContent = row.special || '';
-    const specialErrors = rowFieldErrors(name, 'special');
-    if(specialErrors.length){
-      tdSpecial.classList.add('conflict'); redCells++;
-      tdSpecial.title = specialErrors.map(er=>er.message).join('\n');
-    }
+    { const sv = markSev(tdSpecial, rowFieldErrors(name, 'special')); if(sv==='conflict') redCells++; else if(sv==='advise') adviseCells++; }
     // 표에서 직접 친 특이사항은 메모란 소유가 아니다 ([메모 반영] 을 눌러도 안 지워짐)
     tdSpecial.addEventListener('input', ()=>{
       row.special = tdSpecial.textContent.trim();
@@ -2713,11 +2757,7 @@ function renderDest(){
       refreshChecks();
     });
     tdStatus.appendChild(statusSelect);
-    const statusErrors = rowFieldErrors(name, 'status');
-    if(statusErrors.length){
-      tdStatus.classList.add('conflict'); redCells++;
-      tdStatus.title = statusErrors.map(er=>er.message).join('\n');
-    }
+    { const sv = markSev(tdStatus, rowFieldErrors(name, 'status')); if(sv==='conflict') redCells++; else if(sv==='advise') adviseCells++; }
     tr.appendChild(tdStatus);
 
     const tdDel = document.createElement('td');
@@ -2728,10 +2768,10 @@ function renderDest(){
 
     body.appendChild(tr);
   });
-  updateSummary(redCells);
+  updateSummary(redCells, adviseCells);
 }
 
-function updateSummary(redCells){
+function updateSummary(redCells, adviseCells){
   const bar = document.getElementById('summary-bar');
   const rowCount = Object.keys(state.destRows).length;
   const newCount = Object.values(state.destRows).filter(r=>r.isNew).length;
@@ -2743,17 +2783,22 @@ function updateSummary(redCells){
     headline.textContent = '아직 변환하지 않았습니다';
   } else if(redCells){
     headline.className = 'headline bad';
-    headline.textContent = `확인할 칸 ${redCells}개`;
+    headline.innerHTML = `고쳐야 할 칸 ${redCells}개` +
+      (adviseCells ? ` <span class="headline-sub">· 확인할 칸 ${adviseCells}개</span>` : '');
+  } else if(adviseCells){
+    headline.className = 'headline advise-head';
+    headline.innerHTML = `고칠 것 없음 <span class="headline-sub">· 확인할 칸 ${adviseCells}개</span>`;
   } else {
     headline.className = 'headline good';
-    headline.textContent = '확인할 칸 없음';
+    headline.textContent = '고칠 것도 확인할 것도 없음';
   }
 
   bar.innerHTML = `<span><b>${rowCount}</b>명</span>` +
     (newCount ? `<span style="color:var(--new)"><b>${newCount}</b>명 신환(명단에 없음 · 병실 빈칸)</span>` : '') +
     (checkCount ? `<span style="color:var(--warn)"><b>${checkCount}</b>건 확인필요</span>` : '') +
     (state.pending.length ? `<span style="color:var(--warn)"><b>${state.pending.length}</b>건 이름 못 찾음</span>` : '') +
-    (state.errors.length ? `<span style="color:var(--warn)">오류 <b>${state.errors.length}</b>건</span>` : '');
+    (redCells ? `<span style="color:var(--warn)">고쳐야 할 칸 <b>${redCells}</b>개</span>` : '') +
+    (adviseCells ? `<span style="color:var(--advise-ink)">확인 권고 <b>${adviseCells}</b>개</span>` : '');
   renderPending();
   renderErrors();
   renderDiff();
@@ -2831,14 +2876,18 @@ function renderPending(){
 }
 
 function renderErrors(){
-  const fold = document.getElementById('error-fold');
-  const box = document.getElementById('error-items');
-  if(!state.errors.length){ fold.style.display='none'; return; }
-  fold.style.display='block';
-  document.getElementById('error-count').textContent = `(${state.errors.length}건)`;
-  box.innerHTML = state.errors.map(er=>
-    `<div class="error-item"><b>[${er.type}]</b> ${er.message}</div>`
-  ).join('');
+  const 오류 = state.errors.filter(e=>e.sev==='error');
+  const 권고 = state.errors.filter(e=>e.sev==='warn');
+  [['error', 오류], ['advise', 권고]].forEach(([key, list])=>{
+    const fold = document.getElementById(key+'-fold');
+    const box  = document.getElementById(key+'-items');
+    if(!list.length){ fold.style.display='none'; return; }
+    fold.style.display='block';
+    document.getElementById(key+'-count').textContent = `(${list.length}건)`;
+    box.innerHTML = list.map(er=>
+      `<div class="error-item"><b>[${er.type}]</b> ${er.message}</div>`
+    ).join('');
+  });
 }
 
 /* 전체 변환 */
