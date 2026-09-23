@@ -378,6 +378,26 @@
     padding:12px 14px;
   }
   .advise-box .error-item{border-bottom-color:#E7D5AE;}
+
+  /* 오류·권고를 종류끼리 묶어서 보여준다 */
+  details.err-group{margin-bottom:6px;}
+  details.err-group > summary{
+    cursor:pointer;
+    font-size:12.5px;
+    padding:5px 8px;
+    background:rgba(255,255,255,.75);
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:6px;
+    list-style:none;
+    user-select:none;
+  }
+  details.err-group > summary::-webkit-details-marker{display:none;}
+  details.err-group > summary::before{content:'▸ ';}
+  details.err-group[open] > summary::before{content:'▾ ';}
+  details.err-group > summary:hover{background:#fff;}
+  details.err-group .error-item{padding-left:16px;}
+  details.err-group > .error-item:last-child{border-bottom:none;}
+  .err-n{color:var(--ink-soft);font-weight:600;margin-left:4px;}
   .advise-box .error-item b{color:var(--advise-ink);}
   .error-item{
     font-size:12px;
@@ -831,7 +851,7 @@
         <div class="foldbody"><div id="diff-items"></div></div>
       </details>
       <details class="fold" id="error-fold" style="display:none;">
-        <summary>🔴 고쳐야 할 것 <span id="error-count"></span></summary>
+        <summary>🔴 오류 <span id="error-count"></span></summary>
         <div class="foldbody"><div class="error-box" id="error-items"></div></div>
       </details>
       <details class="fold" id="advise-fold" style="display:none;">
@@ -1266,9 +1286,11 @@
         <summary>빨간 칸 · 주황 칸이 되는 이유 (20가지)</summary>
         <div class="help-sec-body">
           <p class="help-note"><b>두 단계로 나옵니다.</b><br>
-             <b class="help-red">🔴 빨간 칸 — 고쳐야 할 것</b> · 규칙 위반이 확실하거나 ② 메모로 적어준 것을 어긴 경우<br>
+             <b class="help-red">🔴 빨간 칸 — 오류</b> · 규칙 위반이 확실하거나 ② 메모로 적어준 것을 어긴 경우<br>
              <b class="help-yellow">🟡 주황 칸 — 확인 권고</b> · 환자 사정에 따라 정상일 수 있어 눈으로만 보면 되는 경우<br>
-             맨 위에 <span class="mono">고쳐야 할 칸 2개 · 확인할 칸 5개</span> 처럼 따로 셉니다.</p>
+             맨 위에 <span class="mono">오류 2개 · 확인 권고 5개</span> 처럼 따로 셉니다.<br>
+             표 아래 목록은 <b>같은 종류끼리 묶여서</b> <span class="mono">▸ 1:1 개수 31건</span> 처럼 나옵니다.
+             줄을 누르면 펼쳐집니다. 5건 이하인 종류는 처음부터 펼쳐져 있습니다.</p>
           <p class="help-bad"><b>토요일과 공휴일은 규칙이 다릅니다.</b>
              아래 <b>1~13번은 둘 다</b>에 적용되고, <b>14~20번은 공휴일에만</b> 적용됩니다.
              공휴일이 아니면 14~20번은 아예 검사하지 않습니다.</p>
@@ -2571,7 +2593,7 @@ function markSev(td, list){
   const s = sevOf(list);
   if(!s) return null;
   td.classList.add(s);
-  td.title = list.map(er=>(er.sev==='error'?'[고쳐야 함] ':'[확인 권고] ')+er.message).join('\n');
+  td.title = list.map(er=>(er.sev==='error'?'[오류] ':'[확인 권고] ')+er.message).join('\n');
   return s;
 }
 function rowFieldErrors(name, field){
@@ -3166,21 +3188,21 @@ function updateSummary(redCells, adviseCells){
     headline.textContent = '아직 변환하지 않았습니다';
   } else if(redCells){
     headline.className = 'headline bad';
-    headline.innerHTML = `고쳐야 할 칸 ${redCells}개` +
-      (adviseCells ? ` <span class="headline-sub">· 확인할 칸 ${adviseCells}개</span>` : '');
+    headline.innerHTML = `오류 ${redCells}개` +
+      (adviseCells ? ` <span class="headline-sub">· 확인 권고 ${adviseCells}개</span>` : '');
   } else if(adviseCells){
     headline.className = 'headline advise-head';
-    headline.innerHTML = `고칠 것 없음 <span class="headline-sub">· 확인할 칸 ${adviseCells}개</span>`;
+    headline.innerHTML = `오류 없음 <span class="headline-sub">· 확인 권고 ${adviseCells}개</span>`;
   } else {
     headline.className = 'headline good';
-    headline.textContent = '고칠 것도 확인할 것도 없음';
+    headline.textContent = '오류 없음';
   }
 
   bar.innerHTML = `<span><b>${rowCount}</b>명</span>` +
     (newCount ? `<span style="color:var(--new)"><b>${newCount}</b>명 신환(명단에 없음 · 병실 빈칸)</span>` : '') +
     (checkCount ? `<span style="color:var(--warn)"><b>${checkCount}</b>건 확인필요</span>` : '') +
     (state.pending.length ? `<span style="color:var(--warn)"><b>${state.pending.length}</b>건 이름 못 찾음</span>` : '') +
-    (redCells ? `<span style="color:var(--warn)">고쳐야 할 칸 <b>${redCells}</b>개</span>` : '') +
+    (redCells ? `<span style="color:var(--warn)">오류 <b>${redCells}</b>개</span>` : '') +
     (adviseCells ? `<span style="color:var(--advise-ink)">확인 권고 <b>${adviseCells}</b>개</span>` : '');
   renderPending();
   renderErrors();
@@ -3267,9 +3289,19 @@ function renderErrors(){
     if(!list.length){ fold.style.display='none'; return; }
     fold.style.display='block';
     document.getElementById(key+'-count').textContent = `(${list.length}건)`;
-    box.innerHTML = list.map(er=>
-      `<div class="error-item"><b>[${er.type}]</b> ${er.message}</div>`
-    ).join('');
+
+    // 같은 종류끼리 묶는다. 수가 많으면 접어둔다 (권고는 수십 건이 나올 수 있다)
+    const 묶음 = {};
+    list.forEach(er=> (묶음[er.type] = 묶음[er.type] || []).push(er));
+    box.innerHTML = Object.entries(묶음)
+      .sort((a,b)=> b[1].length - a[1].length)
+      .map(([type, items])=>{
+        const 접기 = items.length > 5 ? '' : ' open';
+        return `<details class="err-group"${접기}>` +
+          `<summary><b>${type}</b> <span class="err-n">${items.length}건</span></summary>` +
+          items.map(er=> `<div class="error-item">${er.message}</div>`).join('') +
+          `</details>`;
+      }).join('');
   });
 }
 
