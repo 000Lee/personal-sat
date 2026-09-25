@@ -1760,6 +1760,13 @@ function tokenizeCell(text){
     if(t.includes('팀')) return;                                // ○팀, ○팀액팅
     if(t.toUpperCase().startsWith('FES')) return;               // FES, FES1~FES3
     if(t.startsWith('-')) return;
+    // 앞 줄에 못 붙은 단독 접미(칸 전체가 "VT" 뿐인 경우). 환자 이름이 아니다.
+    // 버리지 않고 "이름 못 찾음" 으로 넘겨 눈에는 보이게 한다.
+    // (한 글자짜리 N·S·A·G·M·Z 는 위의 length<=1 에서 이미 걸러진다)
+    if(SUFFIX_ALONE.test(t.toUpperCase())){
+      out.push({text:t, note:it.note, raw:it.raw, hasSlash: !!it.hasSlash, nameless:true});
+      return;
+    }
     out.push({text:t, note:it.note, raw:it.raw, hasSlash: !!it.hasSlash});
   });
   return out;
@@ -2125,6 +2132,11 @@ function resolveToken(tok, role){
 // 칸 하나 → [{name, category, isNew, note, raw, rule}]
 function classifyCell(cell){
   return tokenizeCell(cell.text).map(t=>{
+    if(t.nameless){        // 치료 표기만 있고 환자 이름이 없는 칸
+      const key = t.text.toUpperCase();
+      return {name:'', category: key === 'VT' ? '연하전기치료' : (SUFFIX_CAT[key] || null),
+              isNew:false, rule:'이름 없음', note:t.note, raw:t.text, hasSlash:t.hasSlash};
+    }
     const r = resolveToken(t.text, cell.role);
     return {name:r.name, category:r.category, isNew:r.isNew, rule:r.rule,
             note:t.note, raw:t.text, hasSlash:t.hasSlash};
@@ -3438,7 +3450,12 @@ function renderErrors(){
   [['error', 오류], ['advise', 권고]].forEach(([key, list])=>{
     const fold = document.getElementById(key+'-fold');
     const box  = document.getElementById(key+'-items');
-    if(!list.length){ fold.style.display='none'; return; }
+    if(!list.length){                       // 숨기기만 하면 옛 내용이 그대로 남는다
+      fold.style.display='none';
+      box.innerHTML = '';
+      document.getElementById(key+'-count').textContent = '';
+      return;
+    }
     fold.style.display='block';
     document.getElementById(key+'-count').textContent = `(${list.length}건)`;
 
