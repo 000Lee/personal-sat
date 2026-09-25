@@ -711,6 +711,11 @@
     padding:1px 4px;
     border-radius:3px;
   }
+  /* 회복기 체크칸 — 공휴일에만 나온다 */
+  #dest-table th.rehab-col{width:46px;}
+  #dest-table td.rehab-col{text-align:center;}
+  #dest-table td.rehab-col input{cursor:pointer;width:15px;height:15px;}
+
   .h1-sub{font-weight:400;font-size:.62em;color:var(--ink-soft);white-space:nowrap;}
 
   /* 메모 카드의 예시 — 그대로 베껴 쓸 수 있게 */
@@ -1160,6 +1165,15 @@
       <details class="help-sec">
         <summary>④ 결과 — 표에서 직접 고치기</summary>
         <div class="help-sec-body">
+          <p class="help-note"><b>공휴일에만 「회복기」 칸이 나옵니다.</b>
+             원본 이름 앞에 <span class="mono">/</span> 가 붙어 있으면 자동으로 체크됩니다.
+             공휴일 검사 여러 개가 이 값을 보고 갈립니다 —
+             <b>1:1 개수 · 1:1 개수(언어) · 1:1 중복</b> 은 체크된 사람만,
+             <b>/ 표시 누락 · 비회복기 언어치료</b> 는 체크 안 된 사람만,
+             <b>치료 1건</b> 은 체크된 사람만 뜹니다.<br>
+             <b><span class="mono">[+ 행 추가]</span> 로 직접 넣은 사람은 원본이 없어 판정할 수가 없습니다.</b>
+             회복기 환자라면 <b>직접 체크해 주세요.</b> 안 하면 위 검사들이 돌지 않습니다.
+             직접 정한 값은 <b>[전체 변환]</b> 을 다시 눌러도 남습니다.</p>
           <p class="help-note"><b>고치면 그 자리에서 바로 다시 검사합니다.</b> 글자를 치는 즉시 빨간 칸과 위의 큰 글씨가 바뀝니다.</p>
           <table class="help-t">
             <tr><th style="width:26%">고칠 곳</th><th>방법</th></tr>
@@ -1387,7 +1401,7 @@
             <tr><td><b>퇴원 환자 배정</b> — <span class="mono">퇴원</span> 인데 치료가 있음</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>신환 정보 불일치</b> — <span class="mono">신환</span> 인데 입원목록 명단에 이미 있음</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr class="rule-grp"><td colspan="3">빠뜨렸을 가능성</td></tr>
-            <tr><td><b>치료 1건</b> — 치료가 하나뿐 <span class="help-dim">(퇴원 제외 · 공휴일은 비회복기도 제외)</span></td><td class="rule-sev">🟡 권고</td><td class="rule-sev">🟡 권고</td></tr>
+            <tr><td><b>치료 1건</b> — 치료가 하나뿐 <span class="help-dim">(퇴원 제외 · 공휴일은 비회복기도 제외 — 아래 「회복기 칸」 참고)</span></td><td class="rule-sev">🟡 권고</td><td class="rule-sev">🟡 권고</td></tr>
             <tr><td><b>시간대 공백</b> — 8:30과 9:40엔 있는데 그 사이 9:05가 비어 있음 <span class="help-dim">(공휴일은 오전·오후 안에서만 봅니다)</span></td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>동명이인</b> — 끝 알파벳만 다른 이름이 같은 표에 둘 이상</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>이름 오류</b> — 눈에는 똑같아 보이는데 <b>보이지 않는 공백이나 특수문자</b> 때문에 두 줄로 나뉨</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
@@ -1445,6 +1459,9 @@
             <tr><td><b>명단이 0명이라고 나온다</b></td><td>담당 병동을 잘못 적었습니다. 아래 병동 목록을 보고 고치세요</td></tr>
             <tr><td><b>파일을 넣었는데 아무것도 안 나온다</b></td><td>시간이 적힌 열을 못 찾은 것입니다. 시간표 양식을 확인하세요</td></tr>
             <tr><td><b>확인필요가 많다</b></td><td>원본 시간표에 치료 표기(N·G·M 등)가 빠진 것입니다. 원본을 확인하거나 칸에 직접 타이핑하세요</td></tr>
+            <tr><td><b>직접 추가한 사람에게<br>공휴일 검사가 안 뜬다</b></td>
+                <td>표의 <b>회복기</b> 칸을 체크하세요. 원본이 없어 <span class="mono">/</span> 를 읽을 수 없으므로
+                기본은 <b>체크 안 됨(비회복기)</b> 입니다</td></tr>
             <tr><td><b>메모를 적었는데 반영이 안 된다</b></td><td>이름을 못 찾은 것입니다. 표에 있는 이름과 똑같이 적어보세요</td></tr>
             <tr><td><b><span class="key">Ctrl</span>+<span class="key">Alt</span>+<span class="key">V</span> 를 눌렀더니<br>
                 그림 · 비트맵 · HTML 목록이 뜬다</b></td>
@@ -2364,6 +2381,14 @@ function parseIndividualCountConstraint(text){
   return parseInt(m[1],10);
 }
 
+/* 회복기 여부. 원본 이름 앞의 "/" 로 판정하지만,
+   [+ 행 추가]로 직접 넣은 사람은 원본이 없어 알 수가 없다.
+   그래서 표의 「회복기」 칸으로 직접 정할 수 있게 하고, 정해 둔 게 있으면 그쪽을 따른다. */
+function isRehab(row){
+  if(row.rehabEdited) return !!row.rehab;
+  return Object.values(row.sources || {}).some(list=> list.some(e=> e.hasSlash));
+}
+
 /* 사람이 칸에 직접 친 내용을 검사에도 반영한다.
    검사는 row.sources(파일에서 읽은 것)를 보는데, 칸을 고칠 때 row.cells 만 바꾸고 있었다.
    그래서 확인필요·시간 겹침·공휴일 개수 규칙이 고치기 전 값 그대로 남았다.
@@ -2373,8 +2398,7 @@ function syncSourcesFromCell(row, timeLabel){
   const text = (row.cells[timeLabel] || '').trim();
   if(!text){ delete row.sources[timeLabel]; return; }
   // 회복기 여부("/" 표시)는 칸이 아니라 사람의 성질이라 다른 칸에서 물려받는다
-  const 회복기 = Object.keys(row.sources).some(t=> t !== timeLabel &&
-    (row.sources[t]||[]).some(e=> e.hasSlash));
+  const 회복기 = isRehab(row);
   row.sources[timeLabel] = text.split('/').map(x=>x.trim()).filter(Boolean).map(cat=>({
     category: cat, sheet:'직접', raw: cat, col:'', header:'직접 입력',
     hasSlash: 회복기, typed: true
@@ -2434,7 +2458,7 @@ function computeConflicts(){
          PT·OT 시간표 양쪽에 같은 치료를 적어두는 관행이 있어서, 그냥 세면
          "한 번 받은 것" 이 두 번으로 잡힌다 (09.24 언어치료 17건). */
     if(isHoliday()){
-      const 회복기 = Object.values(row.sources||{}).some(list=> list.some(e=>e.hasSlash));
+      const 회복기 = isRehab(row);
       state.sessions.forEach(sess=>{
         // (시간 + 치료) 로 합치기
         const 배정 = [];                      // [{t, cat}]
@@ -2599,8 +2623,7 @@ function computeConflicts(){
         treatmentCount += c.split('/').filter(x=>x).length;
       });
       // 공휴일 비회복기 환자는 1:다 치료 1개만 받는 게 정상이므로 경고하지 않는다
-      const 비회복기 = isHoliday() &&
-        !Object.values(row.sources||{}).some(list=> list.some(e=>e.hasSlash));
+      const 비회복기 = isHoliday() && !isRehab(row);
       if(treatmentCount === 1 && !비회복기){
         errors.push({name, timeLabel:null, field:'name', type:'치료 1건', message:`${name} — 치료가 1건만 배정되어 있습니다. 누락 여부를 확인하세요.`});
       }
@@ -3088,7 +3111,9 @@ function rebuildDestHeader(){
       const 세션시작 = 나눔 && i === state.cutIndex + 1;
       return `<th class="${세션시작?'session-start ':''}${나눔?'session-head':''}">${t}</th>`;
     }).join('') +
-    '<th>메모</th><th>특이사항</th><th>신환/퇴원</th><th></th>';
+    '<th>메모</th><th>특이사항</th>' +
+    (나눔 ? '<th class="rehab-col">회복기</th>' : '') +
+    '<th>신환/퇴원</th><th></th>';
   renderModeRow();
   renderDest();
 }
@@ -3251,6 +3276,27 @@ function renderDest(){
       refreshChecks();
     });
     tr.appendChild(tdSpecial);
+
+    // 회복기 칸 — 공휴일에만 나온다 (토요일 규칙은 "/" 를 쓰지 않는다)
+    if(isHoliday()){
+      const tdRehab = document.createElement('td');
+      tdRehab.className = 'rehab-col';
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+      box.checked = isRehab(row);
+      box.title = row.rehabEdited ? '직접 정한 값입니다' : '원본 이름 앞의 "/" 로 자동 판정했습니다';
+      box.addEventListener('change', ()=>{
+        row.rehab = box.checked;
+        row.rehabEdited = true;
+        // 직접 친 칸은 이 값을 물려받으므로 다시 맞춰준다
+        Object.keys(row.sources||{}).forEach(t=>{
+          if((row.sources[t]||[]).some(e=>e.typed)) syncSourcesFromCell(row, t);
+        });
+        refreshChecks();
+      });
+      tdRehab.appendChild(box);
+      tr.appendChild(tdRehab);
+    }
 
     const tdStatus = document.createElement('td');
     tdStatus.dataset.field = 'status';
@@ -3421,9 +3467,10 @@ document.getElementById('btn-autoall').addEventListener('click', ()=>{
   // 단 사람이 넣은 것(메모로 들어온 특이사항·신환/퇴원, 직접 고친 병실)은 지키고 되돌려 놓는다.
   const keep = {};
   Object.values(state.destRows).forEach(r=>{
-    if(r.special || r.status || r.roomEdited){
+    if(r.special || r.status || r.roomEdited || r.rehabEdited){
       keep[r.name] = {special:r.special, status:r.status, room:r.room, roomEdited:r.roomEdited,
-                      specialFromNotes:r.specialFromNotes, statusFromNotes:r.statusFromNotes};
+                      specialFromNotes:r.specialFromNotes, statusFromNotes:r.statusFromNotes,
+                      rehab:r.rehab, rehabEdited:r.rehabEdited};
     }
   });
   state.destRows = {};
@@ -3444,6 +3491,7 @@ document.getElementById('btn-autoall').addEventListener('click', ()=>{
     row.specialFromNotes = keep[name].specialFromNotes;
     row.statusFromNotes  = keep[name].statusFromNotes;
     if(keep[name].roomEdited){ row.room = keep[name].room; row.roomEdited = true; }
+    if(keep[name].rehabEdited){ row.rehab = keep[name].rehab; row.rehabEdited = true; }
   });
 
   renderSource();
