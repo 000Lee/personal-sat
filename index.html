@@ -3165,7 +3165,12 @@ function renderDest(){
   const 바뀐것만 = state.diff && document.getElementById('diff-only').checked;
   // 줄 순서는 사용자가 고른다. 병실순이면 내보내는 엑셀과 같은 순서가 되어 눈으로 대조하기 쉽다.
   const sortBy = (document.getElementById('sortorder')||{}).value || 'room';
+  // [+ 행 추가]로 만들어 아직 이름을 안 넣은 줄은 어떤 순서에서도 맨 아래에 모은다.
+  // (병실이 비어 있으면 "병실 없는 신환" 무리에 섞여 이름 가나다순으로 중간에 끼어들었다)
+  const 빈줄 = n=> /^새 환자\d*$/.test(n);
   const names = Object.keys(state.destRows).sort((a,b)=>{
+    if(빈줄(a) !== 빈줄(b)) return 빈줄(a) ? 1 : -1;
+    if(빈줄(a)) return a.localeCompare(b,'ko','numeric');   // 새 환자 → 새 환자2 → 새 환자3
     if(sortBy === 'name') return a.localeCompare(b,'ko');
     const c = compareRoom(state.destRows[a].room||'', state.destRows[b].room||'');
     if(c !== 0) return c;
