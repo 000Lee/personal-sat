@@ -923,7 +923,7 @@
       </div>
 
       <!-- ① -->
-      <details class="help-sec" open>
+      <details class="help-sec">
         <summary>① 파일 넣기</summary>
         <div class="help-sec-body">
           <table class="help-t">
@@ -951,10 +951,23 @@
 
       <!-- ② -->
       <details class="help-sec">
-        <summary>② 메모 — 적는 법 (자세히)</summary>
+        <summary>⭐ ② 메모 — 적는 법 (자세히)</summary>
         <div class="help-sec-body">
           <p class="help-note"><b>메모는 치료를 만들지 않습니다.</b> 치료는 오직 시간표에서만 나옵니다. 메모는 <b>잘못된 것을 빨간 칸으로 잡아주는</b> 용도입니다.</p>
           <p class="help-note"><b>메모란에 적힌 것이 곧 현재 상태입니다.</b> 줄을 지우고 [메모 반영]을 다시 누르면 그 내용도 표에서 없어집니다. 단 <b>표에서 직접 친 특이사항·신환/퇴원은 지워지지 않습니다.</b></p>
+
+          <h4>이것만 보고 베껴 쓰셔도 됩니다</h4>
+          <pre class="help-code">신환(김철수)
+퇴원(이영희, 강감찬)
+김철수 FES 안 함
+김철수 09:05 이후
+김철수 일찍 받기 희망
+김철수 첫타임 힘들어하심
+김철수 1:1치료 2개</pre>
+          <p class="help-bad"><b>세 가지만 지키면 됩니다.</b><br>
+             ① <b>한 줄에 한 사람만</b> — 특이사항에 두 사람을 적으면 <b>앞사람만</b> 반영됩니다<br>
+             ② <b>신환·퇴원 줄에는 다른 말을 붙이지 않기</b><br>
+             ③ <b>시간은 <span class="mono">9:05</span> 처럼 <span class="mono">시:분</span> 으로</b> — <span class="mono">9시</span> 는 인식하지 못합니다</p>
 
           <h4>한 줄에 하나씩, 세 가지 중 하나</h4>
           <table class="help-t">
@@ -971,8 +984,8 @@
 신환：김철수
 신환 김철수
 
-퇴원(박영희)
-퇴원: 박영희</pre>
+퇴원(최민수)
+퇴원: 최민수</pre>
           <p><b>여러 명을 한 줄에</b> — 쉼표 · 빗금 · 가운뎃점 · 띄어쓰기로 나눠 적습니다.</p>
           <pre class="help-code">신환(김철수, 이영희, 최민수)
 신환: 김철수 이영희
@@ -983,6 +996,12 @@
           <h4>특이사항 — 이름은 줄 어디에 있어도 찾습니다</h4>
           <pre class="help-code">김철수 09:05 이후로 치료받기 원함
 오전 늦게, 이영희B 일찍 받기 희망하심</pre>
+          <p class="help-bad"><b>특이사항은 한 줄에 한 사람만입니다.</b>
+             신환·퇴원과 달리 여러 명을 한 줄에 적을 수 없습니다.
+             두 사람을 적으면 <b>앞사람에게만</b> 들어가고, 뒷사람은 아무 말 없이 빠집니다.<br>
+             <span class="mono">김철수, 이영희 FES 안 함</span> ✗ &nbsp; → &nbsp; 줄을 나눠 적으세요.</p>
+          <pre class="help-code">김철수 FES 안 함
+이영희 FES 안 함</pre>
           <table class="help-t">
             <tr><th style="width:34%">이름 적는 법</th><th>결과</th></tr>
             <tr><td>명단에 있는 그대로<br><span class="mono">이영희B</span></td><td>바로 찾음</td></tr>
@@ -1010,7 +1029,7 @@
 운동 안 함  =  운동치료 안 함  =  운동치료 않음</pre>
           <table class="help-t">
             <tr><th style="width:40%">쓸 수 있는 치료 이름</th><td>PT · 피티 · OT · 오티 · FES · 운동 · 보행 · 매트 · 기구 · 도수 · 작업 · 연하 · 연하전기 · 언어</td></tr>
-            <tr><th>쓸 수 있는 부정어</th><td>안 함 · 안함 · 안 합니다 · 안 해 · 않음 · 없음 · 제외 · 중단 · 불가 · 금지 · 보류 · X</td></tr>
+            <tr><th>쓸 수 있는 부정어</th><td>안 함 · 안함 · 안 합니다 · 안 해 · 않음 · 없음 · 제외 · 중단 · 불가 · 금지 · 보류 · X · x</td></tr>
           </table>
 
           <p class="help-sub">2. 시간 조건</p>
@@ -1044,7 +1063,10 @@
             <tr><th style="width:40%">적는 말</th><th>빨간 칸이 되는 때</th></tr>
             <tr><td><span class="mono">1:1치료 2개</span><br><span class="mono">개별치료 2개</span></td><td>운동 · 언어 · 작업 · 보행 · 도수치료를 <b>합쳐 2회 미만</b>이면</td></tr>
           </table>
-          <p class="help-bad"><b><span class="mono">치료</span>와 <span class="mono">개</span>를 꼭 붙여야</b> 합니다. <span class="mono">1:1 2개</span> <span class="mono">개별 2회</span> 는 인식하지 못합니다.</p>
+          <p class="help-bad"><b><span class="mono">치료</span> 와 <span class="mono">개</span> 라는 글자가 꼭 들어가야</b> 합니다.
+             띄어쓰기는 상관없습니다.<br>
+             <span class="mono">1:1 2개</span> ✗ (치료 없음) &nbsp;
+             <span class="mono">개별 2회</span> ✗ (치료 없음 · 개 아님)</p>
           <p class="help-note">같은 치료를 두 시간대에 받아도 2개로 셉니다. 종류 수가 아니라 <b>횟수</b>입니다.</p>
 
           <h4>한 줄에 여러 조건을 같이 적어도 됩니다</h4>
@@ -1299,11 +1321,11 @@
 
       <!-- 빨간 칸 -->
       <details class="help-sec">
-        <summary>빨간 칸 · 주황 칸이 되는 이유 (20가지)</summary>
+        <summary>⭐ 빨간 칸 · 노란 칸이 되는 이유 (20가지)</summary>
         <div class="help-sec-body">
           <p class="help-note"><b>두 단계로 나옵니다.</b><br>
              <b class="help-red">🔴 빨간 칸 — 오류</b> · 규칙 위반이 확실하거나 ② 메모로 적어준 것을 어긴 경우<br>
-             <b class="help-yellow">🟡 주황 칸 — 확인 권고</b> · 환자 사정에 따라 정상일 수 있어 눈으로만 보면 되는 경우<br>
+             <b class="help-yellow">🟡 노란 칸 — 확인 권고</b> · 환자 사정에 따라 정상일 수 있어 눈으로만 보면 되는 경우<br>
              맨 위에 <span class="mono">오류 2개 · 확인 권고 5개</span> 처럼 따로 셉니다.<br>
              표 아래 목록은 <b>같은 종류끼리 묶여서</b> <span class="mono">▸ 1:1 개수 31건</span> 처럼 나옵니다.
              줄을 누르면 펼쳐집니다. 5건 이하인 종류는 처음부터 펼쳐져 있습니다.</p>
@@ -2593,7 +2615,7 @@ function computeConflicts(){
 function cellErrors(name, timeLabel){
   return state.errors.filter(er=>er.field==='cell' && er.name===name && er.timeLabel===timeLabel);
 }
-// 오류가 하나라도 섞여 있으면 빨강, 권고만 있으면 주황
+// 오류가 하나라도 섞여 있으면 빨강, 권고만 있으면 노랑
 function sevOf(list){
   if(!list.length) return null;
   return list.some(e=>e.sev==='error') ? 'conflict' : 'advise';
