@@ -1408,9 +1408,8 @@
             <tr><td><b>퇴원 환자 배정</b> — <span class="mono">퇴원</span> 인데 치료가 있음</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>신환 정보 불일치</b> — <span class="mono">신환</span> 인데 입원목록 명단에 이미 있음</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr class="rule-grp"><td colspan="3">빠뜨렸을 가능성</td></tr>
-            <tr><td><b>치료 1건</b> — 치료가 하나뿐<br>
-                <span class="help-dim">퇴원은 제외. 공휴일은 <b>표의 「회복기」 칸이 체크된 사람만</b> —
-                비회복기는 1:다 치료(기구·FES·연하전기) 하나만 받는 게 정상이라 뺍니다</span></td><td class="rule-sev">🟡 권고</td><td class="rule-sev">🟡 권고</td></tr>
+            <tr><td><b>치료 1건</b> — 하루 치료가 하나뿐 <span class="help-dim">(퇴원 제외)</span><br>
+                <span class="help-dim">공휴일은 아래 「1:1 개수」가 <b>세션마다</b> 더 자세히 보므로 여기서는 안 봅니다</span></td><td class="rule-sev">🟡 권고</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td></tr>
             <tr><td><b>시간대 공백</b> — 8:30과 9:40엔 있는데 그 사이 9:05가 비어 있음 <span class="help-dim">(공휴일은 오전·오후 안에서만 봅니다)</span></td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>동명이인</b> — 끝 알파벳만 다른 이름이 같은 표에 둘 이상</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>이름 오류</b> — 눈에는 똑같아 보이는데 <b>보이지 않는 공백이나 특수문자</b> 때문에 두 줄로 나뉨</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
@@ -2412,6 +2411,10 @@ function parseIndividualCountConstraint(text){
    그래서 표의 「회복기」 칸으로 직접 정할 수 있게 하고, 정해 둔 게 있으면 그쪽을 따른다. */
 function isRehab(row){
   if(row.rehabEdited) return !!row.rehab;
+  // 파일에서 읽을 때 "/" 가 하나라도 있었으면 그것을 기억해 둔다.
+  // sources 만 보면, 마지막 "/" 칸을 지우는 순간 회복기 판정이 통째로 날아가
+  // 세션 검사(1:1 개수 등)가 조용히 꺼진다. 회복기는 칸이 아니라 사람의 성질이다.
+  if(row.rehabFromFile) return true;
   return Object.values(row.sources || {}).some(list=> list.some(e=> e.hasSlash));
 }
 
@@ -2518,6 +2521,7 @@ function computeConflicts(){
               ? one.map(x=>x.t+' '+x.cat).join(', ')
               : '있는 치료: ' + 배정.map(x=>x.t+' '+x.cat).join(', ');
             errors.push({name, timeLabel:null, field:'name', type:'1:1 개수',
+              sub:`${one.length}개`,          // 목록에서 개수끼리 묶어 보여주려고
               message:`${name} — ${sess.label}에 1:1 치료가 ${one.length}개입니다` +
                       `(${무엇}). 보통 ${ONE_TO_ONE_PER_SESSION}개입니다.`});
           }
@@ -2648,17 +2652,20 @@ function computeConflicts(){
       errors.push({name, timeLabel:null, field:'status', type:'신환 정보 불일치', message:`${name} — 신환으로 표시되었지만 입원목록 명단에 이미 있는 이름입니다.`});
     }
 
-    // 11) 치료 1건 — "/"로 나눈 실제 치료 항목이 1개 (퇴원 제외)
-    if(row.status !== '퇴원'){
-      let treatmentCount = 0;
-      Object.values(row.cells).forEach(c=>{
-        if(!c) return;
-        treatmentCount += c.split('/').filter(x=>x).length;
-      });
-      // 공휴일 비회복기 환자는 1:다 치료 1개만 받는 게 정상이므로 경고하지 않는다
-      const 비회복기 = isHoliday() && !isRehab(row);
-      if(treatmentCount === 1 && !비회복기){
-        errors.push({name, timeLabel:null, field:'name', type:'치료 1건', message:`${name} — 치료가 1건만 배정되어 있습니다. 누락 여부를 확인하세요.`});
+    // 11) 치료 1건 — "/"로 나눈 실제 치료 항목이 1개 (퇴원 제외). 토요일에만 본다.
+    //     공휴일은 「1:1 개수」가 세션마다 더 자세히(어느 세션·무슨 치료) 잡는다.
+    //     실제로 09.24·10.05 에서 「치료 1건」이 뜬 사람은 한 명도 빠짐없이
+    //     「1:1 개수」에도 떠서, 같은 사람이 두 묶음에 두 번 나왔다.
+    if(!isHoliday()){
+      if(row.status !== '퇴원'){
+        let treatmentCount = 0;
+        Object.values(row.cells).forEach(c=>{
+          if(!c) return;
+          treatmentCount += c.split('/').filter(x=>x).length;
+        });
+        if(treatmentCount === 1){
+          errors.push({name, timeLabel:null, field:'name', type:'치료 1건', message:`${name} — 치료가 1건만 배정되어 있습니다. 누락 여부를 확인하세요.`});
+        }
       }
     }
 
@@ -3128,6 +3135,7 @@ function applyClassification(sheet, timeLabel, cell){
     }
     if(!row.sources[timeLabel]) row.sources[timeLabel] = [];
     row.sources[timeLabel].push({category:r.category, sheet, raw:r.raw, col:cell.colLabel, header:cell.header, hasSlash:!!r.hasSlash});
+    if(r.hasSlash) row.rehabFromFile = true;
     if(r.note) row.note = row.note ? row.note+'; '+r.note : r.note;
     applied++;
   });
@@ -3485,16 +3493,25 @@ function renderErrors(){
     fold.style.display='block';
     document.getElementById(key+'-count').textContent = `(${list.length}건)`;
 
-    // 같은 종류끼리 묶는다. 수가 많으면 접어둔다 (권고는 수십 건이 나올 수 있다)
+    // 같은 종류끼리 묶는다. 수가 많으면 접어둔다 (권고는 수십 건이 나올 수 있다).
+    // sub 가 있으면 한 단계 더 나눈다 — 「1:1 개수」는 0개·1개·3개가 섞이면 눈에 안 들어온다.
     const 묶음 = {};
-    list.forEach(er=> (묶음[er.type] = 묶음[er.type] || []).push(er));
+    list.forEach(er=>{
+      const 이름 = er.type + (er.sub ? ' ' + er.sub : '');
+      (묶음[이름] = 묶음[이름] || {type:er.type, items:[]}).items.push(er);
+    });
+    // 종류는 건수 많은 순. 같은 종류에서 나뉜 것들은 서로 붙여 둔다
+    const 종류합 = {};
+    Object.values(묶음).forEach(g=> 종류합[g.type] = (종류합[g.type] || 0) + g.items.length);
     box.innerHTML = Object.entries(묶음)
-      .sort((a,b)=> b[1].length - a[1].length)
-      .map(([type, items])=>{
-        const 접기 = items.length > 5 ? '' : ' open';
+      .sort((a,b)=> (종류합[b[1].type] - 종류합[a[1].type])
+                 || a[1].type.localeCompare(b[1].type,'ko')
+                 || a[0].localeCompare(b[0],'ko'))
+      .map(([이름, g])=>{
+        const 접기 = g.items.length > 5 ? '' : ' open';
         return `<details class="err-group"${접기}>` +
-          `<summary><b>${type}</b> <span class="err-n">${items.length}건</span></summary>` +
-          items.map(er=> `<div class="error-item">${er.message}</div>`).join('') +
+          `<summary><b>${이름}</b> <span class="err-n">${g.items.length}건</span></summary>` +
+          g.items.map(er=> `<div class="error-item">${er.message}</div>`).join('') +
           `</details>`;
       }).join('');
   });
