@@ -2364,6 +2364,23 @@ function parseIndividualCountConstraint(text){
   return parseInt(m[1],10);
 }
 
+/* 사람이 칸에 직접 친 내용을 검사에도 반영한다.
+   검사는 row.sources(파일에서 읽은 것)를 보는데, 칸을 고칠 때 row.cells 만 바꾸고 있었다.
+   그래서 확인필요·시간 겹침·공휴일 개수 규칙이 고치기 전 값 그대로 남았다.
+   특히 공휴일은 검사 대부분이 sources 기반이라 "고쳐도 아무 반응이 없다" 로 보인다. */
+function syncSourcesFromCell(row, timeLabel){
+  row.sources = row.sources || {};
+  const text = (row.cells[timeLabel] || '').trim();
+  if(!text){ delete row.sources[timeLabel]; return; }
+  // 회복기 여부("/" 표시)는 칸이 아니라 사람의 성질이라 다른 칸에서 물려받는다
+  const 회복기 = Object.keys(row.sources).some(t=> t !== timeLabel &&
+    (row.sources[t]||[]).some(e=> e.hasSlash));
+  row.sources[timeLabel] = text.split('/').map(x=>x.trim()).filter(Boolean).map(cat=>({
+    category: cat, sheet:'직접', raw: cat, col:'', header:'직접 입력',
+    hasSlash: 회복기, typed: true
+  }));
+}
+
 function computeConflicts(){
   const errors = [];
   const names = Object.keys(state.destRows);
@@ -2388,6 +2405,7 @@ function computeConflicts(){
       if(cats.size >= 2){
         const 어디서 = [...cats].map(c=>{
           const src = entries.filter(e=> e.category === c).map(e=>{
+            if(e.typed) return '직접 입력한 칸';
             const 치료사 = String(e.header||'').replace(/\s+/g,' ').trim();
             return `${e.sheet.toUpperCase()} ${e.col||''}열${치료사?' '+치료사:''}${e.raw?' "'+e.raw+'"':''}`;
           });
@@ -2403,8 +2421,9 @@ function computeConflicts(){
       if(isHoliday()){
         entries.forEach(e=>{
           if(!SLASH_REQUIRED_CATS.includes(e.category) || e.hasSlash) return;
+          const 어디 = e.typed ? '직접 입력한 칸에' : `원본 "${e.raw}" 에`;
           errors.push({name, timeLabel, field:'cell', type:'/ 표시 누락',
-            message:`${name} · ${timeLabel} — 원본 "${e.raw}" 에 '/' 없이 ${e.category}(1:1 치료)가 배정되어 있습니다. ` +
+            message:`${name} · ${timeLabel} — ${어디} '/' 없이 ${e.category}(1:1 치료)가 배정되어 있습니다. ` +
                     `1:1 치료는 회복기 환자만 받습니다. '/' 표시를 확인하세요. (${e.sheet.toUpperCase()} ${e.col||''}열 ${String(e.header||'').replace(/\s+/g,' ')})`});
         });
       }
@@ -3198,7 +3217,11 @@ function renderDest(){
       paintCatCell(td, row.cells[t]);
       { const sv = markSev(td, cellErrors(name, t)); if(sv==='conflict') redCells++; else if(sv==='advise') adviseCells++; }
       // 글자를 치는 동안 바로 다시 검사한다 (표를 다시 그리지 않으므로 커서가 그대로 있음)
-      td.addEventListener('input', ()=>{ row.cells[t] = td.textContent.trim(); refreshChecks(); });
+      td.addEventListener('input', ()=>{
+        row.cells[t] = td.textContent.trim();
+        syncSourcesFromCell(row, t);          // 검사가 보는 쪽도 같이 고친다
+        refreshChecks();
+      });
       // 칸에서 빠져나갈 때 색 점을 다시 그린다
       td.addEventListener('blur', ()=>{ paintCatCell(td, row.cells[t]); refreshChecks(); });
       markDiff(td, name, t);
