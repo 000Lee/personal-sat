@@ -1380,7 +1380,7 @@
 
       <!-- 빨간 칸 -->
       <details class="help-sec">
-        <summary>⭐ 빨간 칸 · 노란 칸이 되는 이유 (21가지)</summary>
+        <summary>⭐ 빨간 칸 · 노란 칸이 되는 이유 (20가지)</summary>
         <div class="help-sec-body">
           <p class="help-note"><b>두 단계로 나옵니다.</b><br>
              <b class="help-red">🔴 빨간 칸 — 오류</b> · 규칙 위반이 확실하거나 ② 메모로 적어준 것을 어긴 경우<br>
@@ -1414,10 +1414,7 @@
             <tr><td><b>시간대 공백</b> — 8:30과 9:40엔 있는데 그 사이 9:05가 비어 있음 <span class="help-dim">(공휴일은 오전·오후 안에서만 봅니다)</span></td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>동명이인</b> — 끝 알파벳만 다른 이름이 같은 표에 둘 이상</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>이름 오류</b> — 눈에는 똑같아 보이는데 <b>보이지 않는 공백이나 특수문자</b> 때문에 두 줄로 나뉨</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
-            <tr class="rule-grp"><td colspan="3">공휴일에만 보는 것 — 토요일 시간표에는 이 8가지를 아예 적용하지 않습니다</td></tr>
-            <tr><td><b>비회복기 치료 1건</b> — 회복기가 아닌데 치료가 하나뿐<br>
-                <span class="help-dim">"하나만 받아야 한다" 는 규정이 없어 따로 띄웁니다.
-                위 「치료 1건」 과 섞이지 않습니다</span></td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
+            <tr class="rule-grp"><td colspan="3">공휴일에만 보는 것 — 토요일 시간표에는 이 7가지를 아예 적용하지 않습니다</td></tr>
             <tr><td><b>/ 표시 누락</b> — <span class="mono">/</span> 없이 1:1 치료가 배정됨</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:다 중복</b> — <b>같은 처방</b>을 한 세션에 두 번</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:1 개수</b> — 한 세션의 1:1 치료(PT·OT 계열)가 2개가 아님</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
@@ -2345,7 +2342,6 @@ const INDIVIDUAL_CATS = ['운동치료','언어치료','작업치료','보행치
         환자 사정에 따라 정상일 수 있는 "개수" 관련만 권고. */
 const WARN_TYPES = new Set([
   '치료 1건',
-  '비회복기 치료 1건',
   // 공휴일 — 규칙이 아직 확정되지 않아 권고로 둔다 (팀장님 확인 후 오류로 올릴 수 있음)
   '1:1 개수',
   '1:1 개수(언어)',
@@ -2650,20 +2646,10 @@ function computeConflicts(){
         if(!c) return;
         treatmentCount += c.split('/').filter(x=>x).length;
       });
+      // 공휴일 비회복기 환자는 1:다 치료 1개만 받는 게 정상이므로 경고하지 않는다
       const 비회복기 = isHoliday() && !isRehab(row);
       if(treatmentCount === 1 && !비회복기){
         errors.push({name, timeLabel:null, field:'name', type:'치료 1건', message:`${name} — 치료가 1건만 배정되어 있습니다. 누락 여부를 확인하세요.`});
-      }
-      // 12) 비회복기 치료 1건 — 공휴일 비회복기 환자가 치료 1개뿐인 경우.
-      //     "1개만 받아야 한다" 고 못박은 규정이 없으므로 따로 띄운다.
-      //     「치료 1건」 과 섞으면 회복기 쪽 누락이 묻히므로 종류를 나눈다.
-      if(isHoliday()){
-        if(treatmentCount === 1 && !isRehab(row)){
-          const 무엇 = Object.keys(row.cells).filter(t=>row.cells[t])
-            .map(t=>`${t} ${row.cells[t]}`).join('');
-          errors.push({name, timeLabel:null, field:'name', type:'비회복기 치료 1건',
-            message:`${name} — 비회복기 환자인데 치료가 1건(${무엇})뿐입니다. 누락 여부를 확인하세요.`});
-        }
       }
     }
 
