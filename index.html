@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>1층 토요일 시간표 자동분류기 v2</title>
+<title>토요일 &amp; 공휴일 시간표 자동분류기</title>
 <style>
   :root{
     --bg: #F5F4EF;
@@ -705,6 +705,29 @@
     border-radius:0 6px 6px 0;
   }
   .help-warn{color:var(--warn);font-weight:700;}
+  .h1-sub{font-weight:400;font-size:.62em;color:var(--ink-soft);white-space:nowrap;}
+
+  /* 메모 카드의 예시 — 그대로 베껴 쓸 수 있게 */
+  .notes-eg-label{
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--ink-soft);
+    margin-bottom:3px;
+  }
+  pre.notes-eg{
+    margin:0 0 10px;
+    padding:9px 12px;
+    background:#F7F6F1;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-family:ui-monospace,Consolas,monospace;
+    font-size:12px;
+    line-height:1.75;
+    color:var(--ink-soft);
+    white-space:pre-wrap;
+    overflow-x:auto;
+  }
+
   .help-dim{color:var(--ink-soft);font-size:11.5px;}
 
   /* 규칙 표 — 토요일 칸·공휴일 칸을 한눈에 */
@@ -733,7 +756,7 @@
 <body>
 
 <header>
-  <h1>1층 토요일 시간표 자동분류기</h1>
+  <h1>토요일 &amp; 공휴일 시간표 자동분류기 <span class="h1-sub">(개인시간표 + 검사 기능)</span></h1>
   <p>PT·OT 시간표와 입원목록을 넣고 [전체 변환]을 누르면 치료 종류를 자동으로 판별해 표로 만듭니다.</p>
   <div class="rules-strip">
     <span><span class="dot" style="background:var(--c-exercise)"></span>N → 운동치료</span>
@@ -745,7 +768,8 @@
     <span><span class="dot" style="background:var(--c-equip)"></span>이름 앞 G/M → 기구치료</span>
     <span><span class="dot" style="background:var(--c-lang)"></span>언어 열 이름(N-N) → 언어치료</span>
     <span><span class="dot" style="background:var(--c-fes)"></span>FES 열의 이름 → FES</span>
-    <span><span class="dot" style="background:var(--warn)"></span>빨간 칸 = 확인필요 · 시간 겹침 · 특이사항·상태 불일치 · 치료 1건 · 동명이인 · 이름 오류 · 시간대 공백</span>
+    <span><span class="dot" style="background:var(--warn)"></span>빨간 칸 = 확인필요 · 시간 겹침 · 특이사항·상태 불일치 · 동명이인 · 이름 오류 · 시간대 공백</span>
+    <span><span class="dot" style="background:var(--advise)"></span>노란 칸 = 치료 1건 <span style="color:var(--ink-soft)">(공휴일은 더 있음 — ? 참고)</span></span>
   </div>
 </header>
 
@@ -800,12 +824,17 @@
     <div class="card-head"><h2><span class="step-num">2</span>메모 <span style="font-weight:400;color:var(--ink-soft);font-size:13px;">(선택)</span></h2></div>
     <div class="card-body">
       <div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:8px;line-height:1.6;">
-        특이사항·신환·퇴원을 한 줄에 하나씩 적고 <b>[메모 반영]</b>을 누르면 표에 채워지고, 실제 배정과 안 맞으면 빨간 칸으로 표시됩니다.<br>
-        예) <span class="mono">김철수 09:05 이후로 치료받기 원함</span> · <span class="mono">신환(성춘향)</span> · <span class="mono">퇴원(이몽룡)</span><br>
-        예) <span class="mono">이영희B 치료 일찍 받기 희망</span> (앞쪽 절반 시간대를 벗어나면 오류) · <span class="mono">김영수 첫타임 힘들다고 하심</span> (가장 이른 시간대에 배정되면 오류)<br>
-        예) <span class="mono">최민수 1:1치료 2개 희망하심</span> (운동·언어·작업·보행·도수치료 합계가 2개 미만이면 오류)
+        특이사항·신환·퇴원을 한 줄에 하나씩 적고 <b>[메모 반영]</b>을 누르면 표에 채워지고, 실제 배정과 안 맞으면 빨간 칸으로 표시됩니다.
       </div>
-      <textarea id="notes-input" rows="6" style="width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;resize:vertical;" placeholder="예)&#10;김철수 09:05 이후로 치료받기 원함&#10;이영희B 치료 일찍 받기 희망&#10;김영수 첫타임 힘들다고 하심&#10;최민수 1:1치료 2개 희망하심&#10;신환(성춘향)&#10;퇴원(이몽룡)"></textarea>
+      <div class="notes-eg-label">예)</div>
+      <pre class="notes-eg">신환(김철수)
+퇴원(이영희, 강감찬)
+김철수 FES 안 함
+김철수 09:05 이후
+김철수 일찍 받기 희망
+김철수 첫타임 힘들어하심
+김철수 1:1치료 2개</pre>
+      <textarea id="notes-input" rows="6" style="width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;resize:vertical;"></textarea>
       <div style="display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;">
         <button class="btn accent" id="btn-apply-notes">메모 반영</button>
         <span id="notes-status" style="font-size:12px;color:var(--ink-soft);"></span>
@@ -956,14 +985,9 @@
           <p class="help-note"><b>메모는 치료를 만들지 않습니다.</b> 치료는 오직 시간표에서만 나옵니다. 메모는 <b>잘못된 것을 빨간 칸으로 잡아주는</b> 용도입니다.</p>
           <p class="help-note"><b>메모란에 적힌 것이 곧 현재 상태입니다.</b> 줄을 지우고 [메모 반영]을 다시 누르면 그 내용도 표에서 없어집니다. 단 <b>표에서 직접 친 특이사항·신환/퇴원은 지워지지 않습니다.</b></p>
 
-          <h4>이것만 보고 베껴 쓰셔도 됩니다</h4>
-          <pre class="help-code">신환(김철수)
-퇴원(이영희, 강감찬)
-김철수 FES 안 함
-김철수 09:05 이후
-김철수 일찍 받기 희망
-김철수 첫타임 힘들어하심
-김철수 1:1치료 2개</pre>
+          <p class="help-note"><b>바로 베껴 쓸 예시는 메모 칸 위에 있습니다.</b>
+             여기는 그 일곱 줄이 각각 무슨 뜻인지 풀어 쓴 곳입니다.</p>
+
           <p class="help-bad"><b>세 가지만 지키면 됩니다.</b><br>
              ① <b>한 줄에 한 사람만</b> — 특이사항에 두 사람을 적으면 <b>앞사람만</b> 반영됩니다<br>
              ② <b>신환·퇴원 줄에는 다른 말을 붙이지 않기</b><br>
