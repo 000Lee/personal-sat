@@ -1421,7 +1421,9 @@
                 기구치료만 있어 1:1 이 0개인 세션도 잡습니다</span></td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
             <tr><td><b>1:1 개수(언어)</b> — PT·OT 는 2개로 맞는데 언어치료가 더 있어 넘침</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
             <tr><td><b>1:1 중복</b> — 같은 1:1 치료를 한 세션에 두 번 (NDT 두 개 등)</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
-            <tr><td><b>1:다 개수</b> — 한 세션의 1:다 치료가 3개를 넘음</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
+            <tr><td><b>1:다 개수</b> — 한 세션의 1:다 치료(기구·FES·연하전기)가 <b>0개</b>이거나 <b>3개를 넘음</b><br>
+                <span class="help-dim">0개는 「회복기」 칸이 체크된 사람만 봅니다. 회복기는 세션마다 1개는 받는 것이 보통입니다.
+                치료가 아예 없는 세션은 뺍니다</span></td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
             <tr><td><b>비회복기 언어치료</b> — <span class="mono">/</span> 없는 환자에게 언어치료가 있음</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
           </table>
 
@@ -2538,6 +2540,13 @@ function computeConflicts(){
               message:`${name} — ${sess.label}에 ${cat}가 ${ts.length}번 배정되어 있습니다 (${ts.join(', ')}). ` +
                       `한 세션에 같은 1:1 치료를 두 번 받는 게 맞는지 확인하세요.`});
           });
+          // 1:다 가 하나도 없음 — 회복기는 세션마다 1개는 받는 것이 보통이다.
+          // 치료가 아예 없는 세션은 뺀다 (오전만 받는 사람이 정상으로 있다).
+          if(배정.length && many.length === 0){
+            errors.push({name, timeLabel:null, field:'name', type:'1:다 개수', sub:'0개',
+              message:`${name} — ${sess.label}에 1:다 치료(${ONE_TO_MANY_CATS.join('·')})가 없습니다` +
+                      `(있는 치료: ${배정.map(x=>x.t+' '+x.cat).join(', ')}). 보통 세션마다 1개는 받습니다.`});
+          }
         }
 
         // 1:다 중복 — 같은 처방을 한 세션에 두 번 (확정 규칙이므로 오류)
@@ -2549,7 +2558,7 @@ function computeConflicts(){
 
         // 1:다 개수 — 한 세션에 3개(기구·FES·연하전기 각 1개)를 넘김
         if(many.length > ONE_TO_MANY_CATS.length){
-          errors.push({name, timeLabel:null, field:'name', type:'1:다 개수',
+          errors.push({name, timeLabel:null, field:'name', type:'1:다 개수', sub:`${many.length}개`,
             message:`${name} — ${sess.label}에 1:다 치료가 ${many.length}개입니다` +
                     `(${many.map(x=>x.t+' '+x.cat).join(', ')}). 기구·FES·연하전기 각 1개씩 최대 ${ONE_TO_MANY_CATS.length}개입니다.`});
         }
