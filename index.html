@@ -2662,8 +2662,7 @@ function computeConflicts(){
           const 무엇 = Object.keys(row.cells).filter(t=>row.cells[t])
             .map(t=>`${t} ${row.cells[t]}`).join('');
           errors.push({name, timeLabel:null, field:'name', type:'비회복기 치료 1건',
-            message:`${name} — 비회복기 환자인데 치료가 1건(${무엇})뿐입니다. ` +
-                    `비회복기는 1:다 치료(기구·FES·연하전기) 하나만 받는 것이 보통이라 정상일 수 있습니다. 누락 여부만 확인하세요.`});
+            message:`${name} — 비회복기 환자인데 치료가 1건(${무엇})뿐입니다. 누락 여부를 확인하세요.`});
         }
       }
     }
