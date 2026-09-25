@@ -1165,6 +1165,13 @@
       <details class="help-sec">
         <summary>④ 결과 — 표에서 직접 고치기</summary>
         <div class="help-sec-body">
+          <p class="help-note"><b>표 아래 「이름 못 찾음」</b> — 원본 칸에 <b>치료 표기만 있고 환자 이름이 없을 때</b> 나옵니다.
+             칸 전체가 <span class="mono">VT</span> 하나뿐인 경우가 그렇습니다.
+             누구 것인지 알 수 없어 <b>표에 넣지 않고</b> 따로 모아 보여줍니다 —
+             <span class="mono">[OT · 10:50] "VT" → 연하전기치료</span> 처럼 어느 시간표 몇 시인지 알려주니
+             원본을 보고 이름을 확인한 뒤 표에서 직접 채워 넣으세요.<br>
+             이름은 있는데 치료 표기가 없는 반대 경우는 <b>「확인필요」 빨간 칸</b>으로 표에 남습니다.</p>
+
           <p class="help-note"><b>공휴일에만 「회복기」 칸이 나옵니다.</b>
              원본 이름 앞에 <span class="mono">/</span> 가 붙어 있으면 자동으로 체크됩니다.
              공휴일 검사 여러 개가 이 값을 보고 갈립니다 —
@@ -1459,6 +1466,9 @@
             <tr><td><b>명단이 0명이라고 나온다</b></td><td>담당 병동을 잘못 적었습니다. 아래 병동 목록을 보고 고치세요</td></tr>
             <tr><td><b>파일을 넣었는데 아무것도 안 나온다</b></td><td>시간이 적힌 열을 못 찾은 것입니다. 시간표 양식을 확인하세요</td></tr>
             <tr><td><b>확인필요가 많다</b></td><td>원본 시간표에 치료 표기(N·G·M 등)가 빠진 것입니다. 원본을 확인하거나 칸에 직접 타이핑하세요</td></tr>
+            <tr><td><b>「이름 못 찾음」 이 떴다</b></td>
+                <td>원본 칸에 <span class="mono">VT</span> 같은 치료 표기만 있고 이름이 없는 것입니다.
+                적힌 시간표·시각으로 원본을 찾아 누구인지 확인한 뒤, 표에서 그 사람 칸에 직접 넣으세요</td></tr>
             <tr><td><b>직접 추가한 사람에게<br>공휴일 검사가 안 뜬다</b></td>
                 <td>표의 <b>회복기</b> 칸을 체크하세요. 원본이 없어 <span class="mono">/</span> 를 읽을 수 없으므로
                 기본은 <b>체크 안 됨(비회복기)</b> 입니다</td></tr>
@@ -3436,7 +3446,12 @@ function renderDiff(){
 function renderPending(){
   const fold = document.getElementById('pending-fold');
   const box = document.getElementById('pending-items');
-  if(!state.pending.length){ fold.style.display='none'; return; }
+  if(!state.pending.length){            // 숨기기만 하면 옛 내용이 그대로 남는다
+    fold.style.display='none';
+    box.innerHTML = '';
+    document.getElementById('pending-count').textContent = '';
+    return;
+  }
   fold.style.display='block';
   document.getElementById('pending-count').textContent = `(${state.pending.length}건)`;
   box.innerHTML = state.pending.map(p=>
