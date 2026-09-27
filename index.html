@@ -712,12 +712,13 @@
     border-radius:3px;
   }
   /* 「1:1 / 1:다 치료 적은 순」 에서 개수가 바뀌는 자리 */
-  #dest-table tr.one-start > td{ border-top:2px solid var(--accent); }
+  /* 딱지가 앉을 자리를 줄 위쪽에 비워 둔다 — 안 그러면 이름을 덮는다 */
+  #dest-table tr.one-start > td{ border-top:2px solid var(--accent); padding-top:15px; }
   #dest-table tr.one-start > td.name{ position:relative; }
   #dest-table tr.one-start > td.name::before{
     content:attr(data-onelabel) ' ' attr(data-one) '개';
     position:absolute;
-    top:-9px; left:6px;
+    top:3px; left:5px;
     background:var(--accent);
     color:var(--accent-ink);
     font-size:9.5px;
