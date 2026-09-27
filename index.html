@@ -794,7 +794,6 @@
     <span><span class="dot" style="background:var(--c-lang)"></span>언어 열 이름(N-N) → 언어치료</span>
     <span><span class="dot" style="background:var(--c-fes)"></span>FES 열의 이름 → FES</span>
     <span><span class="dot" style="background:var(--warn)"></span>빨간 칸 = 확인필요 · 시간 겹침 · 메모·상태 불일치 · 치료 1건 · 동명이인 · 이름 오류 · 시간대 공백</span>
-    <span><span class="dot" style="background:var(--advise)"></span>노란 칸 = 1:다 개수 <span style="color:var(--ink-soft)">(공휴일에만 — ? 참고)</span></span>
   </div>
 </header>
 
@@ -1199,7 +1198,7 @@
           <p class="help-note"><b>공휴일에만 「회복기」 칸이 나옵니다.</b>
              원본 이름 앞에 <span class="mono">/</span> 가 붙어 있으면 자동으로 체크됩니다.
              공휴일 검사 여러 개가 이 값을 보고 갈립니다 —
-             <b>1:1 개수 · 1:1 조합 · 1:다 개수 0개</b> 는 체크된 사람만,
+             <b>1:1 개수 · 1:1 조합</b> 은 체크된 사람만,
              <b>/ 표시 누락</b> 은 체크 안 된 사람만 뜹니다.<br>
              <b><span class="mono">[+ 행 추가]</span> 로 직접 넣은 사람은 원본이 없어 판정할 수가 없습니다.</b>
              회복기 환자라면 <b>직접 체크해 주세요.</b> 안 하면 위 검사들이 돌지 않습니다.
@@ -1403,13 +1402,12 @@
 
       <!-- 빨간 칸 -->
       <details class="help-sec">
-        <summary>⭐ 빨간 칸 · 노란 칸이 되는 이유 (18가지)</summary>
+        <summary>⭐ 빨간 칸 · 노란 칸이 되는 이유 (17가지)</summary>
         <div class="help-sec-body">
-          <p class="help-note"><b>두 단계로 나옵니다.</b><br>
-             <b class="help-red">🔴 빨간 칸 — 오류</b> · 규칙 위반이 확실하거나 ② 메모로 적어준 것을 어긴 경우<br>
-             <b class="help-yellow">🟡 노란 칸 — 확인 권고</b> · 환자 사정에 따라 정상일 수 있어 눈으로만 보면 되는 경우<br>
-             맨 위에 <span class="mono">오류 2개 · 확인 권고 5개</span> 처럼 따로 셉니다.<br>
-             표 아래 목록은 <b>같은 종류끼리 묶여서</b> <span class="mono">▸ 1:1 개수 31건</span> 처럼 나옵니다.
+          <p class="help-note"><b>걸리면 <span class="help-red">🔴 빨간 칸</span>이 됩니다.</b>
+             맨 위에 <span class="mono">오류 12개</span> 처럼 세어 보여줍니다.
+             칸에 <b>마우스를 올리면</b> 왜 걸렸는지 나옵니다.<br>
+             표 아래 목록은 <b>같은 종류끼리 묶여서</b> <span class="mono">▸ 1:1 개수 1개 20건</span> 처럼 나옵니다.
              줄을 누르면 펼쳐집니다. 5건 이하인 종류는 처음부터 펼쳐져 있습니다.</p>
           <p class="help-bad"><b>토요일과 공휴일은 규칙이 다릅니다.</b>
              아래 표의 <b>토요일</b> 칸과 <b>공휴일</b> 칸을 보세요.
@@ -1436,7 +1434,7 @@
             <tr><td><b>시간대 공백</b> — 8:30과 9:40엔 있는데 그 사이 9:05가 비어 있음 <span class="help-dim">(공휴일은 오전·오후 안에서만 봅니다)</span></td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>동명이인</b> — 끝 알파벳만 다른 이름이 같은 표에 둘 이상</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>이름 오류</b> — 눈에는 똑같아 보이는데 <b>보이지 않는 공백이나 특수문자</b> 때문에 두 줄로 나뉨</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
-            <tr class="rule-grp"><td colspan="3">공휴일에만 보는 것 — 토요일 시간표에는 이 5가지를 아예 적용하지 않습니다</td></tr>
+            <tr class="rule-grp"><td colspan="3">공휴일에만 보는 것 — 토요일 시간표에는 이 4가지를 아예 적용하지 않습니다</td></tr>
             <tr><td><b>/ 표시 누락</b> — <span class="mono">/</span> 없이 1:1 치료가 배정됨</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:다 중복</b> — <b>같은 처방</b>을 한 세션에 두 번</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:1 개수</b> — 한 세션의 1:1 치료가 <b>2개가 안 됨</b> (0개·1개)<br>
@@ -1448,9 +1446,6 @@
                 <b>「1:다 치료 적은 순」</b> 도 같은 식으로 씁니다</span></td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:1 조합</b> — 1:1 치료 2개가 <b>전부 PT 계열</b>(운동·보행·매트·도수)<br>
                 <span class="help-dim"><b>작업치료나 언어치료 중 하나는 꼭 들어가야</b> 합니다. PT 두 개는 안 됩니다</span></td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
-            <tr><td><b>1:다 개수</b> — 한 세션의 1:다 치료(기구·FES·연하전기)가 <b>3개를 넘음</b><br>
-                <span class="help-dim">기구·FES·연하전기는 서로 다른 처방이라 각 1개씩 최대 3개입니다.<br>
-                <b>하나도 없는 경우는 안 잡습니다</b> — 줄 순서를 「1:다 치료 적은 순」 으로 바꾸면 바로 보입니다</span></td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
           </table>
 
           <p class="help-sub">「시간 겹침」 을 더 자세히</p>
@@ -2369,10 +2364,9 @@ const INDIVIDUAL_CATS = ['운동치료','언어치료','작업치료','보행치
 /* 🟡 확인 권고로 띄울 규칙. 여기 없는 것은 전부 🔴 오류다.
    기준: ② 메모로 적어준 것을 어기면 무조건 오류.
         환자 사정에 따라 정상일 수 있는 "개수" 관련만 권고. */
-const WARN_TYPES = new Set([
-  // 공휴일 — 규칙이 아직 확정되지 않아 권고로 둔다 (팀장님 확인 후 오류로 올릴 수 있음)
-  '1:다 개수',
-]);
+// 🟡 확인 권고로 둘 규칙 이름. 지금은 비어 있다 — 모든 규칙이 🔴 오류다.
+// 규칙을 권고로 내리려면 여기에 이름만 넣으면 된다.
+const WARN_TYPES = new Set([]);
 // ※ '1:다 중복'(같은 처방을 한 세션에 두 번)은 확정된 규칙이라 🔴 오류다.
 
 /* ===== 공휴일 전용 ===== */
@@ -2576,12 +2570,6 @@ function computeConflicts(){
                     `같은 처방은 한 세션에 한 번입니다. (기구·FES·연하전기는 서로 다른 처방이라 각 1번씩은 됩니다)`});
         });
 
-        // 1:다 개수 — 한 세션에 3개(기구·FES·연하전기 각 1개)를 넘김
-        if(many.length > ONE_TO_MANY_CATS.length){
-          errors.push({name, timeLabel:null, field:'name', type:'1:다 개수', sub:`${many.length}개`,
-            message:`${name} — ${sess.label}에 1:다 치료가 ${many.length}개입니다` +
-                    `(${many.map(x=>x.t+' '+x.cat).join(', ')}). 기구·FES·연하전기 각 1개씩 최대 ${ONE_TO_MANY_CATS.length}개입니다.`});
-        }
 
       });
     }
