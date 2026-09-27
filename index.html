@@ -798,7 +798,7 @@
     <span><span class="dot" style="background:var(--c-equip)"></span>이름 앞 G/M → 기구치료</span>
     <span><span class="dot" style="background:var(--c-lang)"></span>언어 열 이름(N-N) → 언어치료</span>
     <span><span class="dot" style="background:var(--c-fes)"></span>FES 열의 이름 → FES</span>
-    <span><span class="dot" style="background:var(--warn)"></span>빨간 칸 = 확인필요 · 시간 겹침 · 특이사항·상태 불일치 · 동명이인 · 이름 오류 · 시간대 공백</span>
+    <span><span class="dot" style="background:var(--warn)"></span>빨간 칸 = 확인필요 · 시간 겹침 · 메모·상태 불일치 · 동명이인 · 이름 오류 · 시간대 공백</span>
     <span><span class="dot" style="background:var(--advise)"></span>노란 칸 = 치료 1건 <span style="color:var(--ink-soft)">(공휴일은 더 있음 — ? 참고)</span></span>
   </div>
 </header>
@@ -854,7 +854,7 @@
     <div class="card-head"><h2><span class="step-num">2</span>메모 <span style="font-weight:400;color:var(--ink-soft);font-size:13px;">(선택)</span></h2></div>
     <div class="card-body">
       <div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:8px;line-height:1.6;">
-        특이사항·신환·퇴원을 한 줄에 하나씩 적고 <b>[메모 반영]</b>을 누르면 표에 채워지고, 실제 배정과 안 맞으면 빨간 칸으로 표시됩니다.
+        메모·신환·퇴원을 한 줄에 하나씩 적고 <b>[메모 반영]</b>을 누르면 표의 <b>메모</b> 칸에 채워지고, 실제 배정과 안 맞으면 빨간 칸으로 표시됩니다.
       </div>
       <div class="notes-eg-label">예)</div>
       <pre class="notes-eg">신환(김철수)
@@ -1023,13 +1023,13 @@
         <summary>⭐ ② 메모 — 적는 법 (자세히)</summary>
         <div class="help-sec-body">
           <p class="help-note"><b>메모는 치료를 만들지 않습니다.</b> 치료는 오직 시간표에서만 나옵니다. 메모는 <b>잘못된 것을 빨간 칸으로 잡아주는</b> 용도입니다.</p>
-          <p class="help-note"><b>메모란에 적힌 것이 곧 현재 상태입니다.</b> 줄을 지우고 [메모 반영]을 다시 누르면 그 내용도 표에서 없어집니다. 단 <b>표에서 직접 친 특이사항·신환/퇴원은 지워지지 않습니다.</b></p>
+          <p class="help-note"><b>메모란에 적힌 것이 곧 현재 상태입니다.</b> 줄을 지우고 [메모 반영]을 다시 누르면 그 내용도 표에서 없어집니다. 단 <b>표에서 직접 친 메모·신환/퇴원은 지워지지 않습니다.</b></p>
 
           <p class="help-note"><b>바로 베껴 쓸 예시는 메모 칸 위에 있습니다.</b>
              여기는 그 일곱 줄이 각각 무슨 뜻인지 풀어 쓴 곳입니다.</p>
 
           <p class="help-bad"><b>세 가지만 지키면 됩니다.</b><br>
-             ① <b>한 줄에 한 사람만</b> — 특이사항에 두 사람을 적으면 <b>앞사람만</b> 반영됩니다<br>
+             ① <b>한 줄에 한 사람만</b> — 한 줄에 두 사람을 적으면 <b>앞사람만</b> 반영됩니다<br>
              ② <b>신환·퇴원 줄에는 다른 말을 붙이지 않기</b><br>
              ③ <b>시간은 <span class="mono">9:05</span> 처럼 <span class="mono">시:분</span> 으로</b> — <span class="mono">9시</span> 는 인식하지 못합니다</p>
 
@@ -1038,7 +1038,7 @@
             <tr><th style="width:34%">적는 형태</th><th>결과</th></tr>
             <tr><td><span class="mono">신환(이름)</span></td><td>그 사람 <b>신환/퇴원 칸</b>이 <span class="mono">신환</span>으로</td></tr>
             <tr><td><span class="mono">퇴원(이름)</span></td><td>그 사람 <b>신환/퇴원 칸</b>이 <span class="mono">퇴원</span>으로</td></tr>
-            <tr><td>그 밖의 모든 줄</td><td>줄 안에서 이름을 찾아 그 사람 <b>특이사항 칸</b>에 <b>줄 전체</b>를 저장</td></tr>
+            <tr><td>그 밖의 모든 줄</td><td>줄 안에서 이름을 찾아 그 사람 <b>메모 칸</b>에 <b>줄 전체</b>를 저장</td></tr>
           </table>
 
           <h4>신환 · 퇴원 — 이렇게 적어도 다 됩니다</h4>
@@ -1054,13 +1054,13 @@
           <pre class="help-code">신환(김철수, 이영희, 최민수)
 신환: 김철수 이영희
 퇴원(김철수/이영희)</pre>
-          <p class="help-bad"><b>안 되는 것</b> — 뒤에 다른 말이 붙으면 신환/퇴원으로 인식하지 않고 특이사항으로 들어갑니다.<br>
+          <p class="help-bad"><b>안 되는 것</b> — 뒤에 다른 말이 붙으면 신환/퇴원으로 인식하지 않고 메모 칸으로 들어갑니다.<br>
             <span class="mono">신환(김철수) 어제 입원함</span> ✗ &nbsp; → &nbsp; 두 줄로 나눠 적으세요.</p>
 
-          <h4>특이사항 — 이름은 줄 어디에 있어도 찾습니다</h4>
+          <h4>그 밖의 줄 — 이름은 줄 어디에 있어도 찾습니다</h4>
           <pre class="help-code">김철수 09:05 이후로 치료받기 원함
 오전 늦게, 이영희B 일찍 받기 희망하심</pre>
-          <p class="help-bad"><b>특이사항은 한 줄에 한 사람만입니다.</b>
+          <p class="help-bad"><b>한 줄에 한 사람만입니다.</b>
              신환·퇴원과 달리 여러 명을 한 줄에 적을 수 없습니다.
              두 사람을 적으면 <b>앞사람에게만</b> 들어가고, 뒷사람은 아무 말 없이 빠집니다.<br>
              <span class="mono">김철수, 이영희 FES 안 함</span> ✗ &nbsp; → &nbsp; 줄을 나눠 적으세요.</p>
@@ -1078,7 +1078,7 @@
             <li>같은 사람에게 여러 줄을 적으면 <span class="mono">;</span> 로 이어 붙습니다.</li>
           </ul>
 
-          <h4>특이사항에서 자동으로 검사하는 문구</h4>
+          <h4>메모에서 자동으로 검사하는 문구</h4>
 
           <p class="help-sub">1. 이 치료는 하지 않는다</p>
           <table class="help-t">
@@ -1154,7 +1154,7 @@
           <ul>
             <li>PT·OT 시간표를 전부 읽어 표를 만듭니다.</li>
             <li><b>몇 번 눌러도 결과가 같습니다.</b> 실수로 또 눌러도 괜찮습니다.</li>
-            <li>누를 때마다 표를 새로 만들지만 <b>메모로 넣은 특이사항·신환/퇴원</b>과 <b>직접 고친 병실</b>은 그대로 지켜집니다.</li>
+            <li>누를 때마다 표를 새로 만들지만 <b>② 메모로 넣은 메모·신환/퇴원</b>과 <b>직접 고친 병실</b>은 그대로 지켜집니다.</li>
             <li class="help-bad"><b>치료 칸을 손으로 고친 것은 없어집니다.</b> 치료 칸 손질은 변환을 다 끝낸 뒤 마지막에 하세요.</li>
           </ul>
 
@@ -1191,7 +1191,7 @@
              이름을 찾아 각자에게 나눠 담깁니다. 여기 적힌 것이 곧 현재 상태라, 줄을 지우고 다시 누르면 사라집니다<br>
              <b>비고</b> (표의 열) — <b>원본 시간표에서 딸려온 것.</b> 괄호 안 내용 ·
              <span class="mono">OS</span> · <span class="mono">GB</span> · 언어치료실 방 번호 등. 사람이 적는 칸이 아닙니다<br>
-             <b>특이사항</b> (표의 열) — <b>검사에 쓰이는 칸.</b> ② 메모에서 나눠 담기거나 직접 타이핑합니다.
+             <b>메모</b> (표의 열) — <b>검사에 쓰이는 칸.</b> ② 메모에서 나눠 담기거나 직접 타이핑합니다.
              <span class="mono">FES 안 함</span> 같은 말을 적으면 시간표와 대조해 빨간 칸으로 잡아줍니다</p>
 
           <p class="help-note"><b>표 아래 「이름 못 찾음」</b> — 원본 칸에 <b>치료 표기만 있고 환자 이름이 없을 때</b> 나옵니다.
@@ -1215,7 +1215,7 @@
             <tr><td><b>이름</b></td><td>눌러서 고치고 <b>칸 밖을 클릭</b>(또는 Enter). 이미 표에 있는 이름이면 거부하고 되돌립니다. 바꾼 이름이 입원목록에 있으면 <b>병실이 자동으로 채워지고</b> 노란색이 풀립니다</td></tr>
             <tr><td><b>병실</b></td><td>눌러서 고침</td></tr>
             <tr><td><b>치료 칸</b></td><td>눌러서 <span class="mono">운동치료</span> 처럼 타이핑. 두 개면 <span class="mono">운동치료/작업치료</span></td></tr>
-            <tr><td><b>메모 · 특이사항</b></td><td>눌러서 고침. 여기서 친 것은 [메모 반영]을 눌러도 안 지워집니다</td></tr>
+            <tr><td><b>비고 · 메모</b></td><td>눌러서 고침. 여기서 친 것은 [메모 반영]을 눌러도 안 지워집니다</td></tr>
             <tr><td><b>신환/퇴원</b></td><td>드롭다운에서 고름</td></tr>
             <tr><td><b>[삭제]</b></td><td>그 줄이 사라집니다. <b>엑셀에도 안 들어갑니다</b></td></tr>
           </table>
@@ -1317,7 +1317,7 @@
           <p>토요일 시간표는 수요일부터 여러 차례 검수합니다. ① 에 <b>지난 검수 때 저장한 엑셀</b>을
              같이 넣으면, 그때와 <b>무엇이 달라졌는지</b> 표시해 줍니다.</p>
           <p class="help-note">넣지 않으면 평소처럼 동작합니다. 비교는 <b>엑셀에 들어가는 것만</b> 합니다 —
-             이름 · 병실 · 시간대 칸. 비고 · 특이사항 · 신환/퇴원은 엑셀에 없으므로 비교하지 않습니다.</p>
+             이름 · 병실 · 시간대 칸. 비고 · 메모 · 신환/퇴원은 엑셀에 없으므로 비교하지 않습니다.</p>
           <p class="help-note"><b>공휴일 결과도 됩니다.</b> 시트가 오전·오후 두 장이어도 그대로 넣으면
              <b>둘을 합쳐서</b> 읽습니다. 오전에만 있는 사람, 오후에만 있는 사람도 한 사람으로 봅니다.</p>
 
@@ -1365,7 +1365,7 @@
             <li><b>병실 번호 순</b>으로 정렬. 병실이 없는 신환은 <b>맨 아래</b></li>
             <li>파일 이름 <span class="mono">09.12_토요일.xlsx</span> · 시트 이름 <span class="mono">09.12</span></li>
           </ul>
-          <p class="help-bad"><b>엑셀에 안 들어가는 것</b> — 메모 · 특이사항 · 신환/퇴원. 이 세 가지는 화면에서 검수할 때만 씁니다.<br>
+          <p class="help-bad"><b>엑셀에 안 들어가는 것</b> — 비고 · 메모 · 신환/퇴원. 이 세 가지는 화면에서 검수할 때만 씁니다.<br>
             <b>퇴원으로 골라도 엑셀에서 빠지지 않습니다.</b> 빼려면 그 줄의 <b>[삭제]</b>를 누르세요.</p>
         </div>
       </details>
@@ -1426,11 +1426,11 @@
             <tr><td><b>시간 겹침</b> — 같은 사람이 같은 시간에 <b>서로 다른</b> 치료를 2개 이상 받음</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr class="rule-grp"><td colspan="3">치료를 못 정함</td></tr>
             <tr><td><b>확인필요</b> — 치료사 칸인데 표기가 없음. 원본 글자와 위치를 알려줍니다</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
-            <tr class="rule-grp"><td colspan="3">특이사항(메모)과 안 맞음 — 적어주신 것을 어긴 것이라 전부 오류</td></tr>
-            <tr><td><b>특이사항 불일치</b> — <span class="mono">○○ 안 함</span> 인데 그 치료가 있음</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
-            <tr><td><b>특이사항 시간 위반</b> — <span class="mono">시:분 이후/이전</span> 을 어김</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
-            <tr><td><b>특이사항 이른시간 희망 위반</b> — <span class="mono">일찍 희망</span> 인데 뒤쪽 절반에 배정</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
-            <tr><td><b>특이사항 첫타임 위반</b> — <span class="mono">첫타임 힘들다</span> 인데 가장 이른 시간에 배정</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
+            <tr class="rule-grp"><td colspan="3">메모와 안 맞음 — 적어주신 것을 어긴 것이라 전부 오류</td></tr>
+            <tr><td><b>메모 불일치</b> — <span class="mono">○○ 안 함</span> 인데 그 치료가 있음</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
+            <tr><td><b>메모 시간 위반</b> — <span class="mono">시:분 이후/이전</span> 을 어김</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
+            <tr><td><b>메모 이른시간 희망 위반</b> — <span class="mono">일찍 희망</span> 인데 뒤쪽 절반에 배정</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
+            <tr><td><b>메모 첫타임 위반</b> — <span class="mono">첫타임 힘들다</span> 인데 가장 이른 시간에 배정</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:1치료 개수 부족</b> — <span class="mono">1:1치료 N개</span> 인데 개수가 모자람</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr class="rule-grp"><td colspan="3">신환·퇴원과 안 맞음</td></tr>
             <tr><td><b>퇴원 환자 배정</b> — <span class="mono">퇴원</span> 인데 치료가 있음</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
@@ -2192,7 +2192,7 @@ function classifyCell(cell){
 /* ---------------------------------------------------------
    7. 내보내기용 표 만들기  (SPEC 5)
    이름 | 병실 | 슬롯... — 병실순, 병실 없는 신환은 맨 아래
-   메모·특이사항·신환/퇴원 열은 넣지 않는다 (화면 검수용)
+   비고·메모·신환/퇴원 열은 넣지 않는다 (화면 검수용)
    --------------------------------------------------------- */
 function buildExportAoA(destRows, timeLabels){
   const names = Object.keys(destRows).sort((a,b)=>{
@@ -2304,7 +2304,7 @@ const isHoliday = ()=> state.mode === 'holiday' && state.sessions.length > 1;
    1-1. 지난 결과와 비교
    검수를 여러 차례 하므로, 지난번 결과와 무엇이 달라졌는지 보여준다.
    비교 대상은 엑셀에 들어가는 것만 — 이름 · 병실 · 시간대 칸.
-   (메모 · 특이사항 · 신환/퇴원은 엑셀에 없으므로 비교하지 않는다)
+   (비고 · 메모 · 신환/퇴원은 엑셀에 없으므로 비교하지 않는다)
    ========================================================= */
 function computeDiff(){
   if(!state.prev){ state.diff = null; return; }
@@ -2395,7 +2395,7 @@ const OT_OR_LANG = ['작업치료','언어치료'];
 const ONE_TO_MANY_CATS = ['기구치료','FES','연하전기치료'];
 const ONE_TO_ONE_PER_SESSION = 2;     // 한 세션에 1:1 치료 2개
 
-/* 특이사항 문구 -> 있으면 안 되는 치료 카테고리
+/* 메모 문구 -> 있으면 안 되는 치료 카테고리
    치료 이름을 어떻게 적어도 잡히게 한다.
      "연하 안 함" · "연하전기 안함" · "연하전기치료 제외"  ← 전부 같은 뜻
    앞부분(연하/연하전기)만 적어도, 뒤에 "치료"를 붙여도, 띄어쓰기가 없어도 잡는다. */
@@ -2606,7 +2606,7 @@ function computeConflicts(){
         catStr.split('/').forEach(c=>assignedCats.add(c));
       });
 
-      // 4) 특이사항 "○○ 안 함" 인데 그 치료가 배정됨
+      // 4) 메모 "○○ 안 함" 인데 그 치료가 배정됨
       const hitCats = new Set();
       SPECIAL_NO_RULES.forEach(rule=>{
         if(rule.re.test(row.special)) rule.cats.forEach(c=>hitCats.add(c));
@@ -2614,7 +2614,7 @@ function computeConflicts(){
       if(hitCats.size){
         const overlap = Array.from(hitCats).filter(c=>assignedCats.has(c));
         if(overlap.length){
-          errors.push({name, timeLabel:null, field:'special', type:'특이사항 불일치', message:`${name} — 특이사항("${row.special}")과 달리 ${overlap.join(', ')} 치료가 배정되어 있습니다.`});
+          errors.push({name, timeLabel:null, field:'special', type:'메모 불일치', message:`${name} — 메모("${row.special}")와 달리 ${overlap.join(', ')}가 배정되어 있습니다.`});
         }
       }
 
@@ -2626,10 +2626,10 @@ function computeConflicts(){
           const mins = timeToMinutes(t);
           const limit = `${Math.floor(tc.minutes/60)}:${String(tc.minutes%60).padStart(2,'0')}`;
           if(tc.type==='이후' && mins < tc.minutes){
-            errors.push({name, timeLabel:t, field:'cell', type:'특이사항 시간 위반', message:`${name} · ${t} — 특이사항("${row.special}")상 ${limit} 이후를 원하지만 그 전 시간에 배정되어 있습니다.`});
+            errors.push({name, timeLabel:t, field:'cell', type:'메모 시간 위반', message:`${name} · ${t} — 메모("${row.special}")상 ${limit} 이후를 원하지만 그 전 시간에 배정되어 있습니다.`});
           }
           if(tc.type==='이전' && mins > tc.minutes){
-            errors.push({name, timeLabel:t, field:'cell', type:'특이사항 시간 위반', message:`${name} · ${t} — 특이사항("${row.special}")상 ${limit} 이전을 원하지만 그 이후 시간에 배정되어 있습니다.`});
+            errors.push({name, timeLabel:t, field:'cell', type:'메모 시간 위반', message:`${name} · ${t} — 메모("${row.special}")상 ${limit} 이전을 원하지만 그 이후 시간에 배정되어 있습니다.`});
           }
         });
       }
@@ -2644,8 +2644,8 @@ function computeConflicts(){
           슬.forEach(t=>{
             if(!row.cells[t]) return;
             if(timeToMinutes(t) > cutoffMins){
-              errors.push({name, timeLabel:t, field:'cell', type:'특이사항 이른시간 희망 위반',
-                message:`${name} · ${t} — 특이사항("${row.special}")대로 ${sess.label?sess.label+' ':''}이른 시간(${cutoffLabel} 이전)을 원하지만 그 이후 시간에 배정되어 있습니다.`});
+              errors.push({name, timeLabel:t, field:'cell', type:'메모 이른시간 희망 위반',
+                message:`${name} · ${t} — 메모("${row.special}")대로 ${sess.label?sess.label+' ':''}이른 시간(${cutoffLabel} 이전)을 원하지만 그 이후 시간에 배정되어 있습니다.`});
             }
           });
         });
@@ -2656,8 +2656,8 @@ function computeConflicts(){
         state.sessions.forEach(sess=>{
           const firstLabel = sess.slots[0];
           if(firstLabel && row.cells[firstLabel]){
-            errors.push({name, timeLabel:firstLabel, field:'cell', type:'특이사항 첫타임 위반',
-              message:`${name} · ${firstLabel} — 특이사항("${row.special}")대로 ${sess.label?sess.label+' ':''}첫 타임 배정을 피해야 하지만 ${firstLabel}에 배정되어 있습니다.`});
+            errors.push({name, timeLabel:firstLabel, field:'cell', type:'메모 첫타임 위반',
+              message:`${name} · ${firstLabel} — 메모("${row.special}")대로 ${sess.label?sess.label+' ':''}첫 타임 배정을 피해야 하지만 ${firstLabel}에 배정되어 있습니다.`});
           }
         });
       }
@@ -2671,7 +2671,7 @@ function computeConflicts(){
           catStr.split('/').forEach(c=>{ if(INDIVIDUAL_CATS.includes(c)) individualList.push(c); });
         });
         if(individualList.length < countReq){
-          errors.push({name, timeLabel:null, field:'special', type:'1:1치료 개수 부족', message:`${name} — 특이사항("${row.special}")대로면 1:1치료(${INDIVIDUAL_CATS.join('/')}) ${countReq}개를 원하지만 현재 ${individualList.length}개(${individualList.length?individualList.join(', '):'없음'})만 배정되어 있습니다.`});
+          errors.push({name, timeLabel:null, field:'special', type:'1:1치료 개수 부족', message:`${name} — 메모("${row.special}")대로면 1:1치료(${INDIVIDUAL_CATS.join('/')}) ${countReq}개를 원하지만 현재 ${individualList.length}개(${individualList.length?individualList.join(', '):'없음'})만 배정되어 있습니다.`});
         }
       }
     }
@@ -3188,7 +3188,7 @@ function rebuildDestHeader(){
       const 세션시작 = 나눔 && i === state.cutIndex + 1;
       return `<th class="${세션시작?'session-start ':''}${나눔?'session-head':''}">${t}</th>`;
     }).join('') +
-    '<th>비고</th><th>특이사항</th>' +
+    '<th>비고</th><th>메모</th>' +
     (나눔 ? '<th class="rehab-col">회복기</th>' : '') +
     '<th>신환/퇴원</th><th></th>';
   renderModeRow();
@@ -3385,7 +3385,7 @@ function renderDest(){
     tdSpecial.contentEditable = true;
     tdSpecial.textContent = row.special || '';
     { const sv = markSev(tdSpecial, rowFieldErrors(name, 'special')); if(sv==='conflict') redCells++; else if(sv==='advise') adviseCells++; }
-    // 표에서 직접 친 특이사항은 메모란 소유가 아니다 ([메모 반영] 을 눌러도 안 지워짐)
+    // 표에서 직접 친 메모는 ② 메모란 소유가 아니다 ([메모 반영] 을 눌러도 안 지워짐)
     tdSpecial.addEventListener('input', ()=>{
       row.special = tdSpecial.textContent.trim();
       row.specialFromNotes = false;
@@ -3599,7 +3599,7 @@ document.getElementById('btn-autoall').addEventListener('click', ()=>{
     return;
   }
   // 다시 눌러도 같은 결과가 나오도록 자동 반영분은 새로 만든다.
-  // 단 사람이 넣은 것(메모로 들어온 특이사항·신환/퇴원, 직접 고친 병실)은 지키고 되돌려 놓는다.
+  // 단 사람이 넣은 것(② 메모로 들어온 메모·신환/퇴원, 직접 고친 병실)은 지키고 되돌려 놓는다.
   const keep = {};
   Object.values(state.destRows).forEach(r=>{
     if(r.special || r.status || r.roomEdited || r.rehabEdited){
@@ -3725,7 +3725,7 @@ document.getElementById('btn-apply-notes').addEventListener('click', ()=>{
   const {specialLines, newNames, dischargedNames, unmatched} = parseNotesInput(text);
 
   // 메모란이 곧 현재 상태다. 지난번 메모에서 들어간 것은 먼저 전부 지운다.
-  // (표에서 직접 친 특이사항·상태는 건드리지 않는다)
+  // (표에서 직접 친 메모·상태는 건드리지 않는다)
   Object.values(state.destRows).forEach(row=>{
     if(row.specialFromNotes){ row.special = ''; row.specialFromNotes = false; }
     if(row.statusFromNotes){  row.status  = ''; row.statusFromNotes  = false; }
@@ -3812,7 +3812,7 @@ function showToast(msg){
 /* =========================================================
    7. 내보내기 (SPEC 5)
    시트 하나짜리 새 xlsx. 이름 | 병실 | 시간대... — 병실순, 신환은 맨 아래
-   메모·특이사항·신환/퇴원 열은 넣지 않는다 (화면 검수용)
+   비고·메모·신환/퇴원 열은 넣지 않는다 (화면 검수용)
    ========================================================= */
 document.getElementById('btn-export').addEventListener('click', ()=>{
   const sheetName = document.getElementById('sheetname').value.trim() || '새시트';
