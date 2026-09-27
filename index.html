@@ -712,25 +712,22 @@
     border-radius:3px;
   }
   /* 「1:1 / 1:다 치료 적은 순」 에서 개수가 바뀌는 자리 */
-  /* 딱지가 앉을 자리를 줄 위쪽에 비워 둔다 — 안 그러면 이름을 덮는다 */
-  #dest-table tr.one-start > td{ border-top:2px solid var(--accent); padding-top:15px; }
-  #dest-table tr.one-start > td.name{ position:relative; }
+  /* 딱지는 띄우지 않고 이름 위에 한 줄로 그냥 둔다.
+     띄워 놓으면(position:absolute) 폭이 칸에 눌려 배경이 글자를 못 따라간다. */
+  #dest-table tr.one-start > td{ border-top:2px solid var(--accent); }
   #dest-table tr.one-start > td.name::before{
     content:attr(data-onelabel) ' ' attr(data-one) '개';
-    position:absolute;
-    top:3px; left:5px;
+    display:block;
+    width:fit-content;       /* 자기 줄을 쓰되 배경은 글자 길이만큼만 */
     background:var(--accent);
     color:var(--accent-ink);
     font-size:9.5px;
     font-weight:700;
     line-height:1;
     padding:2px 5px;
+    margin:1px 0 3px;
     border-radius:7px;
     white-space:nowrap;      /* 이름 칸이 좁아 글자가 세로로 접히는 것을 막는다 */
-    width:max-content;       /* 칸 폭에 눌려 배경만 잘리는 것을 막는다 */
-    max-width:none;
-    pointer-events:none;
-    z-index:3;
   }
 
   /* 회복기 체크칸 — 공휴일에만 나온다 */
