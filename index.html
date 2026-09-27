@@ -727,8 +727,10 @@
     padding:2px 5px;
     border-radius:7px;
     white-space:nowrap;      /* 이름 칸이 좁아 글자가 세로로 접히는 것을 막는다 */
+    width:max-content;       /* 칸 폭에 눌려 배경만 잘리는 것을 막는다 */
+    max-width:none;
     pointer-events:none;
-    z-index:2;
+    z-index:3;
   }
 
   /* 회복기 체크칸 — 공휴일에만 나온다 */
