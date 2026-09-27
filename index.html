@@ -1104,8 +1104,9 @@
             <tr><th style="width:40%">① 이 중 하나</th><td>일찍 · 이른 시간 · 빠른 시간</td></tr>
             <tr><th>② 이 중 하나</th><td>희망 · 원함 · 바람 · 해달라 · 해주 · 받고 싶 · 원하</td></tr>
           </table>
-          <p>→ 전체 시간대의 <b>뒤쪽 절반</b>에 배정되면 빨간 칸.<br>
-             예) 8:30~11:25 여섯 칸이면 9:05까지가 앞쪽 절반, <b>9:40부터 빨간 칸</b>.</p>
+          <p>→ <b>뒤쪽 절반</b>에 배정되면 빨간 칸.<br>
+             예) 8:30~11:25 여섯 칸이면 9:05까지가 앞쪽 절반, <b>9:40부터 빨간 칸</b>.<br>
+             <span class="help-dim">공휴일은 <b>오전·오후 각각</b> 따로 봅니다. 토요일은 하루가 한 덩어리입니다.</span></p>
           <p class="help-note">같은 줄에 <span class="mono">09:05 이후</span> 같은 시각이 있으면 그쪽이 우선이고 이 규칙은 쓰지 않습니다.</p>
 
           <p class="help-sub">4. 첫 타임 피하기</p>
@@ -1228,8 +1229,8 @@
             <li><b class="help-yellow">노란 배경</b> = 입원목록 명단에 없는 사람(신환). 병실이 빈칸입니다</li>
             <li><b class="help-red">빨간 칸</b> = 확인이 필요한 곳. <b>마우스를 올리면 이유가 뜹니다</b></li>
             <li>맨 위 <b>큰 글씨</b> = 빨간 칸이 몇 개인지</li>
-            <li><b>▸ 오류 자세히 보기</b> — 빨간 칸의 이유를 한 줄씩 전부 목록으로</li>
-            <li><b>▸ 이름을 못 찾은 항목</b> — 이름을 정하지 못해 표에 못 들어간 것 (보통 0건)</li>
+            <li><b>▸ 🔴 오류</b> — 빨간 칸의 이유를 <b>같은 종류끼리 묶어</b> 한 줄씩</li>
+            <li><b>▸ 이름을 못 찾은 항목</b> — 이름을 정하지 못해 표에 못 들어간 것</li>
           </ul>
         </div>
       </details>
@@ -1274,31 +1275,34 @@
 
           <h4>공휴일에만 하는 검사</h4>
           <p class="help-note"><b>회복기 환자</b>는 원본 이름 앞에 <span class="mono">/</span> 가 붙습니다
-             (<span class="mono">/김철수N</span>). <b>1:1 치료는 회복기 환자만</b> 받을 수 있습니다.</p>
+             (<span class="mono">/김철수N</span>). <b>1:1 치료는 회복기 환자만</b> 받을 수 있습니다.
+             표의 <b>「회복기」 칸</b>으로 확인·수정할 수 있습니다.</p>
           <table class="help-t">
-            <tr><th style="width:24%">1:1 치료</th><td>운동 · 보행 · 매트 · 도수 · 작업<br>
-                <span class="mono">언어치료는 세지 않습니다</span> — 비회복기 환자도 받는 경우가 있어서입니다</td></tr>
+            <tr><th style="width:24%">1:1 치료</th><td>운동 · 보행 · 매트 · 도수(PT) · 작업(OT) · <b>언어치료</b><br>
+                <span class="help-dim">세 계열을 <b>합쳐서</b> 셉니다 — 「PT·OT·언어 중 2개」</span></td></tr>
             <tr><th>1:다 치료</th><td>기구 · FES · 연하전기</td></tr>
           </table>
           <table class="help-t">
-            <tr><th style="width:24%">🔴 / 표시 누락</th><td><span class="mono">/</span> 없이 1:1 치료가 배정된 경우</td></tr>
+            <tr><th style="width:24%">🔴 / 표시 누락</th><td>회복기가 아닌데 1:1 치료가 배정된 경우.
+                <span class="help-dim">표의 「회복기」 칸을 꺼도 같은 판정을 씁니다</span></td></tr>
+            <tr><th>🔴 1:1 개수</th><td>한 세션의 1:1 치료가 <b>2개가 안 되는</b> 경우 (0개 · 1개)<br>
+                <span class="help-dim">그 세션에 치료가 하나도 없으면 뺍니다. <b>기구·FES 만 있어도 검사합니다</b> — 1:1 이 0개라 걸립니다</span></td></tr>
+            <tr><th>🔴 1:1 조합</th><td>1:1 치료 2개가 <b>전부 PT 계열</b>인 경우.
+                작업치료나 언어치료 중 하나는 꼭 들어가야 합니다</td></tr>
             <tr><th>🔴 1:다 중복</th><td><b>같은 처방</b>을 한 세션에 두 번 받은 경우 (오전에 기구 2번 등)<br>
-                기구·FES·연하전기는 <b>서로 다른 처방</b>이라 한 세션에 각 1번씩, 최대 3개까지 됩니다.<br>
-                오전에 기구 1번 + 오후에 기구 1번은 정상입니다</td></tr>
-            <tr><th>🟡 1:1 개수</th><td>한 세션의 1:1 치료(PT·OT 계열)가 2개가 아닌 경우</td></tr>
-            <tr><th>🟡 1:1 개수(언어)</th><td>PT·OT 는 2개로 맞는데 <b>언어치료가 더 있어</b> 넘치는 경우.
-                언어치료도 1:1 이지만 원인이 다르므로 따로 띄웁니다</td></tr>
-            <tr><th>🟡 1:1 중복</th><td>같은 1:1 치료를 한 세션에 <b>두 번</b> 받는 경우 (NDT 두 개 등)</td></tr>
-            <tr><th>🟡 1:다 개수</th><td>한 세션의 1:다 치료가 3개를 넘는 경우</td></tr>
-            <tr><th>🟡 비회복기 언어치료</th><td><span class="mono">/</span> 없는 환자에게 언어치료가 있는 경우</td></tr>
+                기구·FES·연하전기는 <b>서로 다른 처방</b>이라 한 세션에 각 1번씩은 됩니다.<br>
+                오전에 기구 1번 + 오후에 기구 1번도 정상입니다</td></tr>
           </table>
           <p class="help-note"><b>세기 전에 같은 것을 합칩니다.</b> PT·OT 시간표 양쪽에 같은 치료를 적어두는
              관행이 있어서, 그냥 세면 한 번 받은 것이 두 번으로 잡힙니다
-             (09.24 언어치료 17건). <b>시간과 치료가 모두 같으면 한 번</b>으로 셉니다.</p>
-          <p class="help-bad"><b>🟡 세 가지는 아직 규칙이 확정되지 않아 확인 권고로 둡니다.</b>
-             고쳐야 하는 게 아니라 눈으로만 보시면 됩니다.</p>
-          <p class="help-note"><b>비회복기 환자는 「치료 1건」 경고가 뜨지 않습니다.</b>
-             기구 하나만 받고 끝나는 게 정상이기 때문입니다.</p>
+             (09.24 언어치료 17건). <b>시간과 치료가 모두 같으면 한 번</b>으로 셉니다.
+             <b>확인필요</b>는 아직 치료가 아니라서 세지 않습니다.</p>
+          <p class="help-note"><b>2개를 넘는 것은 오류가 아닙니다.</b> 다른 사람 치료가 펑크 나면
+             더 넣어주기도 합니다. 치료가 적은 사람을 찾으려면 줄 순서를
+             <b>「1:1 치료 적은 순」</b> · <b>「1:다 치료 적은 순」</b> 으로 바꾸세요 —
+             개수가 바뀌는 자리에 초록 띠가 들어갑니다.</p>
+          <p class="help-note"><b>「치료 1건」은 공휴일에 안 봅니다.</b>
+             위 「1:1 개수」가 세션마다 더 자세히 보기 때문입니다.</p>
           <p><b>시간대 공백 · 일찍 희망 · 첫타임</b> 검사는 <b>오전·오후 각각</b> 따로 봅니다.
              점심시간을 공백으로 잡지 않습니다.</p>
         </div>
@@ -1395,14 +1399,15 @@
                 <span class="mono">김철수A + OS</span> 도 작업치료, <span class="mono">김철수A + GB</span> 도 작업치료입니다.</li>
           </ul>
           <h4>무시하는 것</h4>
-          <p><span class="mono">FES1</span> <span class="mono">FES-1</span> 같은 기계 담당 표시 · <span class="mono">789</span> <span class="mono">1020</span> 같은 숫자 · <span class="mono">7팀</span> <span class="mono">7팀액팅</span> · <span class="mono">접수</span> <span class="mono">건수</span> <span class="mono">점심</span> <span class="mono">부도사유</span> <span class="mono">OS</span> · 한 글자짜리</p>
+          <p><span class="mono">FES1</span> <span class="mono">FES-1</span> 같은 기계 담당 표시 · <span class="mono">789</span> <span class="mono">1020</span> 같은 숫자 · <span class="mono">7팀</span> <span class="mono">7팀액팅</span> · <span class="mono">접수</span> <span class="mono">건수</span> <span class="mono">점심</span> <span class="mono">부도사유</span> · 한 글자짜리 ·
+             <span class="mono">OS</span> <span class="mono">GB</span> <span class="help-dim">(이름 아랫줄에 있으면 버리지 않고 비고 칸에 남깁니다)</span></p>
           <p class="help-note">「시간별 환자 보기」에서 <b>(무시)</b> 라고 회색으로 보이면 <b>빠뜨린 게 아니라 일부러 버린 것</b>입니다.</p>
         </div>
       </details>
 
       <!-- 빨간 칸 -->
       <details class="help-sec">
-        <summary>⭐ 빨간 칸 · 노란 칸이 되는 이유 (17가지)</summary>
+        <summary>⭐ 빨간 칸이 되는 이유 (17가지)</summary>
         <div class="help-sec-body">
           <p class="help-note"><b>걸리면 <span class="help-red">🔴 빨간 칸</span>이 됩니다.</b>
              맨 위에 <span class="mono">오류 12개</span> 처럼 세어 보여줍니다.
@@ -1438,8 +1443,9 @@
             <tr><td><b>/ 표시 누락</b> — <span class="mono">/</span> 없이 1:1 치료가 배정됨</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:다 중복</b> — <b>같은 처방</b>을 한 세션에 두 번</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:1 개수</b> — 한 세션의 1:1 치료가 <b>2개가 안 됨</b> (0개·1개)<br>
-                <span class="help-dim">1:1 치료 = 운동·보행·매트·도수(PT) · 작업(OT) · 언어치료.
-                치료가 아예 없는 세션은 뺍니다(오전만 받는 사람이 정상으로 있습니다).<br>
+                <span class="help-dim">1:1 치료 = 운동·보행·매트·도수(PT) · 작업(OT) · 언어치료.<br>
+                그 세션에 <b>치료가 하나도 없을 때만</b> 뺍니다 (오전만 받는 사람이 정상으로 있습니다).
+                <b>기구·FES 같은 1:다 치료만 있어도 검사합니다</b> — 그런 세션은 1:1 이 0개라 걸립니다.<br>
                 <b>2개를 넘는 것은 오류가 아닙니다</b> — 다른 사람 치료가 펑크 나면 더 넣어주기도 합니다.
                 적은 사람을 찾으려면 줄 순서를 <b>「1:1 치료 적은 순」</b> 으로 바꾸세요 —
                 개수가 바뀌는 자리에 <b><span class="mono">1:1 치료 2개</span> 초록 띠</b>가 들어갑니다.
