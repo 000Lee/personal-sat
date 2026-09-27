@@ -711,24 +711,19 @@
     padding:1px 4px;
     border-radius:3px;
   }
-  /* 「1:1 / 1:다 치료 적은 순」 에서 개수가 바뀌는 자리 */
-  /* 딱지는 띄우지 않고 이름 위에 한 줄로 그냥 둔다.
-     띄워 놓으면(position:absolute) 폭이 칸에 눌려 배경이 글자를 못 따라간다. */
-  #dest-table tr.one-start > td{ border-top:2px solid var(--accent); }
-  #dest-table tr.one-start > td.name::before{
-    content:attr(data-onelabel) ' ' attr(data-one) '개';
-    display:block;
-    width:fit-content;       /* 자기 줄을 쓰되 배경은 글자 길이만큼만 */
+  /* 「1:1 / 1:다 치료 적은 순」 — 개수가 바뀌는 자리에 끼우는 구분 줄.
+     이름 칸 안에 띄우지 않는다. 표의 한 줄이라 폭·높이가 어긋날 일이 없다. */
+  #dest-table tr.one-divider td{
     background:var(--accent);
     color:var(--accent-ink);
-    font-size:9.5px;
+    font-size:11px;
     font-weight:700;
-    line-height:1;
-    padding:2px 5px;
-    margin:1px 0 3px;
-    border-radius:7px;
-    white-space:nowrap;      /* 이름 칸이 좁아 글자가 세로로 접히는 것을 막는다 */
+    text-align:left;
+    padding:3px 10px;
+    border:1px solid var(--accent);
+    letter-spacing:.2px;
   }
+  #dest-table tr.one-divider:hover td{ background:var(--accent); }
 
   /* 회복기 체크칸 — 공휴일에만 나온다 */
   #dest-table th.rehab-col{width:46px;}
@@ -1449,7 +1444,7 @@
                 치료가 아예 없는 세션은 뺍니다(오전만 받는 사람이 정상으로 있습니다).<br>
                 <b>2개를 넘는 것은 오류가 아닙니다</b> — 다른 사람 치료가 펑크 나면 더 넣어주기도 합니다.
                 적은 사람을 찾으려면 줄 순서를 <b>「1:1 치료 적은 순」</b> 으로 바꾸세요 —
-                개수가 바뀌는 자리에 <b>가로선과 <span class="mono">1:1 2개</span> 딱지</b>가 붙습니다.
+                개수가 바뀌는 자리에 <b><span class="mono">1:1 치료 2개</span> 초록 띠</b>가 들어갑니다.
                 <b>「1:다 치료 적은 순」</b> 도 같은 식으로 씁니다</span></td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:1 조합</b> — 1:1 치료 2개가 <b>전부 PT 계열</b>(운동·보행·매트·도수)<br>
                 <span class="help-dim"><b>작업치료나 언어치료 중 하나는 꼭 들어가야</b> 합니다. PT 두 개는 안 됩니다</span></td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
@@ -3213,6 +3208,8 @@ function refreshChecks(){
   let redCells = 0, adviseCells = 0;
   document.querySelectorAll('#dest-body tr').forEach(tr=>{
     const name = tr.dataset.name;
+    if(!name) return;                    // 구분 줄
+
     tr.querySelectorAll('td').forEach(td=>{
       let errs = null;
       if(td.dataset.t !== undefined){
@@ -3308,12 +3305,18 @@ function renderDest(){
     const row = state.destRows[name];
     const tr = document.createElement('tr');
     tr.dataset.name = name;
+    // 개수가 바뀌면 그 앞에 구분 줄을 하나 끼워 넣는다.
+    // 이름 칸 안에 띄우던 것을 그만둔다 — 칸 폭·높이에 휘둘려 배경이 제멋대로였다.
     if(적은순 && !빈줄(name)){
       const n = 일대일수(name);
       if(n !== 앞줄개수){
-        tr.classList.add('one-start');
-        tr.dataset.one = n;
-        tr.dataset.onelabel = 딱지이름;
+        const 구분 = document.createElement('tr');
+        구분.className = 'one-divider';
+        const td = document.createElement('td');
+        td.colSpan = 2 + state.allTimeLabels.length + (isHoliday() ? 5 : 4);
+        td.textContent = `${딱지이름} 치료 ${n}개`;
+        구분.appendChild(td);
+        body.appendChild(구분);
         앞줄개수 = n;
       }
     }
@@ -3321,10 +3324,6 @@ function renderDest(){
     const tdName = document.createElement('td');
     tdName.className = 'name' + (row.isNew ? ' new-row' : '');
     // 개수 딱지는 이름 칸에 붙는다 (CSS 의 attr() 은 그 칸의 속성만 읽는다)
-    if(tr.dataset.one !== undefined){
-      tdName.dataset.one = tr.dataset.one;
-      tdName.dataset.onelabel = tr.dataset.onelabel;
-    }
     tdName.dataset.field = 'name';
     tdName.contentEditable = true;
     tdName.textContent = row.name;
