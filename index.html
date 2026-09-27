@@ -2492,16 +2492,25 @@ function computeConflicts(){
                   `한 타임에는 하나만 받을 수 있습니다.  ${어디서.join('  ·  ')}`});
       }
 
-      // 2) 공휴일 — "/" 표시 없이 1:1 치료가 배정된 경우
-      //    1:1 치료는 회복기 환자만 받을 수 있고, 회복기는 원본 이름 앞에 "/" 가 붙는다
+      // 2) 공휴일 — 회복기가 아닌데 1:1 치료가 배정된 경우.
+      //    1:1 치료는 회복기 환자만 받고, 회복기는 원본 이름 앞에 "/" 가 붙는다.
+      //    ※ 칸마다 e.hasSlash 를 보던 것을 사람 단위(isRehab)로 바꿨다.
+      //      칸별로 보면 표의 「회복기」 칸을 꺼도 파일에서 읽은 칸은 그대로 통과해
+      //      "직접 친 칸만 오류가 뜬다" 는 이상한 상태가 된다. 회복기는 사람의 성질이다.
+      //      (실제 파일에서는 한 사람 안에 "/" 가 섞인 경우가 한 명도 없어 건수는 같다)
       if(isHoliday()){
+       if(!isRehab(row)){
         entries.forEach(e=>{
-          if(!SLASH_REQUIRED_CATS.includes(e.category) || e.hasSlash) return;
-          const 어디 = e.typed ? '직접 입력한 칸에' : `원본 "${e.raw}" 에`;
+          if(!SLASH_REQUIRED_CATS.includes(e.category)) return;
+          const 어디 = e.typed ? '직접 입력한 칸에'
+                    : e.hasSlash ? '원본에는 '/' 가 있지만 「회복기」 칸을 꺼두셨는데'
+                    : `원본 "${e.raw}" 에 '/' 없이`;
+          const 출처 = e.typed ? '' : ` (${e.sheet.toUpperCase()} ${e.col||''}열 ${String(e.header||'').replace(/\s+/g,' ')})`;
           errors.push({name, timeLabel, field:'cell', type:'/ 표시 누락',
-            message:`${name} · ${timeLabel} — ${어디} '/' 없이 ${e.category}(1:1 치료)가 배정되어 있습니다. ` +
-                    `1:1 치료는 회복기 환자만 받습니다. '/' 표시를 확인하세요. (${e.sheet.toUpperCase()} ${e.col||''}열 ${String(e.header||'').replace(/\s+/g,' ')})`});
+            message:`${name} · ${timeLabel} — ${어디} ${e.category}(1:1 치료)가 배정되어 있습니다. ` +
+                    `1:1 치료는 회복기 환자만 받습니다.${출처}`});
         });
+       }
       }
     });
 
