@@ -793,8 +793,8 @@
     <span><span class="dot" style="background:var(--c-equip)"></span>이름 앞 G/M → 기구치료</span>
     <span><span class="dot" style="background:var(--c-lang)"></span>언어 열 이름(N-N) → 언어치료</span>
     <span><span class="dot" style="background:var(--c-fes)"></span>FES 열의 이름 → FES</span>
-    <span><span class="dot" style="background:var(--warn)"></span>빨간 칸 = 확인필요 · 시간 겹침 · 메모·상태 불일치 · 동명이인 · 이름 오류 · 시간대 공백</span>
-    <span><span class="dot" style="background:var(--advise)"></span>노란 칸 = 치료 1건 <span style="color:var(--ink-soft)">(공휴일은 더 있음 — ? 참고)</span></span>
+    <span><span class="dot" style="background:var(--warn)"></span>빨간 칸 = 확인필요 · 시간 겹침 · 메모·상태 불일치 · 치료 1건 · 동명이인 · 이름 오류 · 시간대 공백</span>
+    <span><span class="dot" style="background:var(--advise)"></span>노란 칸 = 1:다 개수 <span style="color:var(--ink-soft)">(공휴일에만 — ? 참고)</span></span>
   </div>
 </header>
 
@@ -1432,7 +1432,7 @@
             <tr><td><b>신환 정보 불일치</b> — <span class="mono">신환</span> 인데 입원목록 명단에 이미 있음</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr class="rule-grp"><td colspan="3">빠뜨렸을 가능성</td></tr>
             <tr><td><b>치료 1건</b> — 하루 치료가 하나뿐 <span class="help-dim">(퇴원 제외)</span><br>
-                <span class="help-dim">공휴일은 아래 「1:1 개수」가 <b>세션마다</b> 더 자세히 보므로 여기서는 안 봅니다</span></td><td class="rule-sev">🟡 권고</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td></tr>
+                <span class="help-dim">공휴일은 아래 「1:1 개수」가 <b>세션마다</b> 더 자세히 보므로 여기서는 안 봅니다</span></td><td class="rule-sev">🔴 오류</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td></tr>
             <tr><td><b>시간대 공백</b> — 8:30과 9:40엔 있는데 그 사이 9:05가 비어 있음 <span class="help-dim">(공휴일은 오전·오후 안에서만 봅니다)</span></td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>동명이인</b> — 끝 알파벳만 다른 이름이 같은 표에 둘 이상</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>이름 오류</b> — 눈에는 똑같아 보이는데 <b>보이지 않는 공백이나 특수문자</b> 때문에 두 줄로 나뉨</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
@@ -2370,7 +2370,6 @@ const INDIVIDUAL_CATS = ['운동치료','언어치료','작업치료','보행치
    기준: ② 메모로 적어준 것을 어기면 무조건 오류.
         환자 사정에 따라 정상일 수 있는 "개수" 관련만 권고. */
 const WARN_TYPES = new Set([
-  '치료 1건',
   // 공휴일 — 규칙이 아직 확정되지 않아 권고로 둔다 (팀장님 확인 후 오류로 올릴 수 있음)
   '1:다 개수',
 ]);
