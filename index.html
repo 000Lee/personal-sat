@@ -1175,9 +1175,8 @@
           <p class="help-note"><b>공휴일에만 「회복기」 칸이 나옵니다.</b>
              원본 이름 앞에 <span class="mono">/</span> 가 붙어 있으면 자동으로 체크됩니다.
              공휴일 검사 여러 개가 이 값을 보고 갈립니다 —
-             <b>1:1 개수 · 1:1 개수(언어) · 1:1 중복</b> 은 체크된 사람만,
-             <b>/ 표시 누락 · 비회복기 언어치료</b> 는 체크 안 된 사람만,
-             <b>치료 1건</b> 은 체크된 사람만 뜹니다.<br>
+             <b>1:1 개수 · 1:다 개수 0개</b> 는 체크된 사람만,
+             <b>/ 표시 누락</b> 은 체크 안 된 사람만 뜹니다.<br>
              <b><span class="mono">[+ 행 추가]</span> 로 직접 넣은 사람은 원본이 없어 판정할 수가 없습니다.</b>
              회복기 환자라면 <b>직접 체크해 주세요.</b> 안 하면 위 검사들이 돌지 않습니다.
              직접 정한 값은 <b>[전체 변환]</b> 을 다시 눌러도 남습니다.</p>
@@ -1380,7 +1379,7 @@
 
       <!-- 빨간 칸 -->
       <details class="help-sec">
-        <summary>⭐ 빨간 칸 · 노란 칸이 되는 이유 (20가지)</summary>
+        <summary>⭐ 빨간 칸 · 노란 칸이 되는 이유 (17가지)</summary>
         <div class="help-sec-body">
           <p class="help-note"><b>두 단계로 나옵니다.</b><br>
              <b class="help-red">🔴 빨간 칸 — 오류</b> · 규칙 위반이 확실하거나 ② 메모로 적어준 것을 어긴 경우<br>
@@ -1413,18 +1412,15 @@
             <tr><td><b>시간대 공백</b> — 8:30과 9:40엔 있는데 그 사이 9:05가 비어 있음 <span class="help-dim">(공휴일은 오전·오후 안에서만 봅니다)</span></td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>동명이인</b> — 끝 알파벳만 다른 이름이 같은 표에 둘 이상</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>이름 오류</b> — 눈에는 똑같아 보이는데 <b>보이지 않는 공백이나 특수문자</b> 때문에 두 줄로 나뉨</td><td class="rule-sev">🔴 오류</td><td class="rule-sev">🔴 오류</td></tr>
-            <tr class="rule-grp"><td colspan="3">공휴일에만 보는 것 — 토요일 시간표에는 이 7가지를 아예 적용하지 않습니다</td></tr>
+            <tr class="rule-grp"><td colspan="3">공휴일에만 보는 것 — 토요일 시간표에는 이 4가지를 아예 적용하지 않습니다</td></tr>
             <tr><td><b>/ 표시 누락</b> — <span class="mono">/</span> 없이 1:1 치료가 배정됨</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:다 중복</b> — <b>같은 처방</b>을 한 세션에 두 번</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:1 개수</b> — 한 세션의 1:1 치료(PT·OT 계열)가 2개가 아님<br>
                 <span class="help-dim">치료가 아예 없는 세션은 뺍니다(오전만 받는 사람이 정상으로 있습니다).
                 기구치료만 있어 1:1 이 0개인 세션도 잡습니다</span></td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
-            <tr><td><b>1:1 개수(언어)</b> — PT·OT 는 2개로 맞는데 언어치료가 더 있어 넘침</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
-            <tr><td><b>1:1 중복</b> — 같은 1:1 치료를 한 세션에 두 번 (NDT 두 개 등)</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
             <tr><td><b>1:다 개수</b> — 한 세션의 1:다 치료(기구·FES·연하전기)가 <b>0개</b>이거나 <b>3개를 넘음</b><br>
                 <span class="help-dim">0개는 「회복기」 칸이 체크된 사람만 봅니다. 회복기는 세션마다 1개는 받는 것이 보통입니다.
                 치료가 아예 없는 세션은 뺍니다</span></td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
-            <tr><td><b>비회복기 언어치료</b> — <span class="mono">/</span> 없는 환자에게 언어치료가 있음</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🟡 권고</td></tr>
           </table>
 
           <p class="help-sub">「시간 겹침」 을 더 자세히</p>
@@ -2347,10 +2343,7 @@ const WARN_TYPES = new Set([
   '치료 1건',
   // 공휴일 — 규칙이 아직 확정되지 않아 권고로 둔다 (팀장님 확인 후 오류로 올릴 수 있음)
   '1:1 개수',
-  '1:1 개수(언어)',
-  '1:1 중복',
   '1:다 개수',
-  '비회복기 언어치료',
 ]);
 // ※ '1:다 중복'(같은 처방을 한 세션에 두 번)은 확정된 규칙이라 🔴 오류다.
 
@@ -2503,7 +2496,6 @@ function computeConflicts(){
         }));
 
         const one  = 배정.filter(x=> ONE_TO_ONE_CATS.includes(x.cat));
-        const lang = 배정.filter(x=> x.cat === '언어치료');
         const many = 배정.filter(x=> ONE_TO_MANY_CATS.includes(x.cat));
 
         // 치료 종류별로 몇 번인지
@@ -2527,19 +2519,6 @@ function computeConflicts(){
               message:`${name} — ${sess.label}에 1:1 치료가 ${one.length}개입니다` +
                       `(${무엇}). 보통 ${ONE_TO_ONE_PER_SESSION}개입니다.`});
           }
-          // 1:1 개수(언어) — PT·OT 는 2개인데 언어치료가 더 붙어 넘친 경우
-          else if(lang.length && one.length + lang.length > ONE_TO_ONE_PER_SESSION){
-            errors.push({name, timeLabel:null, field:'name', type:'1:1 개수(언어)',
-              message:`${name} — ${sess.label}에 1:1 치료가 ${one.length + lang.length}개입니다` +
-                      `(${[...one, ...lang].map(x=>x.t+' '+x.cat).join(', ')}). ` +
-                      `PT·OT 는 ${one.length}개로 맞지만 언어치료가 더 있습니다.`});
-          }
-          // 1:1 중복 — 같은 1:1 치료를 한 세션에 두 번 (NDT 두 개 등)
-          Object.entries(횟수([...one, ...lang])).filter(([,ts])=>ts.length>1).forEach(([cat,ts])=>{
-            errors.push({name, timeLabel:null, field:'name', type:'1:1 중복',
-              message:`${name} — ${sess.label}에 ${cat}가 ${ts.length}번 배정되어 있습니다 (${ts.join(', ')}). ` +
-                      `한 세션에 같은 1:1 치료를 두 번 받는 게 맞는지 확인하세요.`});
-          });
           // 1:다 가 하나도 없음 — 회복기는 세션마다 1개는 받는 것이 보통이다.
           // 치료가 아예 없는 세션은 뺀다 (오전만 받는 사람이 정상으로 있다).
           if(배정.length && many.length === 0){
@@ -2563,12 +2542,6 @@ function computeConflicts(){
                     `(${many.map(x=>x.t+' '+x.cat).join(', ')}). 기구·FES·연하전기 각 1개씩 최대 ${ONE_TO_MANY_CATS.length}개입니다.`});
         }
 
-        // 비회복기인데 언어치료가 있는 경우 — 예외로 두되 눈에는 보이게 (규칙 미확정)
-        if(!회복기) lang.forEach(x=>{
-          errors.push({name, timeLabel:null, field:'name', type:'비회복기 언어치료',
-            message:`${name} — ${sess.label} ${x.t}에 언어치료가 있는데 원본에 '/' 표시가 없습니다. ` +
-                    `1:1 치료는 회복기 환자만 받지만, 언어치료는 비회복기도 받는 경우가 있어 권고로만 알립니다.`});
-        });
       });
     }
 
