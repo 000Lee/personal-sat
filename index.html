@@ -789,8 +789,9 @@
     <span><span class="dot" style="background:var(--c-mat)"></span>이름 뒤 M → 매트치료</span>
     <span><span class="dot" style="background:var(--c-manual)"></span>Z → 도수치료</span>
     <span><span class="dot" style="background:var(--c-ot)"></span>S 또는 A → 작업치료</span>
+    <span><span class="dot" style="background:var(--c-ot)"></span>S·A + OS/GB → 일상생활동작훈련</span>
     <span><span class="dot" style="background:var(--c-vt)"></span>VT 포함 → 연하전기치료</span>
-    <span><span class="dot" style="background:var(--c-equip)"></span>이름 앞 G/M → 기구치료</span>
+    <span><span class="dot" style="background:var(--c-equip)"></span>이름 앞 G/M → 기구</span>
     <span><span class="dot" style="background:var(--c-lang)"></span>언어 열 이름(N-N) → 언어치료</span>
     <span><span class="dot" style="background:var(--c-fes)"></span>FES 열의 이름 → FES</span>
     <span><span class="dot" style="background:var(--warn)"></span>빨간 칸 = 확인필요 · 시간 겹침 · 메모·상태 불일치 · 치료 1건 · 동명이인 · 이름 오류 · 시간대 공백</span>
@@ -1156,7 +1157,7 @@
           <h4>▸ 시간별 환자 보기</h4>
           <p>원본 시간표를 시간대별로 펼쳐 보여줍니다. <b>프로그램이 원본을 어떻게 읽었는지 눈으로 확인</b>하는 용도입니다. 여기서 뭔가를 넣거나 고치지는 않습니다.</p>
           <pre class="help-code">8:30 · 21칸
-  ● G김철수    (기구치료)
+  ● G김철수    (기구)
   ● 이영희BN   (운동치료·신환)
   ● FES2       (무시)</pre>
           <ul>
@@ -1167,7 +1168,7 @@
             <li><b>PT · OT · ST 탭</b>으로 나눠 봅니다
                 <table class="help-t" style="margin-top:6px">
                   <tr><th style="width:16%">PT</th><td>운동 · 보행 · 매트 · 기구 · 도수 · FES</td></tr>
-                  <tr><th>OT</th><td>작업 · 연하전기</td></tr>
+                  <tr><th>OT</th><td>작업 · 일상생활동작훈련 · 연하전기</td></tr>
                   <tr><th>ST</th><td>언어치료. <b>PT·OT 시간표 양쪽의 「언어」 열을 모아서</b> 보여줍니다.
                       양쪽에 똑같이 적혀 있으면 하나로 합쳐서 한 번만 보여주고,
                       마우스를 올리면 <span class="mono">PT Y열 · OT T열 두 군데에 똑같이 적혀 있음</span> 이라고 나옵니다</td></tr>
@@ -1278,7 +1279,7 @@
              (<span class="mono">/김철수N</span>). <b>1:1 치료는 회복기 환자만</b> 받을 수 있습니다.
              표의 <b>「회복기」 칸</b>으로 확인·수정할 수 있습니다.</p>
           <table class="help-t">
-            <tr><th style="width:24%">1:1 치료</th><td>운동 · 보행 · 매트 · 도수(PT) · 작업(OT) · <b>언어치료</b><br>
+            <tr><th style="width:24%">1:1 치료</th><td>운동 · 보행 · 매트 · 도수(PT) · 작업 · 일상생활동작훈련(OT) · <b>언어치료</b><br>
                 <span class="help-dim">세 계열을 <b>합쳐서</b> 셉니다 — 「PT·OT·언어 중 2개」</span></td></tr>
             <tr><th>1:다 치료</th><td>기구 · FES · 연하전기</td></tr>
           </table>
@@ -1342,7 +1343,7 @@
   김철수 · 8:30    보행치료 → (없음)
   이영희 병실      999 → 302
 【이번에 새로 들어온 사람】
-  최민수 (302)  8:30 작업치료 · 9:05 기구치료
+  최민수 (302)  8:30 작업치료 · 9:05 기구
 【지난번엔 있었는데 이번엔 없는 사람】
   김철수 (804)  지난번: 8:30 운동치료</pre>
           <p class="help-note"><b>빠진 사람은 표에 넣지 않습니다.</b> 표에 넣으면 엑셀 저장에도 들어가기
@@ -1379,7 +1380,8 @@
             <tr><td>이름 뒤 <b>M</b> &nbsp;<span class="mono">김철수M</span></td><td>매트치료</td></tr>
             <tr><td>이름 뒤 <b>Z</b> &nbsp;<span class="mono">김철수Z</span></td><td>도수치료</td></tr>
             <tr><td>이름 뒤 <b>S</b> 또는 <b>A</b></td><td>작업치료</td></tr>
-            <tr><td>이름 <b>앞</b> G 또는 M &nbsp;<span class="mono">G김철수</span></td><td>기구치료</td></tr>
+            <tr><td>위 작업치료에 <b>OS</b> 또는 <b>GB</b> 가 붙음 &nbsp;<span class="mono">김철수A + OS</span></td><td>일상생활동작훈련</td></tr>
+            <tr><td>이름 <b>앞</b> G 또는 M &nbsp;<span class="mono">G김철수</span></td><td>기구</td></tr>
             <tr><td><b>VT</b> 앞이나 뒤 &nbsp;<span class="mono">VT김철수</span> <span class="mono">김철수VT</span></td><td>연하전기치료</td></tr>
             <tr><td><b>언어</b> 열의 <span class="mono">이름(1-3)</span></td><td>언어치료 (괄호 안은 <b>언어치료실 방 번호</b> — <span class="mono">1-3</span> = 1층 3번방, <span class="mono">2-4</span> = 2층 4번방. <b>비고</b> 칸에 들어갑니다)</td></tr>
             <tr><td><b>FES</b> 열의 이름</td><td>FES</td></tr>
@@ -1395,8 +1397,10 @@
                   <tr><th style="width:20%"><span class="mono">OS</span></th><td>근골격계</td></tr>
                   <tr><th><span class="mono">GB</span></th><td>길랑바레</td></tr>
                 </table>
-                <b>치료 종류는 이름 뒤 글자로만 정해집니다.</b> 아랫줄이 무엇이든 치료는 같습니다.
-                <span class="mono">김철수A + OS</span> 도 작업치료, <span class="mono">김철수A + GB</span> 도 작업치료입니다.</li>
+                <b>작업치료에 OS·GB 가 붙으면 일상생활동작훈련</b>으로 들어갑니다.
+                <span class="mono">김철수A + OS</span> 도, <span class="mono">김철수A + GB</span> 도, 괄호로 쓴 <span class="mono">김철수A(OS)</span> 도 일상생활동작훈련입니다.
+                <span class="help-dim">작업치료가 아닌 치료(<span class="mono">김철수VT + OS</span> 등)는 아랫줄이 무엇이든 그대로입니다.
+                검사에서는 일상생활동작훈련을 작업치료와 똑같이 봅니다.</span></li>
           </ul>
           <h4>무시하는 것</h4>
           <p><span class="mono">FES1</span> <span class="mono">FES-1</span> 같은 기계 담당 표시 · <span class="mono">789</span> <span class="mono">1020</span> 같은 숫자 · <span class="mono">7팀</span> <span class="mono">7팀액팅</span> · <span class="mono">접수</span> <span class="mono">건수</span> <span class="mono">점심</span> <span class="mono">부도사유</span> · 한 글자짜리 ·
@@ -1443,7 +1447,7 @@
             <tr><td><b>/ 표시 누락</b> — <span class="mono">/</span> 없이 1:1 치료가 배정됨</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:다 중복</b> — <b>같은 처방</b>을 한 세션에 두 번</td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:1 개수</b> — 한 세션의 1:1 치료가 <b>2개가 안 됨</b> (0개·1개)<br>
-                <span class="help-dim">1:1 치료 = 운동·보행·매트·도수(PT) · 작업(OT) · 언어치료.<br>
+                <span class="help-dim">1:1 치료 = 운동·보행·매트·도수(PT) · 작업·일상생활동작훈련(OT) · 언어치료.<br>
                 그 세션에 <b>치료가 하나도 없을 때만</b> 뺍니다 (오전만 받는 사람이 정상으로 있습니다).
                 <b>기구·FES 같은 1:다 치료만 있어도 검사합니다</b> — 그런 세션은 1:1 이 0개라 걸립니다.<br>
                 <b>2개를 넘는 것은 오류가 아닙니다</b> — 다른 사람 치료가 펑크 나면 더 넣어주기도 합니다.
@@ -1451,14 +1455,14 @@
                 개수가 바뀌는 자리에 <b><span class="mono">1:1 치료 2개</span> 초록 띠</b>가 들어갑니다.
                 <b>「1:다 치료 적은 순」</b> 도 같은 식으로 씁니다</span></td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
             <tr><td><b>1:1 조합</b> — 1:1 치료 2개가 <b>전부 PT 계열</b>(운동·보행·매트·도수)<br>
-                <span class="help-dim"><b>작업치료나 언어치료 중 하나는 꼭 들어가야</b> 합니다. PT 두 개는 안 됩니다</span></td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
+                <span class="help-dim"><b>작업치료(일상생활동작훈련 포함)나 언어치료 중 하나는 꼭 들어가야</b> 합니다. PT 두 개는 안 됩니다</span></td><td class="rule-sev"><span class="rule-no">검사 안 함</span></td><td class="rule-sev">🔴 오류</td></tr>
           </table>
 
           <p class="help-sub">「시간 겹침」 을 더 자세히</p>
           <p>환자는 한 시간에 한 곳에만 있을 수 있으므로 <b>어떤 조합이든</b> 오류입니다.</p>
           <table class="help-t">
             <tr><th style="width:36%">운동치료 + 보행치료</th><td>🔴 오류</td></tr>
-            <tr><th>기구치료 + 도수치료</th><td>🔴 오류</td></tr>
+            <tr><th>기구 + 도수치료</th><td>🔴 오류</td></tr>
             <tr><th>언어치료 + 운동치료</th><td>🔴 오류</td></tr>
             <tr><th>운동치료 + FES</th><td>🔴 오류</td></tr>
             <tr><th>운동치료 + 운동치료</th><td>⚪ 정상 — 같은 치료가 두 군데 적힌 것이라 하나로 합칩니다</td></tr>
@@ -2104,6 +2108,16 @@ const SUFFIX_CAT = {
   'Z':'도수치료',    // SPEC 9-1: 파워쿼리 v6.3 은 운동치료. 이 문서 우선 → 도수치료
 };
 
+// 작업치료로 읽힌 것 중 진단군 표시(OS·GB)가 붙은 것은 일상생활동작훈련으로 낸다.
+// 아랫줄에 따로 적든 괄호로 적든 메모(note)에 들어 있으므로 메모를 본다.
+// ※ 작업치료일 때만 바꾼다. 연하전기치료·운동치료 등에 OS 가 붙은 것은 그대로다.
+const CAT_OT  = '작업치료';
+const CAT_ADL = '일상생활동작훈련';
+const ADL_NOTE = /(^|[^A-Za-z])(OS|GB)(?![A-Za-z])/i;
+function adlIfMarked(cat, note){
+  return (cat === CAT_OT && note && ADL_NOTE.test(note)) ? CAT_ADL : cat;
+}
+
 // 언어 / FES 열은 치료 종류가 정해져 있으므로 이름만 해석한다
 function fixedCandidates(tok, cat){
   const out = [{name:tok, cat}];
@@ -2124,14 +2138,14 @@ function buildCandidates(tok, role){
 
   const out = [{name:tok, cat:null}];
 
-  // 이름 앞 G 또는 M → 기구치료
+  // 이름 앞 G 또는 M → 기구
   if(/^[GM]/.test(tok)){
     const rest = tok.slice(1);
     if(rest.length >= 2){
       if(rest.length > 2 && rest.slice(-1).toUpperCase() === 'N'){
-        out.push({name:rest.slice(0,-1), cat:'기구치료'});
+        out.push({name:rest.slice(0,-1), cat:'기구'});
       }
-      out.push({name:rest, cat:'기구치료'});
+      out.push({name:rest, cat:'기구'});
     }
   }
   // VT 앞 또는 뒤 → 연하전기치료 (위치 차이 없음)
@@ -2180,7 +2194,7 @@ function classifyCell(cell){
               isNew:false, rule:'이름 없음', note:t.note, raw:t.text, hasSlash:t.hasSlash};
     }
     const r = resolveToken(t.text, cell.role);
-    return {name:r.name, category:r.category, isNew:r.isNew, rule:r.rule,
+    return {name:r.name, category:adlIfMarked(r.category, t.note), isNew:r.isNew, rule:r.rule,
             note:t.note, raw:t.text, hasSlash:t.hasSlash};
   });
 }
@@ -2233,7 +2247,8 @@ const CATEGORY_COLOR = {
   '보행치료':'var(--c-gait)',
   '매트치료':'var(--c-mat)',
   '작업치료':'var(--c-ot)',
-  '기구치료':'var(--c-equip)',
+  '일상생활동작훈련':'var(--c-ot)',
+  '기구':'var(--c-equip)',
   '언어치료':'var(--c-lang)',
   '도수치료':'var(--c-manual)',
   '확인필요':'var(--warn)',
@@ -2365,7 +2380,7 @@ function diffTitleFor(name, field){
      운동+보행 같은 조합에 구멍이 있었다. 2026-09-20 하나로 통합. */
 
 // "1:1치료 N개 희망" 과 비교할 1:1(개별) 치료 — SPEC 4-8: 도수치료 포함
-const INDIVIDUAL_CATS = ['운동치료','언어치료','작업치료','보행치료','도수치료'];
+const INDIVIDUAL_CATS = ['운동치료','언어치료','작업치료','일상생활동작훈련','보행치료','도수치료'];
 
 /* 🟡 확인 권고로 띄울 규칙. 여기 없는 것은 전부 🔴 오류다.
    기준: ② 메모로 적어준 것을 어기면 무조건 오류.
@@ -2378,15 +2393,16 @@ const WARN_TYPES = new Set([]);
 /* ===== 공휴일 전용 ===== */
 // 1:1(개별) 치료 — 회복기 환자만 받을 수 있다. 원본 이름 앞에 "/" 가 붙는다.
 // ※ 언어치료는 뺀다. 실제 자료에서 비회복기 환자도 언어치료만 받는 경우가 있었다 (09.24 2명, 09.26 5명)
-const SLASH_REQUIRED_CATS = ['운동치료','보행치료','매트치료','도수치료','작업치료'];
+const SLASH_REQUIRED_CATS = ['운동치료','보행치료','매트치료','도수치료','작업치료','일상생활동작훈련'];
 // 1:1 개수를 셀 때 쓰는 목록 (언어치료 제외 — 위와 같은 이유)
 // 세션당 1:1 개수를 셀 때는 언어치료도 넣는다 — "PT·OT·언어 중 2개".
 // ('/' 표시 누락은 위 SLASH_REQUIRED_CATS 만 본다. 언어치료는 비회복기도 받으므로 거기서 빠진다)
 const ONE_TO_ONE_CATS = [...SLASH_REQUIRED_CATS, '언어치료'];
 // 그 2개 중 하나는 반드시 OT(작업치료)나 언어치료여야 한다. PT 계열만 둘은 안 된다.
-const OT_OR_LANG = ['작업치료','언어치료'];
+// 일상생활동작훈련(OS·GB 가 붙은 작업치료)은 검사에서 작업치료와 똑같이 본다.
+const OT_OR_LANG = ['작업치료','일상생활동작훈련','언어치료'];
 // 1:다 치료 — 비회복기 환자도 받는다
-const ONE_TO_MANY_CATS = ['기구치료','FES','연하전기치료'];
+const ONE_TO_MANY_CATS = ['기구','FES','연하전기치료'];
 const ONE_TO_ONE_PER_SESSION = 2;     // 한 세션에 1:1 치료 2개
 
 /* 메모 문구 -> 있으면 안 되는 치료 카테고리
@@ -2399,15 +2415,15 @@ function noRule(word, cats){
 }
 const SPECIAL_NO_RULES = [
   // "PT 안 함" 에는 도수치료도 포함한다 (도수치료도 PT 치료)
-  noRule('(?:PT|pt|피티)',            ['운동치료','보행치료','매트치료','기구치료','도수치료']),
-  noRule('(?:OT|ot|오티)',            ['작업치료','연하전기치료']),
+  noRule('(?:PT|pt|피티)',            ['운동치료','보행치료','매트치료','기구','도수치료']),
+  noRule('(?:OT|ot|오티)',            ['작업치료','일상생활동작훈련','연하전기치료']),
   noRule('(?:FES|fes|Fes)',           ['FES']),
   noRule('보행',                       ['보행치료']),
   noRule('매트',                       ['매트치료']),
   noRule('운동',                       ['운동치료']),
-  noRule('작업',                       ['작업치료']),
+  noRule('작업',                       ['작업치료','일상생활동작훈련']),
   noRule('연하(?:전기)?',              ['연하전기치료']),
-  noRule('기구',                       ['기구치료']),
+  noRule('기구',                       ['기구']),
   noRule('도수',                       ['도수치료']),
   noRule('언어',                       ['언어치료']),
 ];
